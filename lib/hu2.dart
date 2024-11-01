@@ -105,27 +105,35 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            Container(
-                              height: 150,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.cloud_upload,
-                                      size: 40,
-                                      color: Colors.grey,
+                            GestureDetector(
+                              onTap: () {
+                                // Lógica para seleccionar una imagen
+                              },
+                              child: MouseRegion(
+                                cursor: SystemMouseCursors.click, // Cambiar el cursor
+                                child: Container(
+                                  height: 150,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.cloud_upload,
+                                          size: 40,
+                                          color: Colors.grey,
+                                        ),
+                                        Text(
+                                          'Sube una imagen',
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      'Sube una imagen',
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
