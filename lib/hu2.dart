@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
   runApp(MyApp());
@@ -31,6 +35,69 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 
   String passwordType = "alphanumeric"; // Valor inicial para la selección de contraseña
 
+  // Para almacenar la imagen que se suba
+  File? image;
+
+  // Método para seleccionar la imagen
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        image = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Método para guardar la imagen
+  Future<void> saveImage(File image, String imgName) async {
+    try {
+      final directory = Directory('assets/perfiles');
+      
+      // Crea la carpeta si no existe
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final fileName = '$imgName.jpg';
+      final String newPath = path.join(directory.path, fileName);
+
+      // Copia la imagen a la ruta relativa
+      final File localImage = await image.copy(newPath);
+      print('Imagen guardada en: ${localImage.path}');
+      
+    } catch (e) {
+      print("Error al guardar la imagen: $e");
+    }
+  }
+
+  // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
+  final TextEditingController dniController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController surname1Controller = TextEditingController();
+  final TextEditingController surname2Controller = TextEditingController();
+
+  // FUNCIONES PARA COMPROBAR LA VALIDEZ DE LOS CAMPOS
+
+  bool dniIsValid(String dni) {
+    bool isValid = true;
+
+    if (dni.length != 9) {
+      isValid = false;
+    } else if (!RegExp(r'^[A-Za-z]$').hasMatch(dni[8])) {
+      isValid = false;
+    } else {
+      for (int i = 0; i < 8 && isValid; i++) {
+        if (!RegExp(r'^[0-9]$').hasMatch(dni[i])) {
+          isValid = false;
+        }
+      }
+    }
+    
+    return isValid;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +105,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
       body: Center(
         child: Container(
           width: 740,
-          height: 625,
+          height: 650,
           padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -73,20 +140,39 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextField(
+                          controller: nameController,
                           decoration: InputDecoration(
                             labelText: 'Nombre',
                             border: OutlineInputBorder(),
                           ),
                         ),
                         SizedBox(height: 10),
-                        TextField(
-                          decoration: InputDecoration(
-                            labelText: 'Apellidos',
-                            border: OutlineInputBorder(),
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: surname1Controller,
+                                decoration: InputDecoration(
+                                  labelText: '1er Apellido',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: surname2Controller,
+                                decoration: InputDecoration(
+                                  labelText: '2o Apellido',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 10),
                         TextField(
+                          controller: dniController,
                           decoration: InputDecoration(
                             labelText: 'DNI',
                             border: OutlineInputBorder(),
@@ -106,9 +192,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                             ),
                             SizedBox(height: 10),
                             GestureDetector(
-                              onTap: () {
-                                // Lógica para seleccionar una imagen
-                              },
+                              onTap: pickImage,  // Lógica para seleccionar una imagen
                               child: MouseRegion(
                                 cursor: SystemMouseCursors.click, // Cambiar el cursor
                                 child: Container(
@@ -119,20 +203,26 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Center(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.cloud_upload,
-                                          size: 40,
-                                          color: Colors.grey,
-                                        ),
-                                        Text(
-                                          'Sube una imagen',
-                                          style: TextStyle(color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
+                                    child: image == null
+                                        ? Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.cloud_upload,
+                                                size: 40,
+                                                color: Colors.grey,
+                                              ),
+                                              Text(
+                                                'Sube una imagen',
+                                                style: TextStyle(color: Colors.grey),
+                                              ),
+                                            ],
+                                          )
+                                        : Image.file(
+                                            image!,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                          ),
                                   ),
                                 ),
                               ),
@@ -245,21 +335,98 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (passwordType == 'pictograms') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
-                            );
-                          } else if (passwordType == 'images') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ImagePasswordPage()),
-                            );
-                          } else if (passwordType == 'alphanumeric') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
+                        onPressed: () async {
+                          String dniStudent = dniController.text;
+                          String nameStudent = nameController.text;
+                          String surname1Student = surname1Controller.text;
+                          String surname2Student = surname1Controller.text;
+                          if (!nameStudent.isEmpty && !surname1Student.isEmpty && !surname2Student.isEmpty) {
+                            if (!dniIsValid(dniStudent)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('El formato del DNI es inválido o el DNI ya está registrado.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              if (!audiovisualContentView && !imagesView && !pictogramsView && !textView) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Hay que seleccionar al menos un modo de visualización.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else {
+                                if (image != null) {
+                                  if (passwordType == 'pictograms') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PictogramPasswordPage(
+                                          dniStudent: dniStudent,
+                                          nameStudent: nameStudent,
+                                          surname1Student: surname1Student,
+                                          surname2Student: surname2Student,
+                                          pictogramsView: pictogramsView,
+                                          imagesView: imagesView,
+                                          textView: textView,
+                                          audiovisualContentView: audiovisualContentView,
+                                          image: image!,
+                                          saveImage: saveImage,
+                                        ),
+                                      ),
+                                    );
+                                  } else if (passwordType == 'images') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ImagePasswordPage(
+                                          dniStudent: dniStudent,
+                                          nameStudent: nameStudent,
+                                          surname1Student: surname1Student,
+                                          surname2Student: surname2Student,
+                                          pictogramsView: pictogramsView,
+                                          imagesView: imagesView,
+                                          textView: textView,
+                                          audiovisualContentView: audiovisualContentView,
+                                          image: image!,
+                                          saveImage: saveImage,
+                                        )
+                                      ),
+                                    );
+                                  } else if (passwordType == 'alphanumeric') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => AlphanumericPasswordPage(
+                                          dniStudent: dniStudent,
+                                          nameStudent: nameStudent,
+                                          surname1Student: surname1Student,
+                                          surname2Student: surname2Student,
+                                          pictogramsView: pictogramsView,
+                                          imagesView: imagesView,
+                                          textView: textView,
+                                          audiovisualContentView: audiovisualContentView,
+                                          image: image!,
+                                          saveImage: saveImage,
+                                        )
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Inserta la imagen de perfil.'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('El nombre y los apellidos no pueden ser vacíos.'),
+                                backgroundColor: Colors.red,
+                              ),
                             );
                           }
                         },
@@ -313,6 +480,24 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 
 // Página para la contraseña con pictogramas
 class PictogramPasswordPage extends StatelessWidget {
+  final String dniStudent, nameStudent, surname1Student, surname2Student;
+  final bool pictogramsView , imagesView, textView, audiovisualContentView;
+  final File? image; 
+  final Function(File, String) saveImage;
+
+  PictogramPasswordPage({
+    required this.dniStudent,
+    required this.nameStudent,
+    required this.surname1Student,
+    required this.surname2Student,
+    required this.pictogramsView,
+    required this.imagesView,
+    required this.textView,
+    required this.audiovisualContentView,
+    required this.image,
+    required this.saveImage,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -407,7 +592,9 @@ class PictogramPasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await saveImage(image!, dniStudent); // Lógica para guardar la imagen de perfil en la carpeta
+                          // Lógica para guardar la imagen de perfil en la BD
                           // Lógica para guardar al estudiante en la BD
                           Navigator.pop(context);
                         },
@@ -461,6 +648,24 @@ class PictogramPasswordPage extends StatelessWidget {
 
 // Página para la contraseña con imágenes
 class ImagePasswordPage extends StatelessWidget {
+  final String dniStudent, nameStudent, surname1Student, surname2Student;
+  final bool pictogramsView , imagesView, textView, audiovisualContentView;
+  final File? image; 
+  final Function(File, String) saveImage;
+
+  ImagePasswordPage({
+    required this.dniStudent,
+    required this.nameStudent,
+    required this.surname1Student,
+    required this.surname2Student,
+    required this.pictogramsView,
+    required this.imagesView,
+    required this.textView,
+    required this.audiovisualContentView,
+    required this.image,
+    required this.saveImage,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -555,7 +760,9 @@ class ImagePasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await saveImage(image!, dniStudent); // Lógica para guardar la imagen de perfil en la carpeta
+                          // Lógica para guardar la imagen de perfil en la BD
                           // Lógica para guardar al estudiante en la BD
                           Navigator.pop(context);
                         },
@@ -609,6 +816,24 @@ class ImagePasswordPage extends StatelessWidget {
 
 // Página para la contraseña alfanumérica
 class AlphanumericPasswordPage extends StatelessWidget {
+  final String dniStudent, nameStudent, surname1Student, surname2Student;
+  final bool pictogramsView , imagesView, textView, audiovisualContentView;
+  final File? image; 
+  final Function(File, String) saveImage;
+
+  AlphanumericPasswordPage({
+    required this.dniStudent,
+    required this.nameStudent,
+    required this.surname1Student,
+    required this.surname2Student,
+    required this.pictogramsView,
+    required this.imagesView,
+    required this.textView,
+    required this.audiovisualContentView,
+    required this.image,
+    required this.saveImage,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -665,7 +890,9 @@ class AlphanumericPasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 400,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await saveImage(image!, dniStudent); // Lógica para guardar la imagen de perfil en la carpeta
+                          // Lógica para guardar la imagen de perfil en la BD
                           // Lógica para guardar al estudiante en la BD
                           Navigator.pop(context);
                         },
