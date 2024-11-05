@@ -1,7 +1,9 @@
 import 'dart:io';
 
-import 'package:proyecto/Administrador.dart';
-import 'package:proyecto/Estudiante.dart';
+import 'package:proyecto/Admin.dart';
+import 'package:proyecto/Student.dart';
+import 'package:proyecto/imgClave.dart';
+import 'package:proyecto/Decrypt.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -15,8 +17,10 @@ class ColegioDatabase{
 	ColegioDatabase._init();
 
 
-	final String tablaAdministradores = 'administradores';
-  final String tablaEstudiantes = 'estudiantes';
+	final String tablaAdmin = 'admin';
+  final String tablaStudents = 'students';
+  final String tablaImgClave = 'imgClave';
+  final String tablaDecrypt = 'decrypt';
 
 	Future<Database> get database async {
 		if(_database != null) return _database!;
@@ -40,74 +44,103 @@ class ColegioDatabase{
 
 	Future _onCreateDB(Database db, int version) async{
 		await db.execute('''
-		CREATE TABLE $tablaAdministradores(
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		CREATE TABLE $tablaAdmin(
+		DNI VARCHAR(9) PRIMARY KEY,
 		name VARCHAR(25),
-		user VARCHAR(25),
+    lastName1 VARCHAR(25),
+    lastName2 VARCHAR(25)
+		photo VARCHAR(25),
 		password varchar(25)
 		)
 		
 		''');
 
     await db.execute('''
-		CREATE TABLE $tablaEstudiantes(
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		CREATE TABLE $tablaStudents(
+		DNI VARCHAR(9) PRIMARY KEY,
 		name VARCHAR(25),
-		user VARCHAR(25),
+    lastName1 VARCHAR(25),
+    lastName2 VARCHAR(25)
+		photo VARCHAR(25),
 		password varchar(25),
-		loginType varchar(25)
+    typePassword VARCHAR(25),
+    interfaceIMG BOOLEAN DEFAULT false,
+    interfacePIC BOOLEAN DEFAULT false,
+    interfaceTXT BOOLEAN DEFAULT true
 		)
 		
 		''');
 
+    await db.execute('''
+    CREATE TABLE $tablaImgClave(
+      path VARCHAR(25),
+      imgCode VARCHAR(25)
+    )
+    ''');
+
+    await db.execute('''
+    CREATE TABLE $tablaDecrypt(
+      DNI VARCHAR(9),
+      path VARCHAR(25),
+      FOREIGN KEY (DNI) REFERENCES $tablaStudents(DNI)
+      FOREIGN KEY (path) REFERENCES $tablaImgClave(path)
+      PRIMARY KEY (DNI, path)
+    )
+    ''');
+
 		// Inserta un administrador inicial
-		await db.insert(tablaAdministradores, {
+		await db.insert(tablaAdmin, {
+			'DNI': "00000000A",
 			'name': "Administrador",
-			'user': "admin",
-			'password': "admin"
+      'lastName1': 'admin',
+      'lastName2': 'admin',
+			'password': "admin",
+      'photo': 'img/default'
 		});
+
+
 	}
 
-	Future<void> insertarAdministrador(Administrador admin) async{
+	Future<void> insertAdmin(Admin admin) async{
 		final db = await instance.database;
-		await db.insert(tablaAdministradores, admin.toMap());
+		await db.insert(tablaAdmin, admin.toMap());
 	}
 
-  Future<void> insertarEstudiante(Estudiante est) async{
+  Future<void> insertStudent(Student student) async{
 		final db = await instance.database;
-		await db.insert(tablaEstudiantes, est.toMap());
+		await db.insert(tablaStudents, student.toMap());
 	}
 	
 
-	Future<bool> comprobarAdministrador(Administrador admin) async {
+	Future<bool> checkAdmin(Admin admin) async {
 		final db = await instance.database;
 
 		final result = await db.query(
-			tablaAdministradores,
-			where: 'user = ? AND password = ?',
-			whereArgs: [admin.user, admin.password],	
+			tablaAdmin,
+			where: 'DNI = ? AND password = ?',
+			whereArgs: [admin.DNI, admin.password],
 		);
 
 		return result.isNotEmpty;
 	}
 	
-  Future<bool> comprobarEstudiantes(Estudiante est) async {
+  Future<bool> checkStudent(Student student) async {
 		final db = await instance.database;
 
 		final result = await db.query(
-			tablaEstudiantes,
-			where: 'user = ? AND password = ?',
-			whereArgs: [est.user, est.password],	
+			tablaStudents,
+			where: 'DNI = ? AND password = ?',
+			whereArgs: [student.DNI, student.password],
 		);
 
 		return result.isNotEmpty;
 	}
 
-	Future<bool> registrarEstudiante(Estudiante est) async {
+	Future<bool> registerStudent(Student student) async {
 		final db = await instance.database;
 
 		try {
-			await db.insert(tablaEstudiantes, est.toMap());
+			await db.insert(tablaStudents, student.toMap());
 			return true;
 		} catch (e) {
 			print("Error al insertar el estudiante: $e");
@@ -115,15 +148,15 @@ class ColegioDatabase{
 		}
 	}
 
-	Future<bool> asignarLoginType(String user, String loginType) async {
+	Future<bool> asignLoginType(String dni, String typePassword) async {
 		final db = await instance.database;
 
 		try {
 			int count = await db.update(
-			tablaEstudiantes,
-			{'loginType': loginType},
-			where: 'user = ?',
-			whereArgs: [user],
+				tablaStudents,
+				{'typePassword': typePassword},
+				where: 'DNI = ?',
+				whereArgs: [dni],
 			);
 
 			return count > 0;
@@ -133,15 +166,15 @@ class ColegioDatabase{
 		}
 	}
 
-	Future<bool> modificarDatoEstudiante(String user, String dato, String nuevaInformacion) async{
+	Future<bool> modifyStudent(String dni, String data, String newData) async{
 		final db = await instance.database;
 
 		try {
 			int count = await db.update(
-			tablaEstudiantes,
-			{dato: nuevaInformacion},
-			where: 'user = ?',
-			whereArgs: [user],
+				tablaStudents,
+				{data: newData},
+				where: 'DNI = ?',
+				whereArgs: [dni],
 			);
 
 			return count > 0;
