@@ -41,9 +41,11 @@ class ColegioDatabase{
 	Future _onCreateDB(Database db, int version) async{
 		await db.execute('''
 		CREATE TABLE $tablaAdministradores(
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		DNI INTEGER PRIMARY KEY,
 		name VARCHAR(25),
-		user VARCHAR(25),
+    last_name1 VARCHAR(25),
+    last_name2 VARCHAR(25)
+		photo VARCHAR(25),
 		password varchar(25)
 		)
 		
@@ -51,11 +53,16 @@ class ColegioDatabase{
 
     await db.execute('''
 		CREATE TABLE $tablaEstudiantes(
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		DNI INTEGER PRIMARY KEY,
 		name VARCHAR(25),
-		user VARCHAR(25),
+    last_name1 VARCHAR(25),
+    last_name2 VARCHAR(25)
+		photo VARCHAR(25),
 		password varchar(25),
-		loginType varchar(25)
+    tipoPasswd VARCHAR(25),
+    interfazIMG BOOLEAN DEFAULT false,
+    interfazPIC BOOLEAN DEFAULT false,
+    interfazTXT BOOLEAN DEFAULT true
 		)
 		
 		''');
@@ -64,7 +71,11 @@ class ColegioDatabase{
 		await db.insert(tablaAdministradores, {
 			'name': "Administrador",
 			'user': "admin",
-			'password': "admin"
+			'password': "admin",
+      'DNI': "00000000A",
+      'last_name1': 'admin',
+      'last_name2': 'admin',
+      'photo': 'img/default'
 		});
 	}
 
