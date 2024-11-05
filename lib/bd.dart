@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:proyecto/Administrador.dart';
 import 'package:proyecto/Estudiante.dart';
+import 'package:proyecto/imgClave.dart';
+import 'package:proyecto/descifra.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -17,6 +19,8 @@ class ColegioDatabase{
 
 	final String tablaAdministradores = 'administradores';
   final String tablaEstudiantes = 'estudiantes';
+  final String tablaImgClave = 'imgClave';
+  final String tablaDescifra = 'descifra';
 
 	Future<Database> get database async {
 		if(_database != null) return _database!;
@@ -67,6 +71,23 @@ class ColegioDatabase{
 		
 		''');
 
+    await db.execute('''
+    CREATE TABLE $tablaImgClave(
+      path VARCHAR(25),
+      imgCode VARCHAR(25)
+    )
+    ''');
+
+    await db.execute('''
+    CREATE TABLE $tablaDescifra(
+      DNI INTEGER,
+      path VARCHAR(25),
+      FOREIGN KEY (DNI) REFERENCES $tablaEstudiantes(DNI)
+      FOREIGN KEY (path) REFERENCES $tablaImgClave(path)
+      PRIMARY KEY (DNI, path)
+    )
+    ''');
+
 		// Inserta un administrador inicial
 		await db.insert(tablaAdministradores, {
 			'name': "Administrador",
@@ -77,6 +98,8 @@ class ColegioDatabase{
       'last_name2': 'admin',
       'photo': 'img/default'
 		});
+
+
 	}
 
 	Future<void> insertarAdministrador(Administrador admin) async{
