@@ -1,70 +1,64 @@
 
-import 'package:proyecto/Administrador.dart';
-import 'package:proyecto/Estudiante.dart';
+import 'package:proyecto/Admin.dart';
+import 'package:proyecto/Student.dart';
 import 'package:proyecto/bd.dart';
 
-Future<bool> iniciarSesionAdministrador(String name, String user, String password, int DNI, String last_name1,
-									 String last_name2, String photo) async{
+Future<bool> loginAdmin(String dni, String name, String lastName1,
+									 String lastName2, String password, String photo) async{
 	
-	bool correcto = false;
-	Administrador admin = Administrador(user: user, password: password, name: name, DNI: DNI, last_name1: last_name1, 
-								last_name2: last_name2, photo: photo);
+	bool correct = false;
+	Admin admin = Admin(password: password, name: name, DNI: dni, lastName1: lastName1,
+			lastName2: lastName2, photo: photo);
 
-	correcto = await ColegioDatabase.instance.comprobarAdministrador(admin);
+	correct = await ColegioDatabase.instance.checkAdmin(admin);
 
-	return correcto;
+	return correct;
 }
 
-Future<bool> iniciarSesionEstudiante(String user, String password) async{
+Future<bool> loginStudent(String dni, String password) async{
 	
-	bool correcto = false;
-	Estudiante est = Estudiante(user: user, password: password, name: "name", DNI: 0, last_name1: "0", 
-								last_name2: "0", photo: "0", tipoPasswd: "0", interfazIMG: false, 
-								interfazPIC: false, interfazTXT: false);
+	bool correct = false;
+	Student student = Student(password: password, name: "name", DNI: dni, lastName1: "0",
+			lastName2: "0", photo: "0", typePassword: "0", interfaceIMG: false,
+			interfacePIC: false, interfaceTXT: false);
 
-	correcto = await ColegioDatabase.instance.comprobarEstudiantes(est);
+	correct = await ColegioDatabase.instance.checkStudent(student);
 
-	return correcto;
+	return correct;
 }
 
-Future<bool> registrarEstudiante(String name, String user, String password, int DNI, String last_name1,
-									 String last_name2, String photo, String tipoPasswd, bool interfazIMG,
-									 bool interfazPIC, bool interfazTXT) async{
+Future<bool> registerStudent(String dni, name, String lastName1, String lastName2,
+		String password, String photo, String typePassword, bool interfaceIMG,
+		bool interfacePIC, bool interfaceTXT) async{
 	
-	bool correcto = false;
-	Estudiante est = Estudiante(user: user, password: password, name: name, DNI: DNI, last_name1: last_name1, 
-								last_name2: last_name2, photo: photo, tipoPasswd: tipoPasswd, interfazIMG: interfazIMG, 
-								interfazPIC: interfazPIC, interfazTXT: interfazTXT);
+	bool correct = false;
+	Student student = Student(password: password, name: name, DNI: dni, lastName1: lastName1,
+			lastName2: lastName2, photo: photo, typePassword: typePassword, interfaceIMG: interfaceIMG,
+			interfacePIC: interfacePIC, interfaceTXT: interfaceTXT);
 
-	correcto = await ColegioDatabase.instance.registrarEstudiante(est);
+	correct = await ColegioDatabase.instance.registerStudent(student);
 
-	return correcto;
+	return correct;
 }
 
-Future<bool> asignarLoginType(String user, String loginType) async {
+Future<bool> asignLoginType(String dni, String typePassword) async {
 
-	bool resultado = await ColegioDatabase.instance.asignarLoginType(loginType, user);
+	bool result = await ColegioDatabase.instance.asignLoginType(typePassword, dni);
 
-	return resultado;
+	return result;
 }
 
-Future<bool> modificarUserEstudiante(String user, String nuevoUser) async{
 
-	bool resultado = await ColegioDatabase.instance.modificarDatoEstudiante(user, "user", nuevoUser);
+Future<bool> modifyNameStudent(String dni, String nuevoName) async{
 
-	return resultado;
+	bool result = await ColegioDatabase.instance.modifyStudent(dni, "name", nuevoName);
+
+	return result;
 }
 
-Future<bool> modificarNameEstudiante(String user, String nuevoName) async{
+Future<bool> modifyPasswordStudnt(String dni, String nuevoPassword) async{
 
-	bool resultado = await ColegioDatabase.instance.modificarDatoEstudiante(user, "name", nuevoName);
+	bool result = await ColegioDatabase.instance.modifyStudent(dni, "password", nuevoPassword);
 
-	return resultado;
-}
-
-Future<bool> modificarPasswordEstudiante(String user, String nuevoPassword) async{
-
-	bool resultado = await ColegioDatabase.instance.modificarDatoEstudiante(user, "password", nuevoPassword);
-
-	return resultado;
+	return result;
 }
