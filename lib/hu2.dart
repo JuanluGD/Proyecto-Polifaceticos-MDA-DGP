@@ -67,10 +67,6 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
       final File localImage = await image.copy(newPath);
       print('Imagen guardada en: ${localImage.path}');
       
-      // Muestra mensaje de confirmación
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Imagen guardada en la ruta: ${localImage.path}')),
-      );
     } catch (e) {
       print("Error al guardar la imagen: $e");
     }
@@ -367,7 +363,20 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                   if (passwordType == 'pictograms') {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
+                                      MaterialPageRoute(
+                                        builder: (context) => PictogramPasswordPage(
+                                          dniStudent: dniStudent,
+                                          nameStudent: nameStudent,
+                                          surname1Student: surname1Student,
+                                          surname2Student: surname2Student,
+                                          pictogramsView: pictogramsView,
+                                          imagesView: imagesView,
+                                          textView: textView,
+                                          audiovisualContentView: audiovisualContentView,
+                                          image: image!,
+                                          saveImage: saveImage,
+                                        ),
+                                      ),
                                     );
                                   } else if (passwordType == 'images') {
                                     Navigator.push(
@@ -449,6 +458,24 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 
 // Página para la contraseña con pictogramas
 class PictogramPasswordPage extends StatelessWidget {
+  final String dniStudent, nameStudent, surname1Student, surname2Student;
+  final bool pictogramsView , imagesView, textView, audiovisualContentView;
+  final File? image; 
+  final Function(File, String) saveImage;
+
+  PictogramPasswordPage({
+    required this.dniStudent,
+    required this.nameStudent,
+    required this.surname1Student,
+    required this.surname2Student,
+    required this.pictogramsView,
+    required this.imagesView,
+    required this.textView,
+    required this.audiovisualContentView,
+    required this.image,
+    required this.saveImage,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
