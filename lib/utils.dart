@@ -1,6 +1,6 @@
 
-import 'package:proyecto/Administrador.dart';
-import 'package:proyecto/Estudiante.dart';
+import 'package:proyecto/Admin.dart';
+import 'package:proyecto/Student.dart';
 import 'package:proyecto/bd.dart';
 
 Future<bool> iniciarSesionAdministrador(String name, String user, String password, int DNI, String last_name1,

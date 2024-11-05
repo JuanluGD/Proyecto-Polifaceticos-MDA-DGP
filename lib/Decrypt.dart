@@ -1,12 +1,12 @@
 import 'dart:ffi';
 
-class Descifra {
+class Decrypt {
   
   String DNI; 
-  String path; 
+  String path;
 
-  
-  Descifra({
+
+  Decrypt({
     required this.DNI,
     required this.path,
   });
@@ -19,8 +19,8 @@ class Descifra {
     };
   }
 
-  
-  Descifra.fromMap(Map<String, dynamic> map)
+
+  Decrypt.fromMap(Map<String, dynamic> map)
       : DNI = map['DNI'],
         path = map['path'];
 }
