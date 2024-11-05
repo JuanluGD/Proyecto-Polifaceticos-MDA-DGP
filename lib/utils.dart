@@ -3,28 +3,28 @@ import 'package:proyecto/Admin.dart';
 import 'package:proyecto/Student.dart';
 import 'package:proyecto/bd.dart';
 
-Future<bool> iniciarSesionAdministrador(String name, String user, String password, int DNI, String last_name1,
-									 String last_name2, String photo) async{
+Future<bool> loginAdmin(String DNI, String name, String lastName1,
+									 String lastName2, String password, String photo) async{
 	
-	bool correcto = false;
-	Administrador admin = Administrador(user: user, password: password, name: name, DNI: DNI, last_name1: last_name1, 
-								last_name2: last_name2, photo: photo);
+	bool correct = false;
+	Admin admin = Admin(password: password, name: name, DNI: DNI, lastName1: lastName1,
+			lastName2: lastName2, photo: photo);
 
-	correcto = await ColegioDatabase.instance.comprobarAdministrador(admin);
+	correct = await ColegioDatabase.instance.checkAdmin(admin);
 
-	return correcto;
+	return correct;
 }
 
-Future<bool> iniciarSesionEstudiante(String user, String password) async{
+Future<bool> loginStudent(String DNI, String password) async{
 	
-	bool correcto = false;
-	Estudiante est = Estudiante(user: user, password: password, name: "name", DNI: 0, last_name1: "0", 
+	bool correct = false;
+	Student student = Student(password: password, name: "name", DNI: 0, last_name1: "0",
 								last_name2: "0", photo: "0", tipoPasswd: "0", interfazIMG: false, 
 								interfazPIC: false, interfazTXT: false);
 
-	correcto = await ColegioDatabase.instance.comprobarEstudiantes(est);
+	correct = await ColegioDatabase.instance.checkStudent(student);
 
-	return correcto;
+	return correct;
 }
 
 Future<bool> registrarEstudiante(String name, String user, String password, int DNI, String last_name1,

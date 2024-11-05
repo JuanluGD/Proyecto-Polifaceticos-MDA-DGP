@@ -106,9 +106,9 @@ class ColegioDatabase{
 		await db.insert(tablaAdmin, admin.toMap());
 	}
 
-  Future<void> insertStudent(Student est) async{
+  Future<void> insertStudent(Student student) async{
 		final db = await instance.database;
-		await db.insert(tablaStudents, est.toMap());
+		await db.insert(tablaStudents, student.toMap());
 	}
 	
 
@@ -124,23 +124,23 @@ class ColegioDatabase{
 		return result.isNotEmpty;
 	}
 	
-  Future<bool> checkStudent(Student est) async {
+  Future<bool> checkStudent(Student student) async {
 		final db = await instance.database;
 
 		final result = await db.query(
 			tablaStudents,
 			where: 'DNI = ? AND password = ?',
-			whereArgs: [est.DNI, est.password],
+			whereArgs: [student.DNI, student.password],
 		);
 
 		return result.isNotEmpty;
 	}
 
-	Future<bool> registerEstudiante(Student est) async {
+	Future<bool> registerEstudiante(Student student) async {
 		final db = await instance.database;
 
 		try {
-			await db.insert(tablaStudents, est.toMap());
+			await db.insert(tablaStudents, student.toMap());
 			return true;
 		} catch (e) {
 			print("Error al insertar el estudiante: $e");
@@ -148,15 +148,15 @@ class ColegioDatabase{
 		}
 	}
 
-	Future<bool> asignLoginType(String user, String loginType) async {
+	Future<bool> asignLoginType(String dni, String typePassword) async {
 		final db = await instance.database;
 
 		try {
 			int count = await db.update(
 				tablaStudents,
-				{'loginType': loginType},
-				where: 'user = ?',
-				whereArgs: [user],
+				{'typePassword': typePassword},
+				where: 'DNI = ?',
+				whereArgs: [dni],
 			);
 
 			return count > 0;
@@ -166,15 +166,15 @@ class ColegioDatabase{
 		}
 	}
 
-	Future<bool> modifyStudent(String user, String dato, String nuevaInformacion) async{
+	Future<bool> modifyStudent(String dni, String data, String newData) async{
 		final db = await instance.database;
 
 		try {
 			int count = await db.update(
 				tablaStudents,
-				{dato: nuevaInformacion},
-				where: 'user = ?',
-				whereArgs: [user],
+				{data: newData},
+				where: 'DNI = ?',
+				whereArgs: [dni],
 			);
 
 			return count > 0;
