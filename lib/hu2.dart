@@ -358,8 +358,6 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                 );
                               } else {
                                 if (image != null) {
-                                  String imgName = dniController.text;
-                                  await saveImage(image!, imgName);
                                   if (passwordType == 'pictograms') {
                                     Navigator.push(
                                       context,
@@ -381,12 +379,36 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                   } else if (passwordType == 'images') {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => ImagePasswordPage()),
+                                      MaterialPageRoute(builder: (context) => ImagePasswordPage(
+                                          dniStudent: dniStudent,
+                                          nameStudent: nameStudent,
+                                          surname1Student: surname1Student,
+                                          surname2Student: surname2Student,
+                                          pictogramsView: pictogramsView,
+                                          imagesView: imagesView,
+                                          textView: textView,
+                                          audiovisualContentView: audiovisualContentView,
+                                          image: image!,
+                                          saveImage: saveImage,
+                                        )
+                                      ),
                                     );
                                   } else if (passwordType == 'alphanumeric') {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
+                                      MaterialPageRoute(builder: (context) => AlphanumericPasswordPage(
+                                          dniStudent: dniStudent,
+                                          nameStudent: nameStudent,
+                                          surname1Student: surname1Student,
+                                          surname2Student: surname2Student,
+                                          pictogramsView: pictogramsView,
+                                          imagesView: imagesView,
+                                          textView: textView,
+                                          audiovisualContentView: audiovisualContentView,
+                                          image: image!,
+                                          saveImage: saveImage,
+                                        )
+                                      ),
                                     );
                                   }
                                 } else {
@@ -570,7 +592,9 @@ class PictogramPasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await saveImage(image!, dniStudent); // Lógica para guardar la imagen de perfil en la carpeta
+                          // Lógica para guardar la imagen de perfil en la BD
                           // Lógica para guardar al estudiante en la BD
                           Navigator.pop(context);
                         },
@@ -624,6 +648,24 @@ class PictogramPasswordPage extends StatelessWidget {
 
 // Página para la contraseña con imágenes
 class ImagePasswordPage extends StatelessWidget {
+  final String dniStudent, nameStudent, surname1Student, surname2Student;
+  final bool pictogramsView , imagesView, textView, audiovisualContentView;
+  final File? image; 
+  final Function(File, String) saveImage;
+
+  ImagePasswordPage({
+    required this.dniStudent,
+    required this.nameStudent,
+    required this.surname1Student,
+    required this.surname2Student,
+    required this.pictogramsView,
+    required this.imagesView,
+    required this.textView,
+    required this.audiovisualContentView,
+    required this.image,
+    required this.saveImage,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -718,7 +760,9 @@ class ImagePasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await saveImage(image!, dniStudent); // Lógica para guardar la imagen de perfil en la carpeta
+                          // Lógica para guardar la imagen de perfil en la BD
                           // Lógica para guardar al estudiante en la BD
                           Navigator.pop(context);
                         },
@@ -772,6 +816,24 @@ class ImagePasswordPage extends StatelessWidget {
 
 // Página para la contraseña alfanumérica
 class AlphanumericPasswordPage extends StatelessWidget {
+  final String dniStudent, nameStudent, surname1Student, surname2Student;
+  final bool pictogramsView , imagesView, textView, audiovisualContentView;
+  final File? image; 
+  final Function(File, String) saveImage;
+
+  AlphanumericPasswordPage({
+    required this.dniStudent,
+    required this.nameStudent,
+    required this.surname1Student,
+    required this.surname2Student,
+    required this.pictogramsView,
+    required this.imagesView,
+    required this.textView,
+    required this.audiovisualContentView,
+    required this.image,
+    required this.saveImage,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -828,8 +890,10 @@ class AlphanumericPasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 400,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Lógica para guardar el estudiante en la BD
+                        onPressed: () async {
+                          await saveImage(image!, dniStudent); // Lógica para guardar la imagen de perfil en la carpeta
+                          // Lógica para guardar la imagen de perfil en la BD
+                          // Lógica para guardar al estudiante en la BD
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
