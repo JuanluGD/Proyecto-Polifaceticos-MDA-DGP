@@ -136,7 +136,7 @@ class ColegioDatabase{
 		return result.isNotEmpty;
 	}
 
-	Future<bool> registerEstudiante(Student student) async {
+	Future<bool> registerStudent(Student student) async {
 		final db = await instance.database;
 
 		try {
