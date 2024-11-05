@@ -49,16 +49,16 @@ Future<bool> asignLoginType(String dni, String typePassword) async {
 }
 
 
-Future<bool> modifyNameStudent(String dni, String nuevoName) async{
+Future<bool> modifyNameStudent(String dni, String newName) async{
 
-	bool result = await ColegioDatabase.instance.modifyStudent(dni, "name", nuevoName);
+	bool result = await ColegioDatabase.instance.modifyStudent(dni, "name", newName);
 
 	return result;
 }
 
-Future<bool> modifyPasswordStudnt(String dni, String nuevoPassword) async{
+Future<bool> modifyPasswordStudnt(String dni, String newPassword) async{
 
-	bool result = await ColegioDatabase.instance.modifyStudent(dni, "password", nuevoPassword);
+	bool result = await ColegioDatabase.instance.modifyStudent(dni, "password", newPassword);
 
 	return result;
 }
