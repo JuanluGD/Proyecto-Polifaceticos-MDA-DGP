@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
   runApp(MyApp());
@@ -31,6 +35,47 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 
   String passwordType = "alphanumeric"; // Valor inicial para la selección de contraseña
 
+  // Para almacenar la imagen que se suba
+  File? image;
+
+  // Método para seleccionar la imagen
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        image = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Método para guardar la imagen
+  Future<void> saveImage(File image) async {
+    try {
+      final directory = Directory('assets/perfiles');
+      
+      // Crea la carpeta si no existe
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final fileName = 'imagen_guardada.jpg';
+      final String newPath = path.join(directory.path, fileName);
+
+      // Copia la imagen a la ruta relativa
+      final File localImage = await image.copy(newPath);
+      print('Imagen guardada en: ${localImage.path}');
+      
+      // Muestra mensaje de confirmación
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Imagen guardada en la ruta: ${localImage.path}')),
+      );
+    } catch (e) {
+      print("Error al guardar la imagen: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +83,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
       body: Center(
         child: Container(
           width: 740,
-          height: 625,
+          height: 650,
           padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -106,9 +151,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                             ),
                             SizedBox(height: 10),
                             GestureDetector(
-                              onTap: () {
-                                // Lógica para seleccionar una imagen
-                              },
+                              onTap: pickImage,  // Lógica para seleccionar una imagen
                               child: MouseRegion(
                                 cursor: SystemMouseCursors.click, // Cambiar el cursor
                                 child: Container(
@@ -119,20 +162,26 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Center(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.cloud_upload,
-                                          size: 40,
-                                          color: Colors.grey,
-                                        ),
-                                        Text(
-                                          'Sube una imagen',
-                                          style: TextStyle(color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
+                                    child: image == null
+                                        ? Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.cloud_upload,
+                                                size: 40,
+                                                color: Colors.grey,
+                                              ),
+                                              Text(
+                                                'Sube una imagen',
+                                                style: TextStyle(color: Colors.grey),
+                                              ),
+                                            ],
+                                          )
+                                        : Image.file(
+                                            image!,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                          ),
                                   ),
                                 ),
                               ),
@@ -245,22 +294,26 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (passwordType == 'pictograms') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
-                            );
-                          } else if (passwordType == 'images') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ImagePasswordPage()),
-                            );
-                          } else if (passwordType == 'alphanumeric') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
-                            );
+                        onPressed: () async {
+                          // Igual que esta comprobar también que el resto de campos están rellenos antes de pasar a Siguiente
+                          if (image != null) {
+                            await saveImage(image!);
+                            if (passwordType == 'pictograms') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
+                              );
+                            } else if (passwordType == 'images') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ImagePasswordPage()),
+                              );
+                            } else if (passwordType == 'alphanumeric') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
+                              );
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -666,7 +719,7 @@ class AlphanumericPasswordPage extends StatelessWidget {
                       width: 400,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Lógica para guardar al estudiante en la BD
+                          // Lógica para guardar el estudiante en la BD
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
