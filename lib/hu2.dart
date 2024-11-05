@@ -51,7 +51,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
   }
 
   // Método para guardar la imagen
-  Future<void> saveImage(File image) async {
+  Future<void> saveImage(File image, String imgName) async {
     try {
       final directory = Directory('assets/perfiles');
       
@@ -60,7 +60,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
         await directory.create(recursive: true);
       }
 
-      final fileName = 'imagen_guardada.jpg';
+      final fileName = '$imgName.jpg';
       final String newPath = path.join(directory.path, fileName);
 
       // Copia la imagen a la ruta relativa
@@ -74,6 +74,32 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
     } catch (e) {
       print("Error al guardar la imagen: $e");
     }
+  }
+
+  // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
+  final TextEditingController dniController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController surname1Controller = TextEditingController();
+  final TextEditingController surname2Controller = TextEditingController();
+
+  // FUNCIONES PARA COMPROBAR LA VALIDEZ DE LOS CAMPOS
+
+  bool dniIsValid(String dni) {
+    bool isValid = true;
+
+    if (dni.length != 9) {
+      isValid = false;
+    } else if (!RegExp(r'^[A-Za-z]$').hasMatch(dni[8])) {
+      isValid = false;
+    } else {
+      for (int i = 0; i < 8 && isValid; i++) {
+        if (!RegExp(r'^[0-9]$').hasMatch(dni[i])) {
+          isValid = false;
+        }
+      }
+    }
+    
+    return isValid;
   }
 
   @override
@@ -118,20 +144,39 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         TextField(
+                          controller: nameController,
                           decoration: InputDecoration(
                             labelText: 'Nombre',
                             border: OutlineInputBorder(),
                           ),
                         ),
                         SizedBox(height: 10),
-                        TextField(
-                          decoration: InputDecoration(
-                            labelText: 'Apellidos',
-                            border: OutlineInputBorder(),
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: surname1Controller,
+                                decoration: InputDecoration(
+                                  labelText: '1er Apellido',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: surname2Controller,
+                                decoration: InputDecoration(
+                                  labelText: '2o Apellido',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 10),
                         TextField(
+                          controller: dniController,
                           decoration: InputDecoration(
                             labelText: 'DNI',
                             border: OutlineInputBorder(),
@@ -295,25 +340,63 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                       width: 200,
                       child: ElevatedButton(
                         onPressed: () async {
-                          // Igual que esta comprobar también que el resto de campos están rellenos antes de pasar a Siguiente
-                          if (image != null) {
-                            await saveImage(image!);
-                            if (passwordType == 'pictograms') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
+                          String dniStudent = dniController.text;
+                          String nameStudent = nameController.text;
+                          String surname1Student = surname1Controller.text;
+                          String surname2Student = surname1Controller.text;
+                          if (!nameStudent.isEmpty && !surname1Student.isEmpty && !surname2Student.isEmpty) {
+                            if (!dniIsValid(dniStudent)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('El formato del DNI es inválido o el DNI ya está registrado.'),
+                                  backgroundColor: Colors.red,
+                                ),
                               );
-                            } else if (passwordType == 'images') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => ImagePasswordPage()),
-                              );
-                            } else if (passwordType == 'alphanumeric') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
-                              );
+                            } else {
+                              if (!audiovisualContentView && !imagesView && !pictogramsView && !textView) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Hay que seleccionar al menos un modo de visualización.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else {
+                                if (image != null) {
+                                  String imgName = dniController.text;
+                                  await saveImage(image!, imgName);
+                                  if (passwordType == 'pictograms') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
+                                    );
+                                  } else if (passwordType == 'images') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ImagePasswordPage()),
+                                    );
+                                  } else if (passwordType == 'alphanumeric') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
+                                    );
+                                  }
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Inserta la imagen de perfil.'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
                             }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('El nombre y los apellidos no pueden ser vacíos.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
