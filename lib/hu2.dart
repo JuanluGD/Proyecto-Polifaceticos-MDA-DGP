@@ -246,7 +246,12 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                       width: 200,
                       child: ElevatedButton(
                         onPressed: () {
-                          if (passwordType == 'images') {
+                          if (passwordType == 'pictograms') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
+                            );
+                          } else if (passwordType == 'images') {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => ImagePasswordPage()),
@@ -264,6 +269,154 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                         ),
                         child: Text(
                           'Siguiente',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange[400],
+                          padding: EdgeInsets.symmetric(vertical: 24.0),
+                        ),
+                        child: Text(
+                          'Atrás',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Página para la contraseña con pictogramas
+class PictogramPasswordPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: Container(
+          width: 740,
+          height: 625,
+          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 70.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Alta de estudiante',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              Text(
+                'Creación de contraseña de pictogramas',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              SizedBox(height: 20),
+              // Área para subir y seleccionar pictogramas
+              Container(
+                height: 100,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.cloud_upload,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        'Sube los pictogramas',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Selecciona los pictogramas que formarán parte de la contraseña en el orden correcto:',
+                style: TextStyle(color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              // Grid de pictogramas
+              SizedBox(
+                height: 275, // Altura total
+                child: GridView.count(
+                  crossAxisCount: 4,
+                  shrinkWrap: true,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  children: List.generate(6, (index) {
+                    return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Image.network(
+                          'URL_DE_EJEMPLO_PICTOGRAMA',
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                  }),
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Lógica para guardar al estudiante en la BD
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: EdgeInsets.symmetric(vertical: 24.0),
+                        ),
+                        child: Text(
+                          'Guardar',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

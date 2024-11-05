@@ -239,93 +239,191 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                   // Opciones de selección
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Opciones de visualización
-                        Text(
-                          'Selecciona cómo ve la aplicación el estudiante',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Opciones de visualización
+                      Text(
+                        'Selecciona cómo ve la aplicación el estudiante',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: pictogramsView,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                pictogramsView = value ?? false;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Pictogramas',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: imagesView,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                imagesView = value ?? false;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Imágenes',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: textView,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                textView = value ?? false;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Texto',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: audiovisualContentView,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                audiovisualContentView = value ?? false;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Contenido Audiovisual',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      // Opciones de tipo de contraseña
+                      Text(
+                        'Selecciona el tipo de contraseña del estudiante',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'pictograms',
+                            groupValue: passwordType,
+                            onChanged: (String? value) {
+                              setState(() {
+                                passwordType = value!;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Pictogramas',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'images',
+                            groupValue: passwordType,
+                            onChanged: (String? value) {
+                              setState(() {
+                                passwordType = value!;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Imágenes',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'alphanumeric',
+                            groupValue: passwordType,
+                            onChanged: (String? value) {
+                              setState(() {
+                                passwordType = value!;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Alfanumérica',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 14),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (passwordType == 'pictograms') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
+                                );
+                              } else if (passwordType == 'images') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ImagePasswordPage()),
+                                );
+                              } else if (passwordType == 'alphanumeric') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.lightBlue[200],
+                              padding: EdgeInsets.symmetric(vertical: 16.0),
+                            ),
+                            child: Text(
+                              'Cambiar contraseña',
+                              style: TextStyle(color: Colors.white, fontSize: 16),
+                            ),
                           ),
                         ),
-                        CheckboxListTile(
-                          title: Text('Pictogramas'),
-                          value: pictogramsView,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              pictogramsView = value ?? false;
-                            });
-                          },
-                        ),
-                        CheckboxListTile(
-                          title: Text('Imágenes'),
-                          value: imagesView,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              imagesView = value ?? false;
-                            });
-                          },
-                        ),
-                        CheckboxListTile(
-                          title: Text('Texto'),
-                          value: textView,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              textView = value ?? false;
-                            });
-                          },
-                        ),
-                        CheckboxListTile(
-                          title: Text('Contenido Audiovisual'),
-                          value: audiovisualContentView,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              audiovisualContentView = value ?? false;
-                            });
-                          },
-                        ),
-                        SizedBox(height: 20),
-                        // Opciones de tipo de contraseña
-                        Text(
-                          'Selecciona el tipo de contraseña del estudiante',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        RadioListTile(
-                          title: Text('Pictogramas'),
-                          value: 'pictograms',
-                          groupValue: passwordType,
-                          onChanged: (String? value) {
-                            setState(() {
-                              passwordType = value!;
-                            });
-                          },
-                        ),
-                        RadioListTile(
-                          title: Text('Imágenes'),
-                          value: 'images',
-                          groupValue: passwordType,
-                          onChanged: (String? value) {
-                            setState(() {
-                              passwordType = value!;
-                            });
-                          },
-                        ),
-                        RadioListTile(
-                          title: Text('Alfanumérica'),
-                          value: 'alphanumeric',
-                          groupValue: passwordType,
-                          onChanged: (String? value) {
-                            setState(() {
-                              passwordType = value!;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
                   ),
                 ],
               ),
@@ -339,6 +437,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                       width: 200,
                       child: ElevatedButton(
                         onPressed: () {
+                          /*
                           if (passwordType == 'images') {
                             Navigator.push(
                               context,
@@ -350,6 +449,9 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                               MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
                             );
                           }
+                          */
+                          // Lógica de guardar los cambios
+                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -391,6 +493,154 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
   }
 }
 
+// Página para la contraseña con pictogramas
+class PictogramPasswordPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: Container(
+          width: 740,
+          height: 625,
+          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 70.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Modificación de estudiante',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              Text(
+                'Creación de contraseña de pictogramas',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              SizedBox(height: 20),
+              // Área para subir y seleccionar pictogramas
+              Container(
+                height: 100,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.cloud_upload,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        'Sube los pictogramas',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Selecciona los pictogramas que formarán parte de la contraseña en el orden correcto:',
+                style: TextStyle(color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              // Grid de pictogramas
+              SizedBox(
+                height: 275, // Altura total
+                child: GridView.count(
+                  crossAxisCount: 4,
+                  shrinkWrap: true,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  children: List.generate(6, (index) {
+                    return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Image.network(
+                          'URL_DE_EJEMPLO_PICTOGRAMA',
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                  }),
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Lógica para guardar al estudiante en la BD
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: EdgeInsets.symmetric(vertical: 24.0),
+                        ),
+                        child: Text(
+                          'Guardar',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange[400],
+                          padding: EdgeInsets.symmetric(vertical: 24.0),
+                        ),
+                        child: Text(
+                          'Atrás',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // Página para la contraseña con imágenes
 class ImagePasswordPage extends StatelessWidget {
   @override
@@ -410,7 +660,7 @@ class ImagePasswordPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Alta de estudiante',
+                'Modificación de estudiante',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -426,7 +676,6 @@ class ImagePasswordPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               // Área para subir y seleccionar imágenes
-              // En caso de no haber modificado el tipo de contraseña aparece por defecto la anterior
               Container(
                 height: 100,
                 width: double.infinity,
