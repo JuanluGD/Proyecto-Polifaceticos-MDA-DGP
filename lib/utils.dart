@@ -56,3 +56,9 @@ Future<bool> modifyPasswordStudnt(String dni, String newPassword) async{
 
 	return result;
 }
+
+
+bool checkDNI(String dni) {
+	final RegExp dniRegExp = RegExp(r'^\d{8}[A-Z]$');
+	return dniRegExp.hasMatch(dni);
+}
