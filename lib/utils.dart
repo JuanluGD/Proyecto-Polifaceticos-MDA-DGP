@@ -7,7 +7,7 @@ Future<bool> loginAdmin(String dni, String password) async{
 
 	bool correct = false;
 
-	correct = await ColegioDatabase.instance.checkAdmin2(dni, password);
+	correct = await ColegioDatabase.instance.loginAdmin(dni, password);
 
 	return correct;
 }
@@ -17,18 +17,18 @@ Future<bool> loginStudent(String dni, String password) async{
 	
 	bool correct = false;
 
-	correct = await ColegioDatabase.instance.checkStudent2(dni, password);
+	correct = await ColegioDatabase.instance.loginStudent(dni, password);
 
 	return correct;
 }
 
-Future<bool> registerStudent(String dni, name, String lastName1, String lastName2,
+Future<bool> registerStudent(String dni, name, String surname1, String surname2,
 		String password, String photo, String typePassword, int interfaceIMG,
 		int interfacePIC, int interfaceTXT) async{
 	
 	bool correct = false;
-	Student student = Student(password: password, name: name, DNI: dni, lastName1: lastName1,
-			lastName2: lastName2, photo: photo, typePassword: typePassword, interfaceIMG: interfaceIMG,
+	Student student = Student(password: password, name: name, DNI: dni, surname1: surname1,
+			surname2: surname2, photo: photo, typePassword: typePassword, interfaceIMG: interfaceIMG,
 			interfacePIC: interfacePIC, interfaceTXT: interfaceTXT);
 
 	correct = await ColegioDatabase.instance.registerStudent(student);

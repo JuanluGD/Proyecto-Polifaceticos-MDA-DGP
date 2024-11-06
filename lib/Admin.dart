@@ -3,8 +3,8 @@ class Admin {
 
 	String DNI;
 	String name;
-	String lastName1;
-	String lastName2;
+	String surname1;
+	String surname2;
 	String password;
 	String? photo = '';
 
@@ -12,8 +12,8 @@ class Admin {
 	Admin({
 		required this.DNI,
 		required this.name,
-		required this.lastName1,
-		required this.lastName2,
+		required this.surname1,
+		required this.surname2,
 		required this.password,
 		this.photo
 	});
@@ -23,8 +23,8 @@ class Admin {
 		return {
 			'DNI': DNI,
 			'name': name,
-			'last_name1': lastName1,
-			'last_name2': lastName2,
+			'surname1': surname1,
+			'surname2': surname2,
 			'password': password,
 			'photo': photo
 		};
@@ -35,8 +35,8 @@ class Admin {
 			:
 				DNI = map['DNI'],
 				name = map['name'],
-				lastName1 = map['lastName1'],
-				lastName2 = map['lastName2'],
+				surname1 = map['surname1'],
+				surname2 = map['surname2'],
 				password = map['password'],
 				photo = map['photo'];
 }
