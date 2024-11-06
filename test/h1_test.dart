@@ -20,10 +20,10 @@ void main() {
   test('Login exitoso', () async {
     //creamos una instancia de admin
     final admin = Admin(
-      DNI: '00000000B',
+      dni: '00000000B',
       name: 'Administrador',
-      lastName1: 'admin',
-      lastName2: 'admin',
+      surname1: 'admin',
+      surname2: 'admin',
       password: 'admin',
       photo: 'img/default',
     );
@@ -32,7 +32,7 @@ void main() {
     await db.insertAdmin(admin);
 
     //comprobamos si las credenciales son correctas
-    final loginResult = await db.checkAdmin(admin);
+    final loginResult = await db.loginAdmin(admin.dni, admin.password);
     expect(loginResult, true);
 
     //limpiamos la bd eliminando el administrador de prueba
@@ -40,16 +40,16 @@ void main() {
     await database.delete(
       db.tablaAdmin,
       where: 'DNI = ?',
-      whereArgs: [admin.DNI],
+      whereArgs: [admin.dni],
     );
   });
 
   test('Login con credenciales incorrectas', () async {
     final admin = Admin(
-      DNI: '00000000B',
+      dni: '00000000B',
       name: 'Administrador',
-      lastName1: 'admin',
-      lastName2: 'admin',
+      surname1: 'admin',
+      surname2: 'admin',
       password: 'admin',
       photo: 'img/default',
     );
@@ -57,52 +57,44 @@ void main() {
     await db.insertAdmin(admin);
 
     final wrongAdmin = Admin(
-      DNI: '00000000C', // DNI incorrecto
+      dni: '00000000C', // DNI incorrecto
       name: 'Administrador',
-      lastName1: 'admin',
-      lastName2: 'admin',
+      surname1: 'admin',
+      surname2: 'admin',
       password: 'wrongpassword', // Contraseña incorrecta
       photo: 'img/default',
     );
-    final loginResult = await db.checkAdmin(wrongAdmin);
+
+    final loginResult = await db.loginAdmin(wrongAdmin.dni, wrongAdmin.password);
     expect(loginResult, false);
 
     final database = await db.database;
     await database.delete(
       db.tablaAdmin,
       where: 'DNI = ?',
-      whereArgs: [admin.DNI],
+      whereArgs: [admin.dni],
     );
   });
 
   test('Login con campos vacíos', () async {
     final admin = Admin(
-      DNI: '00000000B',
+      dni: '00000000B',
       name: 'Administrador',
-      lastName1: 'admin',
-      lastName2: 'admin',
+      surname1: 'admin',
+      surname2: 'admin',
       password: 'admin',
       photo: 'img/default',
     );
 
     await db.insertAdmin(admin);
-
-    final emptyAdmin = Admin(
-      DNI: '', // DNI vacío
-      name: '',
-      lastName1: '',
-      lastName2: '',
-      password: '', // Contraseña vacía
-      photo: '',
-    );
-    final loginResult = await db.checkAdmin(emptyAdmin);
+    final loginResult = await db.loginAdmin('','');
     expect(loginResult, false);
 
     final database = await db.database;
     await database.delete(
       db.tablaAdmin,
       where: 'DNI = ?',
-      whereArgs: [admin.DNI],
+      whereArgs: [admin.dni],
     );
   });
 }
