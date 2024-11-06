@@ -1,25 +1,24 @@
-
 class Decrypt {
   
-  String DNI; 
+  String dni; 
   String path;
 
 
   Decrypt({
-    required this.DNI,
+    required this.dni,
     required this.path,
   });
 
   
   Map<String, dynamic> toMap() {
     return {
-      'DNI': DNI,
+      'DNI': dni,
       'path': path,
     };
   }
 
 
   Decrypt.fromMap(Map<String, dynamic> map)
-      : DNI = map['DNI'],
+      : dni = map['DNI'],
         path = map['path'];
 }

@@ -1,4 +1,3 @@
-
 import 'package:proyecto/Admin.dart';
 import 'package:proyecto/Student.dart';
 import 'package:proyecto/bd.dart';
@@ -23,11 +22,11 @@ Future<bool> loginStudent(String dni, String password) async{
 }
 
 Future<bool> registerStudent(String dni, name, String surname1, String surname2,
-		String password, String photo, String typePassword, int interfaceIMG,
-		int interfacePIC, int interfaceTXT) async{
+	String password, String photo, String typePassword, int interfaceIMG,
+	int interfacePIC, int interfaceTXT) async{
 	
 	bool correct = false;
-	Student student = Student(password: password, name: name, DNI: dni, surname1: surname1,
+	Student student = Student(password: password, name: name, dni: dni, surname1: surname1,
 			surname2: surname2, photo: photo, typePassword: typePassword, interfaceIMG: interfaceIMG,
 			interfacePIC: interfacePIC, interfaceTXT: interfaceTXT);
 
