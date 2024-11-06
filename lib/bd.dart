@@ -64,9 +64,9 @@ class ColegioDatabase{
 		photo VARCHAR(25) NOT NULL,
 		password varchar(25) NOT NULL,
     typePassword VARCHAR(25) NOT NULL,
-    interfaceIMG BOOLEAN DEFAULT false,
-    interfacePIC BOOLEAN DEFAULT false,
-    interfaceTXT BOOLEAN DEFAULT true
+    interfaceIMG TINYINT(1) NOT NULL,
+    interfacePIC TINYINT(1) NOT NULL,
+    interfaceTXT TINYINT(1) NOT NULL
 		)
 		
 		''');
@@ -137,6 +137,18 @@ class ColegioDatabase{
 			tablaStudents,
 			where: 'DNI = ? AND password = ?',
 			whereArgs: [student.DNI, student.password],
+		);
+
+		return result.isNotEmpty;
+	}
+
+	Future<bool> checkStudent2(String dni, String password) async {
+		final db = await instance.database;
+
+		final result = await db.query(
+			tablaStudents,
+			where: 'DNI = ? AND password = ?',
+			whereArgs: [dni, password],
 		);
 
 		return result.isNotEmpty;

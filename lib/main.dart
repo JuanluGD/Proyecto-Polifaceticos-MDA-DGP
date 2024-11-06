@@ -46,7 +46,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 
     if (pickedFile != null) {
       setState(() {
-        image = File("/assets/colegio.png");
+        image = File("assets/colegio.png");
       });
     }
   }
@@ -897,7 +897,7 @@ class AlphanumericPasswordPage extends StatelessWidget {
                           // Lógica para guardar la imagen de perfil en la BD
                           // Lógica para guardar al estudiante en la BD
                           // Navigator.pop(context);
-                          if(await registerStudent(dniStudent, nameStudent, surname1Student, surname2Student, password, "assets/colegio.jpg", "alphanumeric", false, false, true)){
+                          if(await registerStudent(dniStudent, nameStudent, surname1Student, surname2Student, password, "assets/colegio.jpg", "alphanumeric", 0, 0, 1)){
                              ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(':)'),

@@ -8,9 +8,9 @@ class Student {
 	String password;
 	String? photo = '';
 	String typePassword;
-	bool interfaceIMG;
-	bool interfacePIC;
-	bool interfaceTXT;
+	int interfaceIMG;
+	int interfacePIC;
+	int interfaceTXT;
 
 	Student({
 		required this.DNI,

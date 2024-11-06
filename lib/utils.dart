@@ -28,17 +28,26 @@ Future<bool> loginStudent(String dni, String password) async{
 	
 	bool correct = false;
 	Student student = Student(password: password, name: "name", DNI: dni, lastName1: "0",
-			lastName2: "0", photo: "0", typePassword: "0", interfaceIMG: false,
-			interfacePIC: false, interfaceTXT: false);
+			lastName2: "0", photo: "0", typePassword: "0", interfaceIMG: 0,
+			interfacePIC: 0, interfaceTXT: 1);
 
 	correct = await ColegioDatabase.instance.checkStudent(student);
 
 	return correct;
 }
 
+Future<bool> loginStudent2(String dni, String password) async{
+	
+	bool correct = false;
+
+	correct = await ColegioDatabase.instance.checkStudent2(dni, password);
+
+	return correct;
+}
+
 Future<bool> registerStudent(String dni, name, String lastName1, String lastName2,
-		String password, String photo, String typePassword, bool interfaceIMG,
-		bool interfacePIC, bool interfaceTXT) async{
+		String password, String photo, String typePassword, int interfaceIMG,
+		int interfacePIC, int interfaceTXT) async{
 	
 	bool correct = false;
 	Student student = Student(password: password, name: name, DNI: dni, lastName1: lastName1,
