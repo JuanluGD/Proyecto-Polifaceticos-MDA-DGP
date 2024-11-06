@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:proyecto/Admin.dart';
 import 'package:proyecto/Student.dart';
 import 'package:proyecto/imgClave.dart';
@@ -18,9 +17,9 @@ class ColegioDatabase{
 
 
 	final String tablaAdmin = 'admin';
-  final String tablaStudents = 'students';
-  final String tablaImgClave = 'imgClave';
-  final String tablaDecrypt = 'decrypt';
+	final String tablaStudents = 'students';
+	final String tablaImgClave = 'imgClave';
+	final String tablaDecrypt = 'decrypt';
 
 	Future<Database> get database async {
 		if(_database != null) return _database!;
@@ -47,56 +46,56 @@ class ColegioDatabase{
 		CREATE TABLE $tablaAdmin(
 		DNI VARCHAR(9) PRIMARY KEY,
 		name VARCHAR(25) NOT NULL,
-    lastName1 VARCHAR(25) NOT NULL,
-    lastName2 VARCHAR(25) NOT NULL,
+		surname1 VARCHAR(25) NOT NULL,
+		surname2 VARCHAR(25) NOT NULL,
 		photo VARCHAR(25) NOT NULL,
 		password varchar(25) NOT NULL
 		)
 		
 		''');
 
-    await db.execute('''
-		CREATE TABLE $tablaStudents(
-		DNI VARCHAR(9) PRIMARY KEY,
-		name VARCHAR(25) NOT NULL,
-    lastName1 VARCHAR(25) NOT NULL,
-    lastName2 VARCHAR(25) NOT NULL,
-		photo VARCHAR(25) NOT NULL,
-		password varchar(25) NOT NULL,
-    typePassword VARCHAR(25) NOT NULL,
-    interfaceIMG TINYINT(1) NOT NULL,
-    interfacePIC TINYINT(1) NOT NULL,
-    interfaceTXT TINYINT(1) NOT NULL
-		)
-		
+		await db.execute('''
+			CREATE TABLE $tablaStudents(
+			DNI VARCHAR(9) PRIMARY KEY,
+			name VARCHAR(25) NOT NULL,
+			surname1 VARCHAR(25) NOT NULL,
+			surname2 VARCHAR(25) NOT NULL,
+			photo VARCHAR(25) NOT NULL,
+			password varchar(25) NOT NULL,
+			typePassword VARCHAR(25) NOT NULL,
+			interfaceIMG TINYINT(1) NOT NULL,
+			interfacePIC TINYINT(1) NOT NULL,
+			interfaceTXT TINYINT(1) NOT NULL
+			)
+			
 		''');
 
-    await db.execute('''
-    CREATE TABLE $tablaImgClave(
-      path VARCHAR(25) PRIMARY KEY,
-      imgCode VARCHAR(25) NOT NULL
-    )
-    ''');
+		await db.execute('''
+			CREATE TABLE $tablaImgClave(
+			path VARCHAR(25) PRIMARY KEY,
+			imgCode VARCHAR(25) NOT NULL
+			)
+		''');
 
-    await db.execute('''
-    CREATE TABLE $tablaDecrypt(
-      DNI VARCHAR(9),
-      path VARCHAR(25),
-      FOREIGN KEY (DNI) REFERENCES $tablaStudents(DNI)
-      FOREIGN KEY (path) REFERENCES $tablaImgClave(path)
-      PRIMARY KEY (DNI, path)
-    )
-    ''');
+		await db.execute('''
+			CREATE TABLE $tablaDecrypt(
+			DNI VARCHAR(9),
+			path VARCHAR(25),
+			FOREIGN KEY (DNI) REFERENCES $tablaStudents(DNI)
+			FOREIGN KEY (path) REFERENCES $tablaImgClave(path)
+			PRIMARY KEY (DNI, path)
+			)
+		''');
 
 		// Inserta un administrador inicial
 		await db.insert(tablaAdmin, {
 			'DNI': "00000000A",
 			'name': "Administrador",
-      'lastName1': 'admin',
-      'lastName2': 'admin',
+			'surname1': 'admin',
+			'surname2': 'admin',
 			'password': "admin",
-      'photo': 'img/default'
-		});
+			'photo': 'img/default'
+			});
 	}
 
 	Future<void> insertAdmin(Admin admin) async{
@@ -104,19 +103,8 @@ class ColegioDatabase{
 		await db.insert(tablaAdmin, admin.toMap());
 	}
 
-	Future<bool> checkAdmin(Admin admin) async {
-		final db = await instance.database;
 
-		final result = await db.query(
-			tablaAdmin,
-			where: 'DNI = ? AND password = ?',
-			whereArgs: [admin.DNI, admin.password],
-		);
-
-		return result.isNotEmpty;
-	}
-
-	Future<bool> checkAdmin2(String dni, String password) async {
+	Future<bool> loginAdmin(String dni, String password) async {
 		final db = await instance.database;
 
 		final result = await db.query(
@@ -129,20 +117,7 @@ class ColegioDatabase{
 	}
 
 
-
-	Future<bool> checkStudent(Student student) async {
-		final db = await instance.database;
-
-		final result = await db.query(
-			tablaStudents,
-			where: 'DNI = ? AND password = ?',
-			whereArgs: [student.DNI, student.password],
-		);
-
-		return result.isNotEmpty;
-	}
-
-	Future<bool> checkStudent2(String dni, String password) async {
+	Future<bool> loginStudent(String dni, String password) async {
 		final db = await instance.database;
 
 		final result = await db.query(
@@ -237,6 +212,12 @@ class ColegioDatabase{
 		} else {
 			return null;
 		}
+	}
+	// Obtener lista de fotos de perfil de estudiantes
+	Future<List<String>> getStudentPhotos() async {
+		final db = await instance.database;
+		final result = await db.query(tablaStudents, columns: ['photo']);
+		return result.map((map) => map['photo'].toString()).toList();
 	}
 
 	// Obtener datos de ImgClave específico por path

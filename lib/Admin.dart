@@ -1,19 +1,18 @@
-
 class Admin {
 
-	String DNI;
+	String dni;
 	String name;
-	String lastName1;
-	String lastName2;
+	String surname1;
+	String surname2;
 	String password;
 	String? photo = '';
 
 
 	Admin({
-		required this.DNI,
+		required this.dni,
 		required this.name,
-		required this.lastName1,
-		required this.lastName2,
+		required this.surname1,
+		required this.surname2,
 		required this.password,
 		this.photo
 	});
@@ -21,10 +20,10 @@ class Admin {
 	// Método para convertir el objeto en un mapa
 	Map<String, dynamic> toMap() {
 		return {
-			'DNI': DNI,
+			'DNI': dni,
 			'name': name,
-			'lastName1': lastName1,
-			'lastName2': lastName2,
+			'surname1': surname1,
+			'surname2': surname2,
 			'password': password,
 			'photo': photo
 		};
@@ -33,10 +32,10 @@ class Admin {
 	// Constructor para crear un objeto desde un mapa (opcional si necesitas leer de SQLite)
 	Admin.fromMap(Map<String, dynamic> map)
 			:
-				DNI = map['DNI'],
+				dni = map['DNI'],
 				name = map['name'],
-				lastName1 = map['lastName1'],
-				lastName2 = map['lastName2'],
+				surname1 = map['surname1'],
+				surname2 = map['surname2'],
 				password = map['password'],
 				photo = map['photo'];
 }
