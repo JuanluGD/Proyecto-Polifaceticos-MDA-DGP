@@ -116,9 +116,21 @@ class ColegioDatabase{
 		return result.isNotEmpty;
 	}
 
+	Future<bool> checkAdmin2(String dni, String password) async {
+		final db = await instance.database;
 
-	
-  Future<bool> checkStudent(Student student) async {
+		final result = await db.query(
+			tablaAdmin,
+			where: 'DNI = ? AND password = ?',
+			whereArgs: [dni, password],
+		);
+
+		return result.isNotEmpty;
+	}
+
+
+
+	Future<bool> checkStudent(Student student) async {
 		final db = await instance.database;
 
 		final result = await db.query(

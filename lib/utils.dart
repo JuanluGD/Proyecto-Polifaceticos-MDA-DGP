@@ -15,6 +15,15 @@ Future<bool> loginAdmin(String dni, String name, String lastName1,
 	return correct;
 }
 
+Future<bool> loginAdmin2(String dni, String password) async{
+
+	bool correct = false;
+
+	correct = await ColegioDatabase.instance.checkAdmin2(dni, password);
+
+	return correct;
+}
+
 Future<bool> loginStudent(String dni, String password) async{
 	
 	bool correct = false;

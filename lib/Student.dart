@@ -1,6 +1,4 @@
 
-import 'dart:ffi';
-
 class Student {
 
 	String DNI;
