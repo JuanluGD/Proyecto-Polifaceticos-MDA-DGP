@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import 'Student.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,18 +22,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Tipo estudiante (definida en una clase aparte del frontend cuando se junte)
-class Student {
-  final String name;
-  final String surname;
-  final String dni;
-
-  Student({required this.name, required this.surname, required this.dni});
-}
-
 // Página de lista de estudiantes
 class StudentListPage extends StatelessWidget {
-  final List<Student> students = List.generate(20, (index) => Student(name: 'Estudiante $index', surname: 'Apellido $index', dni: '${10000000 + index}'));
+  final List<Student> students = List.generate(20, (index) => Student(name: 'Estudiante $index', lastName1: 'Apellido1 $index', lastName2: 'Apellido2 $index', DNI: '${10000000 + index}', password: '', photo: 'assets/perfiles/imagen_guardada.jpg', typePassword: 'alphanumeric', interfaceIMG: false, interfacePIC: false, interfaceTXT: false));
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +67,8 @@ class StudentListPage extends StatelessWidget {
                     return Card(
                       margin: EdgeInsets.symmetric(vertical: 8.0),
                       child: ListTile(
-                        title: Text('${student.name} ${student.surname}'),
-                        subtitle: Text('DNI: ${student.dni}'),
+                        title: Text('${student.name} ${student.lastName1} ${student.lastName2}'),
+                        subtitle: Text('DNI: ${student.DNI}'),
                         onTap: () {
                           // Navegar a la página de modificación del estudiante
                           Navigator.push(
@@ -113,11 +109,49 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
   bool textView = false;
   bool audiovisualContentView = false;
 
-  String passwordType = "alphanumeric"; // Valor anterior para la selección de contraseña
+  late String passwordType; // Valor anterior para la selección de contraseña
+
+  // Para almacenar la imagen que se suba
+  File? image;
+
+  // Método para seleccionar la imagen
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        image = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Método para guardar la imagen
+  Future<void> saveImage(File image, String imgName) async {
+    try {
+      final directory = Directory('assets/perfiles');
+      
+      // Crea la carpeta si no existe
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final fileName = '$imgName.jpg';
+      final String newPath = path.join(directory.path, fileName);
+
+      // Copia la imagen a la ruta relativa
+      final File localImage = await image.copy(newPath);
+      print('Imagen guardada en: ${localImage.path}');
+      
+    } catch (e) {
+      print("Error al guardar la imagen: $e");
+    }
+  }
 
   // Controladores para los campos de texto
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController surnameController = TextEditingController();
+  final TextEditingController surname1Controller = TextEditingController();
+  final TextEditingController surname2Controller = TextEditingController();
   final TextEditingController dniController = TextEditingController();
 
   @override
@@ -125,8 +159,11 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
     super.initState();
     // Inicializar los campos con los datos del estudiante
     nameController.text = widget.student.name;
-    surnameController.text = widget.student.surname;
-    dniController.text = widget.student.dni;
+    surname1Controller.text = widget.student.lastName1;
+    surname2Controller.text = widget.student.lastName2;
+    dniController.text = widget.student.DNI;
+    passwordType = widget.student.typePassword;
+    image = File(widget.student.photo!);
   }
 
   @override
@@ -136,7 +173,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
       body: Center(
         child: Container(
           width: 740,
-          height: 625,
+          height: 650,
           padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -154,7 +191,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                 ),
               ),
               Text(
-                'Ingresa los datos del estudiante',
+                'Modifica los datos del estudiante',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.blueAccent,
@@ -178,22 +215,38 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           ),
                         ),
                         SizedBox(height: 10),
-                        TextField(
-                          controller: surnameController,
-                          decoration: InputDecoration(
-                            labelText: 'Apellidos',
-                            border: OutlineInputBorder(),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: surname1Controller,
+                                decoration: InputDecoration(
+                                  labelText: '1er Apellido',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: surname2Controller,
+                                decoration: InputDecoration(
+                                  labelText: '2o Apellido',
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 30),
+                        Text(
+                          'DNI del estudiante: ${widget.student.DNI}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10),
-                        TextField(
-                          controller: dniController,
-                          decoration: InputDecoration(
-                            labelText: 'DNI',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 30),
                         // Imagen de perfil
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,27 +259,39 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            Container(
-                              height: 150,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.cloud_upload,
-                                      size: 40,
-                                      color: Colors.grey,
-                                    ),
-                                    Text(
-                                      'Sube una imagen',
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
+                            GestureDetector(
+                              onTap: pickImage,  // Lógica para seleccionar una imagen
+                              child: MouseRegion(
+                                cursor: SystemMouseCursors.click, // Cambiar el cursor
+                                child: Container(
+                                  height: 150,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: image == null
+                                        ? Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.cloud_upload,
+                                                size: 40,
+                                                color: Colors.grey,
+                                              ),
+                                              Text(
+                                                'Sube una imagen',
+                                                style: TextStyle(color: Colors.grey),
+                                              ),
+                                            ],
+                                          )
+                                        : Image.file(
+                                            image!,
+                                            fit: BoxFit.contain,
+                                            width: double.infinity,
+                                          ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -263,7 +328,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           SizedBox(width: 8),
                           Text(
                             'Pictogramas',
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -281,7 +346,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           SizedBox(width: 8),
                           Text(
                             'Imágenes',
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -299,7 +364,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           SizedBox(width: 8),
                           Text(
                             'Texto',
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -317,7 +382,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           SizedBox(width: 8),
                           Text(
                             'Contenido Audiovisual',
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -345,7 +410,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           SizedBox(width: 8),
                           Text(
                             'Pictogramas',
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -364,7 +429,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           SizedBox(width: 8),
                           Text(
                             'Imágenes',
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -383,7 +448,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           SizedBox(width: 8),
                           Text(
                             'Alfanumérica',
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -436,22 +501,48 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
-                          /*
-                          if (passwordType == 'images') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => ImagePasswordPage()),
-                            );
-                          } else if (passwordType == 'alphanumeric') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
+                        onPressed: () async {
+                          String dniStudent = dniController.text;
+                          String nameStudent = nameController.text;
+                          String surname1Student = surname1Controller.text;
+                          String surname2Student = surname1Controller.text;
+
+                          if (!nameStudent.isEmpty && !surname1Student.isEmpty && !surname2Student.isEmpty) {
+                            if (!audiovisualContentView && !imagesView && !pictogramsView && !textView) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Hay que seleccionar al menos un modo de visualización.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              if (image != null) {
+                                saveImage(image!, dniStudent);
+                                // Lógica para guardar las modificaciones en la BD
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Cambios realizados con éxito.'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Inserta la imagen de perfil.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('El nombre y los apellidos no pueden ser vacíos.'),
+                                backgroundColor: Colors.red,
+                              ),
                             );
                           }
-                          */
-                          // Lógica de guardar los cambios
-                          Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,

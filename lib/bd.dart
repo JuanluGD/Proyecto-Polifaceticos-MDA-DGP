@@ -45,25 +45,25 @@ class ColegioDatabase{
 	Future _onCreateDB(Database db, int version) async{
 		await db.execute('''
 		CREATE TABLE $tablaAdmin(
-		DNI VARCHAR(9) PRIMARY KEY,
-		name VARCHAR(25),
-    lastName1 VARCHAR(25),
-    lastName2 VARCHAR(25)
-		photo VARCHAR(25),
-		password varchar(25)
+		DNI VARCHAR(9) PRIMARY KEY CHECK(DNI LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Za-z]'),
+		name VARCHAR(25) NOT NULL,
+    lastName1 VARCHAR(25) NOT NULL,
+    lastName2 VARCHAR(25) NOT NULL,
+		photo VARCHAR(25) NOT NULL,
+		password varchar(25) NOT NULL
 		)
 		
 		''');
 
     await db.execute('''
 		CREATE TABLE $tablaStudents(
-		DNI VARCHAR(9) PRIMARY KEY,
-		name VARCHAR(25),
-    lastName1 VARCHAR(25),
-    lastName2 VARCHAR(25)
-		photo VARCHAR(25),
-		password varchar(25),
-    typePassword VARCHAR(25),
+		DNI VARCHAR(9) PRIMARY KEY CHECK(DNI LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Za-z]'),
+		name VARCHAR(25) NOT NULL,
+    lastName1 VARCHAR(25) NOT NULL,
+    lastName2 VARCHAR(25) NOT NULL,
+		photo VARCHAR(25) NOT NULL,
+		password varchar(25) NOT NULL,
+    typePassword VARCHAR(25) NOT NULL CHECK(typePassword IN ('alphanumeric', 'pictograms', 'images')),
     interfaceIMG BOOLEAN DEFAULT false,
     interfacePIC BOOLEAN DEFAULT false,
     interfaceTXT BOOLEAN DEFAULT true
@@ -73,8 +73,8 @@ class ColegioDatabase{
 
     await db.execute('''
     CREATE TABLE $tablaImgClave(
-      path VARCHAR(25),
-      imgCode VARCHAR(25)
+      path VARCHAR(25) PRIMARY KEY,
+      imgCode VARCHAR(25) NOT NULL
     )
     ''');
 

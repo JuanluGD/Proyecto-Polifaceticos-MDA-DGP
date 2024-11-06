@@ -220,7 +220,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                           )
                                         : Image.file(
                                             image!,
-                                            fit: BoxFit.cover,
+                                            fit: BoxFit.contain,
                                             width: double.infinity,
                                           ),
                                   ),
