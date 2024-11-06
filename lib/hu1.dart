@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto/utils.dart';
 
 void main() {
   runApp(MyApp());
@@ -118,7 +119,7 @@ class LoginPage extends StatelessWidget {
                       child: SizedBox(
                         width: 350,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (userController.text.isEmpty || passwordController.text.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -126,7 +127,7 @@ class LoginPage extends StatelessWidget {
                                   backgroundColor: Colors.red,
                                 ),
                               );
-                            } else if (false) { // Si del check de la BD se recupera false
+                            } else if (await loginAdmin2(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Usuario o contraseña incorrectos.'),
@@ -134,6 +135,12 @@ class LoginPage extends StatelessWidget {
                                 ),
                               );
                             } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('OLE.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
                               // Navegar a la página del alumno
                             }
                           },
