@@ -23,8 +23,8 @@ class Admin {
 		return {
 			'DNI': DNI,
 			'name': name,
-			'last_name1': lastName1,
-			'last_name2': lastName2,
+			'lastName1': lastName1,
+			'lastName2': lastName2,
 			'password': password,
 			'photo': photo
 		};
