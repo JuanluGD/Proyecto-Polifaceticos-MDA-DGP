@@ -45,7 +45,7 @@ class ColegioDatabase{
 	Future _onCreateDB(Database db, int version) async{
 		await db.execute('''
 		CREATE TABLE $tablaAdmin(
-		DNI VARCHAR(9) PRIMARY KEY CHECK(DNI LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Z]'),
+		DNI VARCHAR(9) PRIMARY KEY,
 		name VARCHAR(25) NOT NULL,
     lastName1 VARCHAR(25) NOT NULL,
     lastName2 VARCHAR(25) NOT NULL,
@@ -57,13 +57,13 @@ class ColegioDatabase{
 
     await db.execute('''
 		CREATE TABLE $tablaStudents(
-		DNI VARCHAR(9) PRIMARY KEY CHECK(DNI LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Z]'),
+		DNI VARCHAR(9) PRIMARY KEY,
 		name VARCHAR(25) NOT NULL,
     lastName1 VARCHAR(25) NOT NULL,
     lastName2 VARCHAR(25) NOT NULL,
 		photo VARCHAR(25) NOT NULL,
 		password varchar(25) NOT NULL,
-    typePassword VARCHAR(25) NOT NULL CHECK(typePassword IN ('alphanumeric', 'pictograms', 'images')),
+    typePassword VARCHAR(25) NOT NULL,
     interfaceIMG BOOLEAN DEFAULT false,
     interfacePIC BOOLEAN DEFAULT false,
     interfaceTXT BOOLEAN DEFAULT true
