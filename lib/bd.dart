@@ -97,20 +97,12 @@ class ColegioDatabase{
 			'password': "admin",
       'photo': 'img/default'
 		});
-
-
 	}
 
 	Future<void> insertAdmin(Admin admin) async{
 		final db = await instance.database;
 		await db.insert(tablaAdmin, admin.toMap());
 	}
-
-  Future<void> insertStudent(Student student) async{
-		final db = await instance.database;
-		await db.insert(tablaStudents, student.toMap());
-	}
-	
 
 	Future<bool> checkAdmin(Admin admin) async {
 		final db = await instance.database;
@@ -123,6 +115,8 @@ class ColegioDatabase{
 
 		return result.isNotEmpty;
 	}
+
+
 	
   Future<bool> checkStudent(Student student) async {
 		final db = await instance.database;
@@ -182,6 +176,83 @@ class ColegioDatabase{
 			print("Error al modificar el dato: $e");
 			return false;
 		}
+	}
+
+	// Obtener datos de un administrador específico por DNI
+	Future<Admin?> getAdmin(String dni) async {
+		final db = await instance.database;
+		final result = await db.query(
+			tablaAdmin,
+			where: 'DNI = ?',
+			whereArgs: [dni],
+		);
+		if (result.isNotEmpty) {
+			return Admin.fromMap(result.first);
+		} else {
+			return null;
+		}
+	}
+
+	// Obtener todos los administradores
+	Future<List<Student>> getAllStudents() async {
+		final db = await instance.database;
+		final result = await db.query(tablaStudents);
+		return result.map((map) => Student.fromMap(map)).toList();
+	}
+
+	// Obtener datos de un estudiante específico por DNI
+	Future<Student?> getStudent(String dni) async {
+		final db = await instance.database;
+		final result = await db.query(
+			tablaStudents,
+			where: 'DNI = ?',
+			whereArgs: [dni],
+		);
+		if (result.isNotEmpty) {
+			return Student.fromMap(result.first);
+		} else {
+			return null;
+		}
+	}
+
+	// Obtener datos de ImgClave específico por path
+	Future<ImgClave?> getImgClave(String path) async {
+		final db = await instance.database;
+		final result = await db.query(
+			tablaImgClave,
+			where: 'path = ?',
+			whereArgs: [path],
+		);
+		if (result.isNotEmpty) {
+			return ImgClave.fromMap(result.first);
+		} else {
+			return null;
+		}
+	}
+
+	// Obtener todas las ImgClave
+	Future<List<ImgClave>> getAllImgClaves() async {
+		final db = await instance.database;
+		final result = await db.query(tablaImgClave);
+		return result.map((map) => ImgClave.fromMap(map)).toList();
+	}
+
+	// Obtener todos los registros de la tabla Decrypt asociados a un estudiante específico
+	Future<List<Decrypt>> getDecryptsByStudentDNI(String dni) async {
+		final db = await instance.database;
+		final result = await db.query(
+			tablaDecrypt,
+			where: 'DNI = ?',
+			whereArgs: [dni],
+		);
+		return result.map((map) => Decrypt.fromMap(map)).toList();
+	}
+
+	// Obtener todos los registros de la tabla Decrypt
+	Future<List<Decrypt>> getAllDecrypts() async {
+		final db = await instance.database;
+		final result = await db.query(tablaDecrypt);
+		return result.map((map) => Decrypt.fromMap(map)).toList();
 	}
 
 }
