@@ -45,7 +45,7 @@ class ColegioDatabase{
 	Future _onCreateDB(Database db, int version) async{
 		await db.execute('''
 		CREATE TABLE $tablaAdmin(
-		DNI VARCHAR(9) PRIMARY KEY CHECK(DNI LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Za-z]'),
+		DNI VARCHAR(9) PRIMARY KEY CHECK(DNI LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Z]'),
 		name VARCHAR(25) NOT NULL,
     lastName1 VARCHAR(25) NOT NULL,
     lastName2 VARCHAR(25) NOT NULL,
@@ -57,7 +57,7 @@ class ColegioDatabase{
 
     await db.execute('''
 		CREATE TABLE $tablaStudents(
-		DNI VARCHAR(9) PRIMARY KEY CHECK(DNI LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Za-z]'),
+		DNI VARCHAR(9) PRIMARY KEY CHECK(DNI LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][A-Z]'),
 		name VARCHAR(25) NOT NULL,
     lastName1 VARCHAR(25) NOT NULL,
     lastName2 VARCHAR(25) NOT NULL,
