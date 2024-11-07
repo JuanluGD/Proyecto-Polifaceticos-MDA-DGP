@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'package:proyecto/Admin.dart';
 import 'package:proyecto/Student.dart';
 import 'package:proyecto/imgClave.dart';
 import 'package:proyecto/Decrypt.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -43,10 +41,10 @@ class ColegioDatabase{
 
 		await db.execute('''
 			CREATE TABLE $tablaStudents(
-			DNI VARCHAR(9) PRIMARY KEY,
+			user VARCHAR(30) PRIMARY KEY,
 			name VARCHAR(25) NOT NULL,
-			surname1 VARCHAR(25) NOT NULL,
-			surname2 VARCHAR(25) NOT NULL,
+			surname1 VARCHAR(25),
+			surname2 VARCHAR(25),
 			photo VARCHAR(25) NOT NULL,
 			password varchar(25) NOT NULL,
 			typePassword VARCHAR(25) NOT NULL,
@@ -66,24 +64,24 @@ class ColegioDatabase{
 
 		await db.execute('''
 			CREATE TABLE $tablaDecrypt(
-			DNI VARCHAR(9),
+			user VARCHAR(9),
 			path VARCHAR(25),
-			FOREIGN KEY (DNI) REFERENCES $tablaStudents(DNI)
+			FOREIGN KEY (user) REFERENCES $tablaStudents(user)
 			FOREIGN KEY (path) REFERENCES $tablaImgClave(path)
-			PRIMARY KEY (DNI, path)
+			PRIMARY KEY (user, path)
 			)
 		''');
 
 	}
 
 
-	Future<bool> loginStudent(String dni, String password) async {
+	Future<bool> loginStudent(String user, String password) async {
 		final db = await instance.database;
 
 		final result = await db.query(
 			tablaStudents,
-			where: 'DNI = ? AND password = ?',
-			whereArgs: [dni, password],
+			where: 'user = ? AND password = ?',
+			whereArgs: [user, password],
 		);
 
 		return result.isNotEmpty;
@@ -101,15 +99,15 @@ class ColegioDatabase{
 		}
 	}
 
-	Future<bool> asignLoginType(String dni, String typePassword) async {
+	Future<bool> asignLoginType(String user, String typePassword) async {
 		final db = await instance.database;
 
 		try {
 			int count = await db.update(
 				tablaStudents,
 				{'typePassword': typePassword},
-				where: 'DNI = ?',
-				whereArgs: [dni],
+				where: 'user = ?',
+				whereArgs: [user],
 			);
 
 			return count > 0;
@@ -119,15 +117,15 @@ class ColegioDatabase{
 		}
 	}
 
-	Future<bool> modifyStudent(String dni, String data, String newData) async{
+	Future<bool> modifyStudent(String user, String data, String newData) async{
 		final db = await instance.database;
 
 		try {
 			int count = await db.update(
 				tablaStudents,
 				{data: newData},
-				where: 'DNI = ?',
-				whereArgs: [dni],
+				where: 'user = ?',
+				whereArgs: [user],
 			);
 
 			return count > 0;
@@ -137,20 +135,46 @@ class ColegioDatabase{
 		}
 	}
 
-	// Obtener todos los administradores
+	Future<bool> modifyCompleteStudent(String user, String name, String? surname1, String? surname2,
+		String password, String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async{
+		final db = await instance.database;
+		try {
+			int count = await db.update(
+				tablaStudents,
+				{
+					'name': name,
+					'surname1': surname1,
+					'surname2': surname2,
+					'password': password,
+					'photo': photo,
+					'typePassword': typePassword,
+					'interfaceIMG': interfaceIMG,
+					'interfacePIC': interfacePIC,
+					'interfaceTXT': interfaceTXT
+				},
+				where: 'user = ?',
+				whereArgs: [user],
+			);
+
+			return count > 0;
+		} catch (e) {
+			print("Error al modificar el estudiante: $e");
+			return false;
+		}
+	}
+
 	Future<List<Student>> getAllStudents() async {
 		final db = await instance.database;
 		final result = await db.query(tablaStudents);
 		return result.map((map) => Student.fromMap(map)).toList();
 	}
 
-	// Obtener datos de un estudiante específico por DNI
-	Future<Student?> getStudent(String dni) async {
+	Future<Student?> getStudent(String user) async {
 		final db = await instance.database;
 		final result = await db.query(
 			tablaStudents,
-			where: 'DNI = ?',
-			whereArgs: [dni],
+			where: 'user = ?',
+			whereArgs: [user],
 		);
 		if (result.isNotEmpty) {
 			return Student.fromMap(result.first);
@@ -158,14 +182,13 @@ class ColegioDatabase{
 			return null;
 		}
 	}
-	// Obtener lista de fotos de perfil de estudiantes
+
 	Future<List<String>> getStudentPhotos() async {
 		final db = await instance.database;
 		final result = await db.query(tablaStudents, columns: ['photo']);
 		return result.map((map) => map['photo'].toString()).toList();
 	}
 
-	// Obtener datos de ImgClave específico por path
 	Future<ImgClave?> getImgClave(String path) async {
 		final db = await instance.database;
 		final result = await db.query(
@@ -180,25 +203,22 @@ class ColegioDatabase{
 		}
 	}
 
-	// Obtener todas las ImgClave
 	Future<List<ImgClave>> getAllImgClaves() async {
 		final db = await instance.database;
 		final result = await db.query(tablaImgClave);
 		return result.map((map) => ImgClave.fromMap(map)).toList();
 	}
 
-	// Obtener todos los registros de la tabla Decrypt asociados a un estudiante específico
-	Future<List<Decrypt>> getDecryptsByStudentDNI(String dni) async {
+	Future<List<Decrypt>> getDecryptsByStudent(String user) async {
 		final db = await instance.database;
 		final result = await db.query(
 			tablaDecrypt,
-			where: 'DNI = ?',
-			whereArgs: [dni],
+			where: 'user = ?',
+			whereArgs: [user],
 		);
 		return result.map((map) => Decrypt.fromMap(map)).toList();
 	}
 
-	// Obtener todos los registros de la tabla Decrypt
 	Future<List<Decrypt>> getAllDecrypts() async {
 		final db = await instance.database;
 		final result = await db.query(tablaDecrypt);

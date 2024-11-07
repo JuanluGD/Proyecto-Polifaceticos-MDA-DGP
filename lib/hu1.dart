@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto/utils.dart';
 import 'package:proyecto/Admin.dart';
 
 void main() {

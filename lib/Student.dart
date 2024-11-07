@@ -1,21 +1,21 @@
 class Student {
 
-  final String dni;
-  final String name;
-  final String surname1;
-  final String surname2;
-  final String password;
-  final String photo;
-  final String typePassword;
-  final int interfaceIMG;
-  final int interfacePIC;
-  final int interfaceTXT;
+  final String user;
+  String name;
+  String? surname1;
+  String? surname2;
+  String password;
+  String photo;
+  String typePassword;
+  int interfaceIMG;
+  int interfacePIC;
+  int interfaceTXT;
 
   Student({
-    required this.dni,
+    required this.user,
     required this.name,
-    required this.surname1,
-    required this.surname2,
+    this.surname1,
+    this.surname2,
     required this.password,
     required this.photo,
     required this.typePassword,
@@ -27,7 +27,7 @@ class Student {
 	// Método para convertir el objeto en un mapa
 	Map<String, dynamic> toMap() {
 		return {
-			'DNI': dni,
+			'user': user,
 			'name': name,
 			'surname1': surname1,
 			'surname2': surname2,
@@ -44,7 +44,7 @@ class Student {
 	// Constructor para crear un objeto desde un mapa
 		Student.fromMap(Map<String, dynamic> map)
 				:
-					dni = map['DNI'],
+					user = map['user'],
 					name = map['name'],
 					surname1 = map['surname1'],
 					surname2 = map['surname2'],

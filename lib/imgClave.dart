@@ -1,10 +1,9 @@
 class ImgClave {
 
-  
   String path; 
   String imgCode;
 
- 
+
   ImgClave({
     required this.path,
     required this.imgCode,
