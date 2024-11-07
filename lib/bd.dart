@@ -15,8 +15,6 @@ class ColegioDatabase{
 	
 	ColegioDatabase._init();
 
-
-	final String tablaAdmin = 'admin';
 	final String tablaStudents = 'students';
 	final String tablaImgClave = 'imgClave';
 	final String tablaDecrypt = 'decrypt';
@@ -42,17 +40,6 @@ class ColegioDatabase{
 	}
 
 	Future _onCreateDB(Database db, int version) async{
-		await db.execute('''
-		CREATE TABLE $tablaAdmin(
-		DNI VARCHAR(9) PRIMARY KEY,
-		name VARCHAR(25) NOT NULL,
-		surname1 VARCHAR(25) NOT NULL,
-		surname2 VARCHAR(25) NOT NULL,
-		photo VARCHAR(25) NOT NULL,
-		password varchar(25) NOT NULL
-		)
-		
-		''');
 
 		await db.execute('''
 			CREATE TABLE $tablaStudents(
@@ -87,33 +74,6 @@ class ColegioDatabase{
 			)
 		''');
 
-		// Inserta un administrador inicial
-		await db.insert(tablaAdmin, {
-			'DNI': "00000000A",
-			'name': "Administrador",
-			'surname1': 'admin',
-			'surname2': 'admin',
-			'password': "admin",
-			'photo': 'img/default'
-			});
-	}
-
-	Future<void> insertAdmin(Admin admin) async{
-		final db = await instance.database;
-		await db.insert(tablaAdmin, admin.toMap());
-	}
-
-
-	Future<bool> loginAdmin(String dni, String password) async {
-		final db = await instance.database;
-
-		final result = await db.query(
-			tablaAdmin,
-			where: 'DNI = ? AND password = ?',
-			whereArgs: [dni, password],
-		);
-
-		return result.isNotEmpty;
 	}
 
 
@@ -174,21 +134,6 @@ class ColegioDatabase{
 		} catch (e) {
 			print("Error al modificar el dato: $e");
 			return false;
-		}
-	}
-
-	// Obtener datos de un administrador específico por DNI
-	Future<Admin?> getAdmin(String dni) async {
-		final db = await instance.database;
-		final result = await db.query(
-			tablaAdmin,
-			where: 'DNI = ?',
-			whereArgs: [dni],
-		);
-		if (result.isNotEmpty) {
-			return Admin.fromMap(result.first);
-		} else {
-			return null;
 		}
 	}
 

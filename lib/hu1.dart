@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/utils.dart';
+import 'package:proyecto/Admin.dart';
 
 void main() {
   runApp(MyApp());
@@ -127,7 +128,7 @@ class LoginPage extends StatelessWidget {
                                   backgroundColor: Colors.red,
                                 ),
                               );
-                            } else if (await loginAdmin(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
+                            } else if (loginAdmin(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Usuario o contraseña incorrectos.'),
