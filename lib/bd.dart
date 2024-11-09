@@ -85,8 +85,8 @@ class ColegioDatabase{
 			tablaStudents,
 			where: 'user = ? AND password = ?',
 			whereArgs: [user, password],
+      limit: 1
 		);
-
 		return result.isNotEmpty;
 	}
 
