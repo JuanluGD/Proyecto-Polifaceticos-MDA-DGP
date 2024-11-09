@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:proyecto/gestion_imagenes.dart';
 import 'ImgCode.dart';
 import 'utils.dart';
 
@@ -747,7 +748,8 @@ class _PictogramPasswordPageState extends State<PictogramPasswordPage> {
                           await widget.saveImage(widget.perfilImage!, '$userStudent$extension', 'assets/perfiles');
 
                           password = await imageCodeToPassword(passwordPictograms);
-                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 'pictograms', 0, 0, 0);
+                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 
+                            'pictograms', interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0);
                           // TOMATE guardar al estudiante en la BD (la contraseña en los códigos de passwordPictograms)
                           // TOMATE guardar los pictogramas que deben salir para que introduzca su contraseña (en selectedPictograms)
                           Navigator.pop(context);
@@ -1088,7 +1090,8 @@ class _ImagePasswordPageState extends State<ImagePasswordPage> {
                           await widget.saveImage(widget.perfilImage!, '$userStudent$extension', 'assets/perfiles');
 
                           password = await imageCodeToPassword(passwordImages);
-                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 'pictograms', interface, 0, 0);
+                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 
+                            'images', interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0);
                           // TOMATE guardar al estudiante en la BD (la contraseña en los códigos de passwordImages)
                           // TOMATE guardar los pictogramas que deben salir para que introduzca su contraseña (en selectedImages)
                           Navigator.pop(context);
