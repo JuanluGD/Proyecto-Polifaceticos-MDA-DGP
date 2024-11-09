@@ -49,7 +49,7 @@ class ColegioDatabase{
 			name VARCHAR(25) NOT NULL,
 			surname VARCHAR(100),
 			image VARCHAR(25) NOT NULL UNIQUE,
-			password varchar(25) NOT NULL,
+			password varchar(500) NOT NULL,
 			typePassword VARCHAR(25) NOT NULL,
 			interfaceIMG TINYINT(1) NOT NULL,
 			interfacePIC TINYINT(1) NOT NULL,
@@ -225,6 +225,57 @@ class ColegioDatabase{
 		final db = await instance.database;
 		final result = await db.query(tablaDecrypt);
 		return result.map((map) => Decrypt.fromMap(map)).toList();
+	}
+
+  Future<bool> userIsValid(String user) async{
+    final db = await instance.database;
+    final result = await db.query(
+      tablaStudents,
+      where: 'user = ?',
+      whereArgs: [user],
+    );
+    return result.isEmpty;
+  }
+
+  Future<String> getCodeImgCode(String path) async{
+    final db = await instance.database;
+    final result = await db.query(
+      tablaImgCode,
+      where: 'path = ?',
+      whereArgs: [path],
+    );
+    return result.first['code'].toString();
+  }
+  
+  Future<bool> insertImgCode(String path, String code) async{
+		final db = await instance.database;
+		try {
+			await db.insert(tablaImgCode, {'path': path, 'code': code});
+			return true;
+		} catch (e) {
+			print("Error al insertar el código de la imagen: $e");
+			return false;
+		}
+	}
+
+	Future<String> getImgCodePath(String code) async{
+		final db = await instance.database;
+		final result = await db.query(
+			tablaImgCode,
+			where: 'code = ?',
+			whereArgs: [code],
+		);
+		return result.first['path'].toString();
+	}
+
+	Future<int> imgCodePathCount(String path) async{
+		final db = await instance.database;
+		final result = await db.query(
+			tablaImgCode,
+			where: 'path LIKE ?',
+			whereArgs: [path],
+		);
+		return result.length;
 	}
 
 }

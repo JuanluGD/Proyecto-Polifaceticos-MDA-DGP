@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'ImgCode.dart';
+import 'utils.dart';
 
 void main() {
   runApp(MyApp());
@@ -76,13 +77,6 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
   final TextEditingController userController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
-
-  // FUNCIONES PARA COMPROBAR LA VALIDEZ DE LOS CAMPOS
-
-  bool userIsValid(String user) {
-    // TOMATE
-    return true;  // Llamar a la función que comprueba que en la BD no existe ya un estudiante con ese usuario
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +312,14 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                           String nameStudent = nameController.text;
                           String surnameStudent = surnameController.text;
                           if (!nameStudent.isEmpty && !userStudent.isEmpty) {
-                            if (!userIsValid(userStudent)) {
+                            if(!userFormat(userStudent)){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('El usuario no puede contener espacios ni caracteres especiales.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else if (!(await userIsValid(userStudent))) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('El usuario ingresado ya está registrado.'),
@@ -736,6 +737,9 @@ class _PictogramPasswordPageState extends State<PictogramPasswordPage> {
                           String extension = path.extension(widget.perfilImage!.path);
                           // Guardar la imagen de perfil en la carpeta
                           await widget.saveImage(widget.perfilImage!, '$userStudent$extension', 'assets/perfiles');
+
+                          password = await imageCodeToPassword(passwordPictograms);
+                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 'pictograms', 0, 0, 0);
                           // TOMATE guardar al estudiante en la BD (la contraseña en los códigos de passwordPictograms)
                           // TOMATE guardar los pictogramas que deben salir para que introduzca su contraseña (en selectedPictograms)
                           Navigator.pop(context);
@@ -1069,6 +1073,9 @@ class _ImagePasswordPageState extends State<ImagePasswordPage> {
                           String extension = path.extension(widget.perfilImage!.path);
                           // Guardar la imagen de perfil en la carpeta
                           await widget.saveImage(widget.perfilImage!, '$userStudent$extension', 'assets/perfiles');
+
+                          password = await imageCodeToPassword(passwordImages);
+                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 'pictograms', 0, 0, 0);
                           // TOMATE guardar al estudiante en la BD (la contraseña en los códigos de passwordImages)
                           // TOMATE guardar los pictogramas que deben salir para que introduzca su contraseña (en selectedImages)
                           Navigator.pop(context);
