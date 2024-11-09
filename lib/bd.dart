@@ -43,14 +43,14 @@ class ColegioDatabase{
 			CREATE TABLE $tablaStudents(
 			user VARCHAR(30) PRIMARY KEY,
 			name VARCHAR(25) NOT NULL,
-			surname1 VARCHAR(25),
-			surname2 VARCHAR(25),
-			photo VARCHAR(25) NOT NULL,
+			surname VARCHAR(100),
+			image VARCHAR(25) NOT NULL,
 			password varchar(25) NOT NULL,
 			typePassword VARCHAR(25) NOT NULL,
 			interfaceIMG TINYINT(1) NOT NULL,
 			interfacePIC TINYINT(1) NOT NULL,
-			interfaceTXT TINYINT(1) NOT NULL
+			interfaceTXT TINYINT(1) NOT NULL,
+      diningRoomTask TINYINT(1) NOT NULL,
 			)
 			
 		''');
@@ -64,7 +64,7 @@ class ColegioDatabase{
 
 		await db.execute('''
 			CREATE TABLE $tablaDecrypt(
-			user VARCHAR(9),
+			user VARCHAR(30),
 			path VARCHAR(25),
 			FOREIGN KEY (user) REFERENCES $tablaStudents(user)
 			FOREIGN KEY (path) REFERENCES $tablaImgClave(path)
@@ -73,7 +73,6 @@ class ColegioDatabase{
 		''');
 
 	}
-
 
 	Future<bool> loginStudent(String user, String password) async {
 		final db = await instance.database;
@@ -135,16 +134,15 @@ class ColegioDatabase{
 		}
 	}
 
-	Future<bool> modifyCompleteStudent(String user, String name, String? surname1, String? surname2,
-		String password, String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async{
+	Future<bool> modifyCompleteStudent(String user, String name, String? surname,String password, 
+    String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async{
 		final db = await instance.database;
 		try {
 			int count = await db.update(
 				tablaStudents,
 				{
 					'name': name,
-					'surname1': surname1,
-					'surname2': surname2,
+					'surname': surname,
 					'password': password,
 					'photo': photo,
 					'typePassword': typePassword,

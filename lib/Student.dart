@@ -2,26 +2,26 @@ class Student {
 
   final String user;
   String name;
-  String? surname1;
-  String? surname2;
+  String? surname;
   String password;
-  String photo;
+  String image;
   String typePassword;
   int interfaceIMG;
   int interfacePIC;
   int interfaceTXT;
+  int diningRoomTask;
 
   Student({
     required this.user,
     required this.name,
-    this.surname1,
-    this.surname2,
+    this.surname,
     required this.password,
-    required this.photo,
+    required this.image,
     required this.typePassword,
     required this.interfaceIMG,
     required this.interfacePIC,
     required this.interfaceTXT,
+    this.diningRoomTask = 0,
   });
 
 	// Método para convertir el objeto en un mapa
@@ -29,14 +29,14 @@ class Student {
 		return {
 			'user': user,
 			'name': name,
-			'surname1': surname1,
-			'surname2': surname2,
+			'surname': surname,
 			'password': password,
-			'photo': photo,
+			'image': image,
 			'typePassword': typePassword,
 			'interfaceIMG': interfaceIMG,
 			'interfacePIC': interfacePIC,
-			'interfaceTXT': interfaceTXT
+			'interfaceTXT': interfaceTXT,
+      'diningRoomTask': diningRoomTask
 		
 		};
 	}
@@ -46,12 +46,12 @@ class Student {
 				:
 					user = map['user'],
 					name = map['name'],
-					surname1 = map['surname1'],
-					surname2 = map['surname2'],
+					surname = map['surname'],
 					password = map['password'],
-					photo = map['photo'],
+					image = map['image'],
 					typePassword = map['typePassword'],
 					interfaceIMG = map['interfaceIMG'],
 					interfacePIC = map['interfacePIC'],
-					interfaceTXT = map['interfaceTXT'];
+					interfaceTXT = map['interfaceTXT'],
+          diningRoomTask = map['diningRoomTask'];
 }

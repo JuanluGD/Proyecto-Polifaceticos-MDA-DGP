@@ -1,55 +1,56 @@
 import 'package:proyecto/Student.dart';
 import 'package:proyecto/bd.dart';
 
-Future<bool> loginStudent(String user, String password) async{
-	
-	bool correct = false;
+String user = 'admin';
+String password = 'admin';
 
-	correct = await ColegioDatabase.instance.loginStudent(user, password);
-
-	return correct;
+bool loginAdmin(String user, String password){
+  return user == 'admin' && password == 'admin';
 }
 
-Future<bool> registerStudent(String user, name, String surname1, String surname2,
-	String password, String photo, String typePassword, int interfaceIMG,
+Future<bool> loginStudent(String user, String password) async{
+	return await ColegioDatabase.instance.loginStudent(user, password);
+}
+
+Future<bool> login(String user, String password) async{
+  if(user == "admin"){
+    return loginAdmin(user, password);
+  }
+  else {
+    return await loginStudent(user, password);
+  }
+}
+
+Future<bool> registerStudent(String user, name, String surname, String password, 
+  String image, String typePassword, int interfaceIMG,
 	int interfacePIC, int interfaceTXT) async{
-	
-	bool correct = false;
-	Student student = Student(password: password, name: name, user: user, surname1: surname1,
-			surname2: surname2, photo: photo, typePassword: typePassword, interfaceIMG: interfaceIMG,
-			interfacePIC: interfacePIC, interfaceTXT: interfaceTXT);
 
-	correct = await ColegioDatabase.instance.registerStudent(student);
+  if (user == "admin") {
+    return false;
+  }
+  
+	Student student = Student(password: password, name: name, user: user, surname:surname, 
+    image: image, typePassword: typePassword, interfaceIMG: interfaceIMG,
+		interfacePIC: interfacePIC, interfaceTXT: interfaceTXT);
 
-	return correct;
+	return await ColegioDatabase.instance.registerStudent(student);
+
 }
 
 Future<bool> asignLoginType(String user, String typePassword) async {
-
-	bool result = await ColegioDatabase.instance.asignLoginType(user, typePassword);
-
-	return result;
+	return await ColegioDatabase.instance.asignLoginType(user, typePassword);;
 }
 
 
 Future<bool> modifyNameStudent(String user, String newName) async{
-
-	bool result = await ColegioDatabase.instance.modifyStudent(user, "name", newName);
-
-	return result;
+	return await ColegioDatabase.instance.modifyStudent(user, "name", newName);
 }
 
 Future<bool> modifyPasswordStudent(String user, String newPassword) async{
-
-	bool result = await ColegioDatabase.instance.modifyStudent(user, "password", newPassword);
-
-	return result;
+	return await ColegioDatabase.instance.modifyStudent(user, "password", newPassword);
 }
 
-Future<bool> modifyCompleteStudent(String user, String name, String? surname1, String? surname2,
-  String password, String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async{
-
-  bool result = await ColegioDatabase.instance.modifyCompleteStudent(user, name, surname1, surname2, password, photo, typePassword, interfaceIMG, interfacePIC, interfaceTXT);
-
-  return result;
+Future<bool> modifyCompleteStudent(String user, String name, String? surname, String password, 
+  String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async{
+  return await ColegioDatabase.instance.modifyCompleteStudent(user, name, surname, password, photo, typePassword, interfaceIMG, interfacePIC, interfaceTXT);
 }
