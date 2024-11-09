@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:proyecto/utils.dart';
 
@@ -46,7 +45,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 
     if (pickedFile != null) {
       setState(() {
-        image = File("assets/colegio.png");
+        image = File("assets/colegio.jpg");
       });
     }
   }
@@ -897,7 +896,7 @@ class AlphanumericPasswordPage extends StatelessWidget {
                           // Lógica para guardar la imagen de perfil en la BD
                           // Lógica para guardar al estudiante en la BD
                           // Navigator.pop(context);
-                          if(await registerStudent(dniStudent, nameStudent, surname1Student, surname2Student, password, "assets/colegio.jpg", "alphanumeric", 0, 0, 1)){
+                          if(await registerStudent(dniStudent, nameStudent, surname1Student, password, "assets/colegio.jpg", "alphanumeric", 0, 0, 1)){
                              ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(':)'),

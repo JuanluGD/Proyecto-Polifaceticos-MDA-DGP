@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:proyecto/Student.dart';
-import 'package:proyecto/imgClave.dart';
+import 'package:proyecto/ImgCode.dart';
 import 'package:proyecto/Decrypt.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -14,7 +14,7 @@ class ColegioDatabase{
 	ColegioDatabase._init();
 
 	final String tablaStudents = 'students';
-	final String tablaImgClave = 'imgClave';
+	final String tablaImgCode = 'imgCode';
 	final String tablaDecrypt = 'decrypt';
 
 	Future<Database> get database async {
@@ -25,16 +25,20 @@ class ColegioDatabase{
 	}
 	
 	Future<Database> _initDB(String filePath) async {
+    try {
+      if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+        sqfliteFfiInit();
+        databaseFactory = databaseFactoryFfi;
+      }
 
-		if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
-			sqfliteFfiInit();
-			databaseFactory = databaseFactoryFfi;
-		}
+      final dbPath = await getDatabasesPath();
+      final path = join(dbPath, filePath);
 
-		final dbPath = await getDatabasesPath();
-		final path = join(dbPath, filePath);
-
-		return await openDatabase(path, version: 1, onCreate: _onCreateDB);
+      return await openDatabase(path, version: 1, onCreate: _onCreateDB);
+    } catch (e) {
+      print("Error al inicializar la base de datos: $e");
+      rethrow;
+    }
 	}
 
 	Future _onCreateDB(Database db, int version) async{
@@ -44,21 +48,21 @@ class ColegioDatabase{
 			user VARCHAR(30) PRIMARY KEY,
 			name VARCHAR(25) NOT NULL,
 			surname VARCHAR(100),
-			image VARCHAR(25) NOT NULL,
+			image VARCHAR(25) NOT NULL UNIQUE,
 			password varchar(25) NOT NULL,
 			typePassword VARCHAR(25) NOT NULL,
 			interfaceIMG TINYINT(1) NOT NULL,
 			interfacePIC TINYINT(1) NOT NULL,
 			interfaceTXT TINYINT(1) NOT NULL,
-      diningRoomTask TINYINT(1) NOT NULL,
+      diningRoomTask TINYINT(1) NOT NULL
 			)
 			
 		''');
 
 		await db.execute('''
-			CREATE TABLE $tablaImgClave(
+			CREATE TABLE $tablaImgCode(
 			path VARCHAR(25) PRIMARY KEY,
-			imgCode VARCHAR(25) NOT NULL
+			code VARCHAR(25) NOT NULL UNIQUE
 			)
 		''');
 
@@ -66,8 +70,8 @@ class ColegioDatabase{
 			CREATE TABLE $tablaDecrypt(
 			user VARCHAR(30),
 			path VARCHAR(25),
-			FOREIGN KEY (user) REFERENCES $tablaStudents(user)
-			FOREIGN KEY (path) REFERENCES $tablaImgClave(path)
+			FOREIGN KEY (user) REFERENCES $tablaStudents(user),
+			FOREIGN KEY (path) REFERENCES $tablaImgCode(path),
 			PRIMARY KEY (user, path)
 			)
 		''');
@@ -187,24 +191,24 @@ class ColegioDatabase{
 		return result.map((map) => map['photo'].toString()).toList();
 	}
 
-	Future<ImgClave?> getImgClave(String path) async {
+	Future<ImgCode?> getImgCode(String path) async {
 		final db = await instance.database;
 		final result = await db.query(
-			tablaImgClave,
+			tablaImgCode,
 			where: 'path = ?',
 			whereArgs: [path],
 		);
 		if (result.isNotEmpty) {
-			return ImgClave.fromMap(result.first);
+			return ImgCode.fromMap(result.first);
 		} else {
 			return null;
 		}
 	}
 
-	Future<List<ImgClave>> getAllImgClaves() async {
+	Future<List<ImgCode>> getAllImgCodes() async {
 		final db = await instance.database;
-		final result = await db.query(tablaImgClave);
-		return result.map((map) => ImgClave.fromMap(map)).toList();
+		final result = await db.query(tablaImgCode);
+		return result.map((map) => ImgCode.fromMap(map)).toList();
 	}
 
 	Future<List<Decrypt>> getDecryptsByStudent(String user) async {
