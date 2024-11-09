@@ -567,8 +567,16 @@ class _PictogramPasswordPageState extends State<PictogramPasswordPage> {
                           // añadirle algo al nombre para que no se sobreescriba en la carpeta,
                           // en la de perfiles no pq si se la cambia es mejor que se sobreescriba, solo hay una imagen de perfil
 
+                          if(await pathExists(fileName, 'assets/picto_claves')){
+                            String newName = await rewritePath('assets/picto_claves/$fileName');
+                            fileName = newName.split("/").last;
+                          }
+
+
                           // Guardar la imagen seleccionada en la galería de pictogramas para contraseñas
                           await widget.saveImage(pickedFile, fileName, 'assets/picto_claves');
+
+                          await insertImgCode('assets/picto_claves/$fileName');
                         }
                       },
                       child: MouseRegion(
@@ -902,9 +910,14 @@ class _ImagePasswordPageState extends State<ImagePasswordPage> {
                           // TOMATE quizá aquí sí es interesante que si ya hay una que se llame igual en imgs_clave,
                           // añadirle algo al nombre para que no se sobreescriba en la carpeta,
                           // en la de perfiles no pq si se la cambia es mejor que se sobreescriba, solo hay una imagen de perfil
+                          if(await pathExists(fileName, 'assets/imgs_claves')){
+                            String newName = await rewritePath('assets/imgs_claves/$fileName');
+                            fileName = newName.split("/").last;
+                          }
 
                           // Guardar la imagen seleccionada en la galería de imágenes para contraseñas
                           await widget.saveImage(pickedFile, fileName, 'assets/imgs_claves');
+                          await insertImgCode('assets/imgs_claves/$fileName');
                         }
                       },
                       child: MouseRegion(
@@ -1075,7 +1088,7 @@ class _ImagePasswordPageState extends State<ImagePasswordPage> {
                           await widget.saveImage(widget.perfilImage!, '$userStudent$extension', 'assets/perfiles');
 
                           password = await imageCodeToPassword(passwordImages);
-                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 'pictograms', 0, 0, 0);
+                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 'pictograms', interface, 0, 0);
                           // TOMATE guardar al estudiante en la BD (la contraseña en los códigos de passwordImages)
                           // TOMATE guardar los pictogramas que deben salir para que introduzca su contraseña (en selectedImages)
                           Navigator.pop(context);
