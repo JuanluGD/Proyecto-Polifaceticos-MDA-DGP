@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'imgClave.dart';
+import 'ImgCode.dart';
 
 void main() {
   runApp(MyApp());
@@ -512,9 +512,9 @@ class _PictogramPasswordPageState extends State<PictogramPasswordPage> {
   });
 
   // Pictogramas opcionales para la contraseña
-  List<ImgClave> selectedPictograms = [];
+  List<ImgCode> selectedPictograms = [];
   // Pictogramas que componen la contraseña
-  List<ImgClave> passwordPictograms = [];
+  List<ImgCode> passwordPictograms = [];
 
   @override
   Widget build(BuildContext context) {
@@ -845,9 +845,9 @@ class _ImagePasswordPageState extends State<ImagePasswordPage> {
   });
 
   // Imágenes opcionales para la contraseña
-  List<ImgClave> selectedImages = [];
+  List<ImgCode> selectedImages = [];
   // Pictogramas que componen la contraseña
-  List<ImgClave> passwordImages = [];
+  List<ImgCode> passwordImages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -1274,7 +1274,7 @@ class AlphanumericPasswordPage extends StatelessWidget {
 
 // Página para seleccionar un pictograma que formará parte de las posibilidades de contraseña del estudiante
 class PictogramSelectionPage extends StatefulWidget {
-  final Function(List<ImgClave>) updateSelectedPictograms;
+  final Function(List<ImgCode>) updateSelectedPictograms;
 
   PictogramSelectionPage({
     required this.updateSelectedPictograms,
@@ -1287,18 +1287,18 @@ class PictogramSelectionPage extends StatefulWidget {
 class _PictogramSelectionPageState extends State<PictogramSelectionPage> {
   // TOMATE
   // Recuperar la lista de pictogramas clave que ya se han subido anteriormente a la BD
-  final List<ImgClave> pictograms = List.generate(
+  final List<ImgCode> pictograms = List.generate(
     10,
-    (index) => ImgClave(
+    (index) => ImgCode(
       path: 'assets/picto_claves/pictograma${index+1}.png',
-      imgCode: '$index',
+      code: '$index',
     ),
   );
 
   // Lista para seleccionar pictogramas
-  final List<ImgClave> selectionPictograms = [];
+  final List<ImgCode> selectionPictograms = [];
 
-  void toggleSelection(ImgClave pictogram) {
+  void toggleSelection(ImgCode pictogram) {
     setState(() {
       if (selectionPictograms.contains(pictogram)) {
         selectionPictograms.remove(pictogram);
@@ -1438,7 +1438,7 @@ class _PictogramSelectionPageState extends State<PictogramSelectionPage> {
 
 // Página para seleccionar una iagen que formará parte de las posibilidades de contraseña del estudiante
 class ImageSelectionPage extends StatefulWidget {
-  final Function(List<ImgClave>) updateSelectedImages;
+  final Function(List<ImgCode>) updateSelectedImages;
 
   ImageSelectionPage({
     required this.updateSelectedImages,
@@ -1451,18 +1451,18 @@ class ImageSelectionPage extends StatefulWidget {
 class _ImageSelectionPageState extends State<ImageSelectionPage> {
   // TOMATE
   // Recuperar la lista de imágenes clave que ya se han subido anteriormente a la BD
-  final List<ImgClave> images = List.generate(
+  final List<ImgCode> images = List.generate(
     8,
-    (index) => ImgClave(
+    (index) => ImgCode(
       path: 'assets/imgs_claves/imagen${index+1}.png',
-      imgCode: '$index',
+      code: '$index',
     ),
   );
 
   // Lista para seleccionar imágenes
-  final List<ImgClave> selectionImages = [];
+  final List<ImgCode> selectionImages = [];
 
-  void toggleSelection(ImgClave img) {
+  void toggleSelection(ImgCode img) {
     setState(() {
       if (selectionImages.contains(img)) {
         selectionImages.remove(img);
