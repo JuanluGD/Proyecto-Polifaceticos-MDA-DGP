@@ -30,10 +30,10 @@ class StudentRegistrationPage extends StatefulWidget {
 }
 
 class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
-  bool pictogramsView = false;
-  bool imagesView = false;
-  bool textView = false;
-  bool audiovisualContentView = false;
+  bool interfacePIC = false;
+  bool interfaceIMG = false;
+  bool interfaceTXT = false;
+  bool interfaceAV = false;
 
   String passwordType = "alphanumeric"; // Valor inicial para la selección de contraseña
 
@@ -220,37 +220,37 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                         ),
                         CheckboxListTile(
                           title: Text('Pictogramas'),
-                          value: pictogramsView,
+                          value: interfacePIC,
                           onChanged: (bool? value) {
                             setState(() {
-                              pictogramsView = value ?? false;
+                              interfacePIC = value ?? false;
                             });
                           },
                         ),
                         CheckboxListTile(
                           title: Text('Imágenes'),
-                          value: imagesView,
+                          value: interfaceIMG,
                           onChanged: (bool? value) {
                             setState(() {
-                              imagesView = value ?? false;
+                              interfaceIMG = value ?? false;
                             });
                           },
                         ),
                         CheckboxListTile(
                           title: Text('Texto'),
-                          value: textView,
+                          value: interfaceTXT,
                           onChanged: (bool? value) {
                             setState(() {
-                              textView = value ?? false;
+                              interfaceTXT = value ?? false;
                             });
                           },
                         ),
                         CheckboxListTile(
                           title: Text('Contenido Audiovisual'),
-                          value: audiovisualContentView,
+                          value: interfaceAV,
                           onChanged: (bool? value) {
                             setState(() {
-                              audiovisualContentView = value ?? false;
+                              interfaceAV = value ?? false;
                             });
                           },
                         ),
@@ -327,7 +327,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                 ),
                               );
                             } else {
-                              if (!audiovisualContentView && !imagesView && !pictogramsView && !textView) {
+                              if (!interfaceAV && !interfaceIMG && !interfacePIC && !interfaceTXT) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Hay que seleccionar al menos un modo de visualización.'),
@@ -344,10 +344,10 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                           userStudent: userStudent,
                                           nameStudent: nameStudent,
                                           surnameStudent: surnameStudent,
-                                          pictogramsView: pictogramsView,
-                                          imagesView: imagesView,
-                                          textView: textView,
-                                          audiovisualContentView: audiovisualContentView,
+                                          interfacePIC: interfacePIC,
+                                          interfaceIMG: interfaceIMG,
+                                          interfaceTXT: interfaceTXT,
+                                          interfaceAV: interfaceAV,
                                           perfilImage: image!,
                                           saveImage: saveImage,
                                           pickImage: pickImage,
@@ -361,10 +361,10 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                           userStudent: userStudent,
                                           nameStudent: nameStudent,
                                           surnameStudent: surnameStudent,
-                                          pictogramsView: pictogramsView,
-                                          imagesView: imagesView,
-                                          textView: textView,
-                                          audiovisualContentView: audiovisualContentView,
+                                          interfacePIC: interfacePIC,
+                                          interfaceIMG: interfaceIMG,
+                                          interfaceTXT: interfaceTXT,
+                                          interfaceAV: interfaceAV,
                                           perfilImage: image!,
                                           saveImage: saveImage,
                                           pickImage: pickImage,
@@ -378,10 +378,10 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                           userStudent: userStudent,
                                           nameStudent: nameStudent,
                                           surnameStudent: surnameStudent,
-                                          pictogramsView: pictogramsView,
-                                          imagesView: imagesView,
-                                          textView: textView,
-                                          audiovisualContentView: audiovisualContentView,
+                                          interfacePIC: interfacePIC,
+                                          interfaceIMG: interfaceIMG,
+                                          interfaceTXT: interfaceTXT,
+                                          interfaceAV: interfaceAV,
                                           perfilImage: image!,
                                           saveImage: saveImage,
                                         )
@@ -459,7 +459,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 // Página para la contraseña con pictogramas
 class PictogramPasswordPage extends StatefulWidget {
   final String userStudent, nameStudent, surnameStudent;
-  final bool pictogramsView, imagesView, textView, audiovisualContentView;
+  final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
   final File? perfilImage;
   final Function(File, String, String) saveImage;
   final Function() pickImage;
@@ -468,10 +468,10 @@ class PictogramPasswordPage extends StatefulWidget {
     required this.userStudent,
     required this.nameStudent,
     required this.surnameStudent,
-    required this.pictogramsView,
-    required this.imagesView,
-    required this.textView,
-    required this.audiovisualContentView,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
     required this.perfilImage,
     required this.saveImage,
     required this.pickImage,
@@ -482,10 +482,10 @@ class PictogramPasswordPage extends StatefulWidget {
     userStudent: userStudent,
     nameStudent: nameStudent,
     surnameStudent: surnameStudent,
-    pictogramsView: pictogramsView,
-    imagesView: imagesView,
-    textView: textView,
-    audiovisualContentView: audiovisualContentView,
+    interfacePIC: interfacePIC,
+    interfaceIMG: interfaceIMG,
+    interfaceTXT: interfaceTXT,
+    interfaceAV: interfaceAV,
     perfilImage: perfilImage,
     saveImage: saveImage,
     pickImage: pickImage,
@@ -494,7 +494,7 @@ class PictogramPasswordPage extends StatefulWidget {
 
 class _PictogramPasswordPageState extends State<PictogramPasswordPage> {
   final String userStudent, nameStudent, surnameStudent;
-  final bool pictogramsView, imagesView, textView, audiovisualContentView;
+  final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
   final File? perfilImage;
   final Function(File, String, String) saveImage;
   final Function() pickImage;
@@ -503,10 +503,10 @@ class _PictogramPasswordPageState extends State<PictogramPasswordPage> {
     required this.userStudent,
     required this.nameStudent,
     required this.surnameStudent,
-    required this.pictogramsView,
-    required this.imagesView,
-    required this.textView,
-    required this.audiovisualContentView,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
     required this.perfilImage,
     required this.saveImage,
     required this.pickImage,
@@ -803,7 +803,7 @@ class _PictogramPasswordPageState extends State<PictogramPasswordPage> {
 // Página para la contraseña con imágenes
 class ImagePasswordPage extends StatefulWidget {
   final String userStudent, nameStudent, surnameStudent;
-  final bool pictogramsView, imagesView, textView, audiovisualContentView;
+  final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
   final File? perfilImage;
   final Function(File, String, String) saveImage;
   final Function() pickImage;
@@ -812,10 +812,10 @@ class ImagePasswordPage extends StatefulWidget {
     required this.userStudent,
     required this.nameStudent,
     required this.surnameStudent,
-    required this.pictogramsView,
-    required this.imagesView,
-    required this.textView,
-    required this.audiovisualContentView,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
     required this.perfilImage,
     required this.saveImage,
     required this.pickImage,
@@ -826,10 +826,10 @@ class ImagePasswordPage extends StatefulWidget {
     userStudent: userStudent,
     nameStudent: nameStudent,
     surnameStudent: surnameStudent,
-    pictogramsView: pictogramsView,
-    imagesView: imagesView,
-    textView: textView,
-    audiovisualContentView: audiovisualContentView,
+    interfacePIC: interfacePIC,
+    interfaceIMG: interfaceIMG,
+    interfaceTXT: interfaceTXT,
+    interfaceAV: interfaceAV,
     perfilImage: perfilImage,
     saveImage: saveImage,
     pickImage: pickImage,
@@ -838,7 +838,7 @@ class ImagePasswordPage extends StatefulWidget {
 
 class _ImagePasswordPageState extends State<ImagePasswordPage> {
   final String userStudent, nameStudent, surnameStudent;
-  final bool pictogramsView, imagesView, textView, audiovisualContentView;
+  final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
   final File? perfilImage;
   final Function(File, String, String) saveImage;
   final Function() pickImage;
@@ -847,10 +847,10 @@ class _ImagePasswordPageState extends State<ImagePasswordPage> {
     required this.userStudent,
     required this.nameStudent,
     required this.surnameStudent,
-    required this.pictogramsView,
-    required this.imagesView,
-    required this.textView,
-    required this.audiovisualContentView,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
     required this.perfilImage,
     required this.saveImage,
     required this.pickImage,
@@ -1144,7 +1144,7 @@ class _ImagePasswordPageState extends State<ImagePasswordPage> {
 // Página para la contraseña alfanumérica
 class AlphanumericPasswordPage extends StatelessWidget {
   final String userStudent, nameStudent, surnameStudent;
-  final bool pictogramsView , imagesView, textView, audiovisualContentView;
+  final bool interfacePIC , interfaceIMG, interfaceTXT, interfaceAV;
   final File? perfilImage; 
   final Function(File, String, String) saveImage;
 
@@ -1155,10 +1155,10 @@ class AlphanumericPasswordPage extends StatelessWidget {
     required this.userStudent,
     required this.nameStudent,
     required this.surnameStudent,
-    required this.pictogramsView,
-    required this.imagesView,
-    required this.textView,
-    required this.audiovisualContentView,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
     required this.perfilImage,
     required this.saveImage,
   });
