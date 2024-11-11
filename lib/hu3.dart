@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'Student.dart';
+import 'ImgCode.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,7 +25,8 @@ class MyApp extends StatelessWidget {
 
 // Página de lista de estudiantes
 class StudentListPage extends StatelessWidget {
-  final List<Student> students = List.generate(20, (index) => Student(name: 'Estudiante $index', lastName1: 'Apellido1 $index', lastName2: 'Apellido2 $index', DNI: '${10000000 + index}', password: '', photo: 'assets/perfiles/imagen_guardada.jpg', typePassword: 'alphanumeric', interfaceIMG: false, interfacePIC: false, interfaceTXT: false));
+  // TOMATE se recuperan los estudiantes de la BD
+  final List<Student> students = List.generate(20, (index) => Student(user: 'estudiante$index', name: 'Estudiante $index', surname: 'Apellidos $index', password: 'a', image: 'assets/perfiles/imagen_guardada.jpg', typePassword: 'alphanumeric', interfaceIMG: 0, interfacePIC: 0, interfaceTXT: 0));
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +69,8 @@ class StudentListPage extends StatelessWidget {
                     return Card(
                       margin: EdgeInsets.symmetric(vertical: 8.0),
                       child: ListTile(
-                        title: Text('${student.name} ${student.lastName1} ${student.lastName2}'),
-                        subtitle: Text('DNI: ${student.DNI}'),
+                        title: Text('${student.name} ${student.surname}'),
+                        subtitle: Text('Usuario: ${student.user}'),
                         onTap: () {
                           // Navegar a la página de modificación del estudiante
                           Navigator.push(
@@ -93,7 +95,7 @@ class StudentListPage extends StatelessWidget {
 
 // Página de modificación de estudiante
 class StudentModificationPage extends StatefulWidget {
-  final Student student; // Recibimos el estudiante seleccionado
+  final Student student; // Recibir el estudiante seleccionado
 
   StudentModificationPage({required this.student});
 
@@ -103,13 +105,13 @@ class StudentModificationPage extends StatefulWidget {
 }
 
 class _StudentModificationPageState extends State<StudentModificationPage> {
-  // Valores iniciales según los que tuviese el estudiante
-  bool pictogramsView = false;
-  bool imagesView = false;
-  bool textView = false;
-  bool audiovisualContentView = false;
+  // TOMATE valores iniciales según los que tuviese el estudiante
+  bool interfacePIC = false;
+  bool interfaceIMG = false;
+  bool interfaceTXT = false;
+  bool interfaceAV = false;
 
-  late String passwordType; // Valor anterior para la selección de contraseña
+  late String passwordType; // TOMATE valor anterior para la selección de contraseña
 
   // Para almacenar la imagen que se suba
   File? image;
@@ -127,16 +129,16 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
   }
 
   // Método para guardar la imagen
-  Future<void> saveImage(File image, String imgName) async {
+  Future<void> saveImage(File image, String imgName, String dir) async {
     try {
-      final directory = Directory('assets/perfiles');
+      final directory = Directory('$dir');
       
       // Crea la carpeta si no existe
       if (!await directory.exists()) {
         await directory.create(recursive: true);
       }
 
-      final fileName = '$imgName.jpg';
+      final fileName = '$imgName';
       final String newPath = path.join(directory.path, fileName);
 
       // Copia la imagen a la ruta relativa
@@ -150,20 +152,18 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
 
   // Controladores para los campos de texto
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController surname1Controller = TextEditingController();
-  final TextEditingController surname2Controller = TextEditingController();
-  final TextEditingController dniController = TextEditingController();
+  final TextEditingController surnameController = TextEditingController();
+  final TextEditingController userController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     // Inicializar los campos con los datos del estudiante
     nameController.text = widget.student.name;
-    surname1Controller.text = widget.student.lastName1;
-    surname2Controller.text = widget.student.lastName2;
-    dniController.text = widget.student.DNI;
+    surnameController.text = widget.student.surname!;
+    userController.text = widget.student.user;
     passwordType = widget.student.typePassword;
-    image = File(widget.student.photo!);
+    image = File(widget.student.image);
   }
 
   @override
@@ -183,7 +183,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Modificación de estudiante',
+                'Modificación de ${widget.student.name}',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -207,6 +207,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        SizedBox(height: 20),
                         TextField(
                           controller: nameController,
                           decoration: InputDecoration(
@@ -215,38 +216,22 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           ),
                         ),
                         SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: surname1Controller,
-                                decoration: InputDecoration(
-                                  labelText: '1er Apellido',
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: TextField(
-                                controller: surname2Controller,
-                                decoration: InputDecoration(
-                                  labelText: '2o Apellido',
-                                  border: OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                          ],
+                        TextField(
+                          controller: surnameController,
+                          decoration: InputDecoration(
+                            labelText: 'Apellidos',
+                            border: OutlineInputBorder(),
+                          ),
                         ),
-                        SizedBox(height: 30),
+                        SizedBox(height: 20),
                         Text(
-                          'DNI del estudiante: ${widget.student.DNI}',
+                          'Usuario del estudiante: ${widget.student.user}',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 30),
+                        SizedBox(height: 20),
                         // Imagen de perfil
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,10 +303,10 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                       Row(
                         children: [
                           Checkbox(
-                            value: pictogramsView,
+                            value: interfacePIC,
                             onChanged: (bool? value) {
                               setState(() {
-                                pictogramsView = value ?? false;
+                                interfacePIC = value ?? false;
                               });
                             },
                           ),
@@ -336,10 +321,10 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                       Row(
                         children: [
                           Checkbox(
-                            value: imagesView,
+                            value: interfaceIMG,
                             onChanged: (bool? value) {
                               setState(() {
-                                imagesView = value ?? false;
+                                interfaceIMG = value ?? false;
                               });
                             },
                           ),
@@ -354,10 +339,10 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                       Row(
                         children: [
                           Checkbox(
-                            value: textView,
+                            value: interfaceTXT,
                             onChanged: (bool? value) {
                               setState(() {
-                                textView = value ?? false;
+                                interfaceTXT = value ?? false;
                               });
                             },
                           ),
@@ -372,10 +357,10 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                       Row(
                         children: [
                           Checkbox(
-                            value: audiovisualContentView,
+                            value: interfaceAV,
                             onChanged: (bool? value) {
                               setState(() {
-                                audiovisualContentView = value ?? false;
+                                interfaceAV = value ?? false;
                               });
                             },
                           ),
@@ -462,17 +447,49 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                               if (passwordType == 'pictograms') {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => PictogramPasswordPage()),
+                                  MaterialPageRoute(builder: (context) => PictogramPasswordPage(
+                                    userStudent: userController.text,
+                                    nameStudent: nameController.text,
+                                    surnameStudent: surnameController.text,
+                                    interfacePIC: interfacePIC,
+                                    interfaceIMG: interfaceIMG,
+                                    interfaceTXT: interfaceTXT,
+                                    interfaceAV: interfaceAV,
+                                    perfilImage: image!,
+                                    saveImage: saveImage,
+                                    pickImage: pickImage,
+                                  )),
                                 );
                               } else if (passwordType == 'images') {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => ImagePasswordPage()),
+                                  MaterialPageRoute(builder: (context) => ImagePasswordPage(
+                                    userStudent: userController.text,
+                                    nameStudent: nameController.text,
+                                    surnameStudent: surnameController.text,
+                                    interfacePIC: interfacePIC,
+                                    interfaceIMG: interfaceIMG,
+                                    interfaceTXT: interfaceTXT,
+                                    interfaceAV: interfaceAV,
+                                    perfilImage: image!,
+                                    saveImage: saveImage,
+                                    pickImage: pickImage,
+                                  )),
                                 );
                               } else if (passwordType == 'alphanumeric') {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => AlphanumericPasswordPage()),
+                                  MaterialPageRoute(builder: (context) => AlphanumericPasswordPage(
+                                    userStudent: userController.text,
+                                    nameStudent: nameController.text,
+                                    surnameStudent: surnameController.text,
+                                    interfacePIC: interfacePIC,
+                                    interfaceIMG: interfaceIMG,
+                                    interfaceTXT: interfaceTXT,
+                                    interfaceAV: interfaceAV,
+                                    perfilImage: image!,
+                                    saveImage: saveImage,
+                                  )),
                                 );
                               }
                             },
@@ -502,13 +519,12 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                       width: 200,
                       child: ElevatedButton(
                         onPressed: () async {
-                          String dniStudent = dniController.text;
+                          String userStudent = userController.text;
                           String nameStudent = nameController.text;
-                          String surname1Student = surname1Controller.text;
-                          String surname2Student = surname1Controller.text;
+                          String surnameStudent = surnameController.text;
 
-                          if (!nameStudent.isEmpty && !surname1Student.isEmpty && !surname2Student.isEmpty) {
-                            if (!audiovisualContentView && !imagesView && !pictogramsView && !textView) {
+                          if (!nameStudent.isEmpty) {
+                            if (!interfaceAV && !interfaceIMG && !interfacePIC && !interfaceTXT) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Hay que seleccionar al menos un modo de visualización.'),
@@ -517,7 +533,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                               );
                             } else {
                               if (image != null) {
-                                saveImage(image!, dniStudent);
+                                await widget.saveImage(widget.image!, '$userStudent$extension', 'assets/perfiles');
                                 // Lógica para guardar las modificaciones en la BD
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -538,7 +554,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('El nombre y los apellidos no pueden ser vacíos.'),
+                                content: Text('El nombre no puede ser vacío.'),
                                 backgroundColor: Colors.red,
                               ),
                             );
@@ -585,7 +601,66 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
 }
 
 // Página para la contraseña con pictogramas
-class PictogramPasswordPage extends StatelessWidget {
+class PictogramPasswordPage extends StatefulWidget {
+  final String userStudent, nameStudent, surnameStudent;
+  final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
+  final File? perfilImage;
+  final Function(File, String, String) saveImage;
+  final Function() pickImage;
+
+  PictogramPasswordPage({
+    required this.userStudent,
+    required this.nameStudent,
+    required this.surnameStudent,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
+    required this.perfilImage,
+    required this.saveImage,
+    required this.pickImage,
+  });
+
+  @override
+  _PictogramPasswordPageState createState() => _PictogramPasswordPageState(
+    userStudent: userStudent,
+    nameStudent: nameStudent,
+    surnameStudent: surnameStudent,
+    interfacePIC: interfacePIC,
+    interfaceIMG: interfaceIMG,
+    interfaceTXT: interfaceTXT,
+    interfaceAV: interfaceAV,
+    perfilImage: perfilImage,
+    saveImage: saveImage,
+    pickImage: pickImage,
+  );
+}
+
+class _PictogramPasswordPageState extends State<PictogramPasswordPage> {
+  final String userStudent, nameStudent, surnameStudent;
+  final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
+  final File? perfilImage;
+  final Function(File, String, String) saveImage;
+  final Function() pickImage;
+
+  _PictogramPasswordPageState({
+    required this.userStudent,
+    required this.nameStudent,
+    required this.surnameStudent,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
+    required this.perfilImage,
+    required this.saveImage,
+    required this.pickImage,
+  });
+
+  // Pictogramas opcionales para la contraseña
+  List<ImgCode> selectedPictograms = [];
+  // Pictogramas que componen la contraseña
+  List<ImgCode> passwordPictograms = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -603,7 +678,7 @@ class PictogramPasswordPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Modificación de estudiante',
+                'Alta de $nameStudent',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -619,29 +694,114 @@ class PictogramPasswordPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               // Área para subir y seleccionar pictogramas
-              Container(
-                height: 100,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.cloud_upload,
-                        size: 40,
-                        color: Colors.grey,
+              Row(
+                children: [
+                  // Cuadro de subir imagen
+                  Expanded(
+                    flex: 1,
+                    child: GestureDetector(
+                      onTap: () async {
+                        // Seleccionar una imagen
+                        final pickedFile = await widget.pickImage();
+                        if (pickedFile != null) {
+                          // Obtener el nombre del archivo seleccionado
+                          String fileName = pickedFile.uri.pathSegments.last;
+
+                          // TOMATE quizá aquí sí es interesante que si ya hay una que se llame igual en picto_clave,
+                          // añadirle algo al nombre para que no se sobreescriba en la carpeta,
+                          // en la de perfiles no pq si se la cambia es mejor que se sobreescriba, solo hay una imagen de perfil
+
+                          if(await pathExists(fileName, 'assets/picto_claves')){
+                            String newName = await rewritePath('assets/picto_claves/$fileName');
+                            fileName = newName.split("/").last;
+                          }
+
+
+                          // Guardar la imagen seleccionada en la galería de pictogramas para contraseñas
+                          await widget.saveImage(pickedFile, fileName, 'assets/picto_claves');
+
+                          await insertImgCode('assets/picto_claves/$fileName');
+                        }
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.cloud_upload,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                                Text(
+                                  'Sube un pictograma',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      Text(
-                        'Sube los pictogramas',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  SizedBox(width: 10),
+                  // Cuadro de selección de imágenes existentes
+                  Expanded(
+                    flex: 1,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Navegar a la página de selección de imágenes
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PictogramSelectionPage(
+                              updateSelectedPictograms: (newPictograms) {
+                                // Actualizar la lista de pictogramas seleccionados
+                                passwordPictograms = [];
+                                setState(() {
+                                  selectedPictograms = newPictograms;
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.photo_library,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                                Text(
+                                  'Selecciona un pictograma existente',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 20),
               Text(
@@ -649,27 +809,71 @@ class PictogramPasswordPage extends StatelessWidget {
                 style: TextStyle(color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 20),
               // Grid de pictogramas
-              SizedBox(
-                height: 275, // Altura total
-                child: GridView.count(
-                  crossAxisCount: 4,
-                  shrinkWrap: true,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  children: List.generate(6, (index) {
-                    return Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8),
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,  // Número de columnas en el grid
+                    crossAxisSpacing: 10,  // Espacio entre las columnas
+                    mainAxisSpacing: 10,   // Espacio entre las filas
+                  ),
+                  itemCount: selectedPictograms.length,
+                  itemBuilder: (context, index) {
+                    final pictogram = selectedPictograms[index];
+                    bool isSelected = passwordPictograms.contains(pictogram); // Verificar si el pictograma está en la contraseña
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (isSelected) {
+                            passwordPictograms.remove(pictogram); // Si estaba, se elimina
+                          } else {
+                            passwordPictograms.add(pictogram); // Si no lo estaba, se añade
+                          }
+                        });
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isSelected ? Colors.blue : Colors.grey,
+                              width: isSelected ? 3 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: Image.asset(
+                                  pictogram.path,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              if (isSelected) // Mostrar el índice del pictograma en la contraseña
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: Container(
+                                    color: Colors.blue.withOpacity(0.7),
+                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    child: Text(
+                                      '${passwordPictograms.indexOf(pictogram) + 1}', // Mostrar el orden de la contraseña
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                        child: Image.network(
-                          'URL_DE_EJEMPLO_PICTOGRAMA',
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                  }),
+                      ),
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 20),
@@ -680,8 +884,17 @@ class PictogramPasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Lógica para guardar al estudiante en la BD
+                        onPressed: () async {
+                          // Obtener la extensión del archivo original
+                          String extension = path.extension(widget.perfilImage!.path);
+                          // Guardar la imagen de perfil en la carpeta
+                          await widget.saveImage(widget.perfilImage!, '$userStudent$extension', 'assets/perfiles');
+
+                          password = await imageCodeToPassword(passwordPictograms);
+                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 
+                            'pictograms', interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0);
+                          // TOMATE guardar al estudiante en la BD (la contraseña en los códigos de passwordPictograms)
+                          // TOMATE guardar los pictogramas que deben salir para que introduzca su contraseña (en selectedPictograms)
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -733,7 +946,66 @@ class PictogramPasswordPage extends StatelessWidget {
 }
 
 // Página para la contraseña con imágenes
-class ImagePasswordPage extends StatelessWidget {
+class ImagePasswordPage extends StatefulWidget {
+  final String userStudent, nameStudent, surnameStudent;
+  final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
+  final File? perfilImage;
+  final Function(File, String, String) saveImage;
+  final Function() pickImage;
+
+  ImagePasswordPage({
+    required this.userStudent,
+    required this.nameStudent,
+    required this.surnameStudent,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
+    required this.perfilImage,
+    required this.saveImage,
+    required this.pickImage,
+  });
+
+  @override
+  _ImagePasswordPageState createState() => _ImagePasswordPageState(
+    userStudent: userStudent,
+    nameStudent: nameStudent,
+    surnameStudent: surnameStudent,
+    interfacePIC: interfacePIC,
+    interfaceIMG: interfaceIMG,
+    interfaceTXT: interfaceTXT,
+    interfaceAV: interfaceAV,
+    perfilImage: perfilImage,
+    saveImage: saveImage,
+    pickImage: pickImage,
+  );
+}
+
+class _ImagePasswordPageState extends State<ImagePasswordPage> {
+  final String userStudent, nameStudent, surnameStudent;
+  final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
+  final File? perfilImage;
+  final Function(File, String, String) saveImage;
+  final Function() pickImage;
+
+  _ImagePasswordPageState({
+    required this.userStudent,
+    required this.nameStudent,
+    required this.surnameStudent,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
+    required this.perfilImage,
+    required this.saveImage,
+    required this.pickImage,
+  });
+
+  // Imágenes opcionales para la contraseña
+  List<ImgCode> selectedImages = [];
+  // Pictogramas que componen la contraseña
+  List<ImgCode> passwordImages = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -751,7 +1023,7 @@ class ImagePasswordPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Modificación de estudiante',
+                'Alta de $nameStudent',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -759,7 +1031,7 @@ class ImagePasswordPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'Creación de contraseña de imágenes',
+                'Creación de contraseña de imágeness',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.blueAccent,
@@ -767,29 +1039,111 @@ class ImagePasswordPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               // Área para subir y seleccionar imágenes
-              Container(
-                height: 100,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.cloud_upload,
-                        size: 40,
-                        color: Colors.grey,
+              Row(
+                children: [
+                  // Cuadro de subir imagen
+                  Expanded(
+                    flex: 1,
+                    child: GestureDetector(
+                      onTap: () async {
+                        // Seleccionar una imagen
+                        final pickedFile = await widget.pickImage();
+                        if (pickedFile != null) {
+                          // Obtener el nombre del archivo seleccionado
+                          String fileName = pickedFile.uri.pathSegments.last;
+
+                          // TOMATE quizá aquí sí es interesante que si ya hay una que se llame igual en imgs_clave,
+                          // añadirle algo al nombre para que no se sobreescriba en la carpeta,
+                          // en la de perfiles no pq si se la cambia es mejor que se sobreescriba, solo hay una imagen de perfil
+                          if(await pathExists(fileName, 'assets/imgs_claves')){
+                            String newName = await rewritePath('assets/imgs_claves/$fileName');
+                            fileName = newName.split("/").last;
+                          }
+
+                          // Guardar la imagen seleccionada en la galería de imágenes para contraseñas
+                          await widget.saveImage(pickedFile, fileName, 'assets/imgs_claves');
+                          await insertImgCode('assets/imgs_claves/$fileName');
+                        }
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.cloud_upload,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                                Text(
+                                  'Sube una imagen',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      Text(
-                        'Sube las imágenes',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  SizedBox(width: 10),
+                  // Cuadro de selección de imágenes existentes
+                  Expanded(
+                    flex: 1,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Navegar a la página de selección de imágenes
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageSelectionPage(
+                              updateSelectedImages: (newImages) {
+                                // Actualizar la lista de imágenes seleccionadas
+                                passwordImages = [];
+                                setState(() {
+                                  selectedImages = newImages;
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.photo_library,
+                                  size: 40,
+                                  color: Colors.grey,
+                                ),
+                                Text(
+                                  'Selecciona una imagen existente',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 20),
               Text(
@@ -797,27 +1151,71 @@ class ImagePasswordPage extends StatelessWidget {
                 style: TextStyle(color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 20),
               // Grid de imágenes
-              SizedBox(
-                height: 275, // Altura total
-                child: GridView.count(
-                  crossAxisCount: 4,
-                  shrinkWrap: true,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  children: List.generate(6, (index) {
-                    return Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8),
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,  // Número de columnas en el grid
+                    crossAxisSpacing: 10,  // Espacio entre las columnas
+                    mainAxisSpacing: 10,   // Espacio entre las filas
+                  ),
+                  itemCount: selectedImages.length,
+                  itemBuilder: (context, index) {
+                    final img = selectedImages[index];
+                    bool isSelected = passwordImages.contains(img); // Verificar si la imagen está en la contraseña
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (isSelected) {
+                            passwordImages.remove(img); // Si estaba, se elimina
+                          } else {
+                            passwordImages.add(img); // Si no lo estaba, se añade
+                          }
+                        });
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isSelected ? Colors.blue : Colors.grey,
+                              width: isSelected ? 3 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: Image.asset(
+                                  img.path,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              if (isSelected) // Mostrar el índice de la imagen en la contraseña
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: Container(
+                                    color: Colors.blue.withOpacity(0.7),
+                                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    child: Text(
+                                      '${passwordImages.indexOf(img) + 1}', // Mostrar el orden de la contraseña
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                        child: Image.network(
-                          'URL_DE_EJEMPLO_IMAGEN',
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                  }),
+                      ),
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 20),
@@ -828,8 +1226,17 @@ class ImagePasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 200,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Lógica para guardar al estudiante en la BD
+                        onPressed: () async {
+                          // Obtener la extensión del archivo original
+                          String extension = path.extension(widget.perfilImage!.path);
+                          // Guardar la imagen de perfil en la carpeta
+                          await widget.saveImage(widget.perfilImage!, '$userStudent$extension', 'assets/perfiles');
+
+                          password = await imageCodeToPassword(passwordImages);
+                          await registerStudent(userStudent, nameStudent, surnameStudent, password, perfilImage!.path, 
+                            'images', interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0);
+                          // TOMATE guardar al estudiante en la BD (la contraseña en los códigos de passwordImages)
+                          // TOMATE guardar los pictogramas que deben salir para que introduzca su contraseña (en selectedImages)
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -882,6 +1289,26 @@ class ImagePasswordPage extends StatelessWidget {
 
 // Página para la contraseña alfanumérica
 class AlphanumericPasswordPage extends StatelessWidget {
+  final String userStudent, nameStudent, surnameStudent;
+  final bool interfacePIC , interfaceIMG, interfaceTXT, interfaceAV;
+  final File? perfilImage; 
+  final Function(File, String, String) saveImage;
+
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController samePasswordController = TextEditingController();
+
+  AlphanumericPasswordPage({
+    required this.userStudent,
+    required this.nameStudent,
+    required this.surnameStudent,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
+    required this.perfilImage,
+    required this.saveImage,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -899,7 +1326,7 @@ class AlphanumericPasswordPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             children: [
               Text(
-                'Alta de estudiante',
+                'Alta de $nameStudent',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -916,17 +1343,19 @@ class AlphanumericPasswordPage extends StatelessWidget {
               SizedBox(height: 20),
               Spacer(),
               TextField(
+                controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Contraseña',
+                  labelText: 'Contraseña*',
                   border: OutlineInputBorder(),
                 ),
               ),
               SizedBox(height: 10),
               TextField(
+                controller: samePasswordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Repetir contraseña',
+                  labelText: 'Repetir contraseña*',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -938,9 +1367,28 @@ class AlphanumericPasswordPage extends StatelessWidget {
                     child: SizedBox(
                       width: 400,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Lógica para guardar al estudiante en la BD
-                          Navigator.pop(context);
+                        onPressed: () async {
+                          if (!passwordController.text.isEmpty && !samePasswordController.text.isEmpty) {
+                            if (passwordController.text == samePasswordController.text) {
+                              await saveImage(perfilImage!, userStudent, 'assets/perfiles'); // Guardar la imagen de perfil en la carpeta
+                              // TOMATE guardar al estudiante en la BD (contraseña en passwordController.text)
+                              Navigator.pop(context);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Las contraseñas no coinciden.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Los campos no pueden ser vacíos.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -981,6 +1429,334 @@ class AlphanumericPasswordPage extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Página para seleccionar un pictograma que formará parte de las posibilidades de contraseña del estudiante
+class PictogramSelectionPage extends StatefulWidget {
+  final Function(List<ImgCode>) updateSelectedPictograms;
+
+  PictogramSelectionPage({
+    required this.updateSelectedPictograms,
+  });
+
+  @override
+  _PictogramSelectionPageState createState() => _PictogramSelectionPageState();
+}
+
+class _PictogramSelectionPageState extends State<PictogramSelectionPage> {
+  // TOMATE
+  // Recuperar la lista de pictogramas clave que ya se han subido anteriormente a la BD
+  final List<ImgCode> pictograms = List.generate(
+    10,
+    (index) => ImgCode(
+      path: 'assets/picto_claves/pictograma${index+1}.png',
+      code: '$index',
+    ),
+  );
+
+  // Lista para seleccionar pictogramas
+  final List<ImgCode> selectionPictograms = [];
+
+  void toggleSelection(ImgCode pictogram) {
+    setState(() {
+      if (selectionPictograms.contains(pictogram)) {
+        selectionPictograms.remove(pictogram);
+      } else {
+        if (selectionPictograms.length < 6) {
+          selectionPictograms.add(pictogram);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Máximo de 6 pictogramas seleccionados")),
+          );
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: Container(
+          width: 740,
+          height: 625,
+          padding: EdgeInsets.all(30.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                'Galería de Pictogramas',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  children: pictograms.map((pictogram) {
+                    final isSelected = selectionPictograms.contains(pictogram);
+                    return GestureDetector(
+                      onTap: () => toggleSelection(pictogram),
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isSelected ? Colors.blue : Colors.grey,
+                              width: isSelected ? 3 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: Image.asset(
+                                  pictogram.path,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              if (isSelected)
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Botón Guardar
+              SizedBox(
+                width: 400,
+                child: ElevatedButton(
+                  onPressed: () {
+                    widget.updateSelectedPictograms(selectionPictograms);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                  ),
+                  child: Text(
+                    'Guardar selección',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Botón Atrás
+              SizedBox(
+                width: 400,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange[400],
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                  ),
+                  child: Text(
+                    'Atrás',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Página para seleccionar una iagen que formará parte de las posibilidades de contraseña del estudiante
+class ImageSelectionPage extends StatefulWidget {
+  final Function(List<ImgCode>) updateSelectedImages;
+
+  ImageSelectionPage({
+    required this.updateSelectedImages,
+  });
+
+  @override
+  _ImageSelectionPageState createState() => _ImageSelectionPageState();
+}
+
+class _ImageSelectionPageState extends State<ImageSelectionPage> {
+  // TOMATE
+  // Recuperar la lista de imágenes clave que ya se han subido anteriormente a la BD
+  final List<ImgCode> images = List.generate(
+    8,
+    (index) => ImgCode(
+      path: 'assets/imgs_claves/imagen${index+1}.png',
+      code: '$index',
+    ),
+  );
+
+  // Lista para seleccionar imágenes
+  final List<ImgCode> selectionImages = [];
+
+  void toggleSelection(ImgCode img) {
+    setState(() {
+      if (selectionImages.contains(img)) {
+        selectionImages.remove(img);
+      } else {
+        if (selectionImages.length < 6) {
+          selectionImages.add(img);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Máximo de 6 imágenes seleccionadas")),
+          );
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: Container(
+          width: 740,
+          height: 625,
+          padding: EdgeInsets.all(30.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                'Galería de Imágenes',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  children: images.map((img) {
+                    final isSelected = selectionImages.contains(img);
+                    return GestureDetector(
+                      onTap: () => toggleSelection(img),
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isSelected ? Colors.blue : Colors.grey,
+                              width: isSelected ? 3 : 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: Image.asset(
+                                  img.path,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              if (isSelected)
+                                Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: Icon(
+                                    Icons.check_circle,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Botón Guardar
+              SizedBox(
+                width: 400,
+                child: ElevatedButton(
+                  onPressed: () {
+                    widget.updateSelectedImages(selectionImages);
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                  ),
+                  child: Text(
+                    'Guardar selección',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Botón Atrás
+              SizedBox(
+                width: 400,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange[400],
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                  ),
+                  child: Text(
+                    'Atrás',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

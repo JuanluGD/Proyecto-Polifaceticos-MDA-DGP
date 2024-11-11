@@ -4,6 +4,8 @@ import 'package:path/path.dart' as path;
 
 import 'interface_utils.dart';
 import 'image_utils.dart';
+import 'bd_utils.dart';
+import 'image_management.dart';
 
 import 'ImgCode.dart';
 
@@ -173,7 +175,14 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                           String nameStudent = nameController.text;
                           String surnameStudent = surnameController.text;
                           if (!nameStudent.isEmpty && !userStudent.isEmpty) {
-                            if (false) {
+                            if(!userFormat(userStudent)){ // TOMATE
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('El usuario no puede contener espacios ni caracteres especiales.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else if (!(await userIsValid(userStudent))) { // TOMATE
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('El usuario ingresado ya está registrado.'),
@@ -313,16 +322,10 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Alta de ${widget.nameStudent}', style: titleTextStyle),
-              if (widget.passwordType == 'pictograms')
-                Text(
-                  'Creación de contraseña de pictogramas',
-                  style: subtitleTextStyle,
-                )
-              else if (widget.passwordType == 'images')
-                Text(
-                  'Creación de contraseña de imágenes',
-                  style: subtitleTextStyle,
-                ),
+              Text(
+                'Creación de contraseña de $pluralWord',
+                style: subtitleTextStyle,
+              ),
               SizedBox(height: 20),
               // Área para subir y seleccionar pictogramas o imágenes
               Row(
@@ -337,13 +340,22 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                           if (pickedFile != null) {
                             // Obtener el nombre del archivo seleccionado
                             String fileName = pickedFile.uri.pathSegments.last;
+                            String folder = '';
 
+                            if (widget.passwordType == 'pictograms') folder = 'picto_claves';
+                            else if (widget.passwordType == 'images') folder = 'imgs_claves';
+
+                            // TOMATE
                             // Guardar en carpeta según sea pictograma o imagen
-                            if (widget.passwordType == 'pictograms')
-                              await saveImage(pickedFile, fileName, 'assets/picto_claves');
-                            else if (widget.passwordType == 'images')
-                              await saveImage(pickedFile, fileName, 'assets/imgs_claves');
-
+                            // Si ya existe alguna imagen que se llame asi, renombrarla
+                            if(await pathExists(fileName, 'assets/picto_claves')) {
+                              String newName = await rewritePath('assets/$folder/$fileName');
+                              fileName = newName.split("/").last;
+                            }
+                            // Meter la tupla en la BD
+                            await insertImgCode('assets/$folder/$fileName');
+                            // Guardar en la carpeta
+                            await saveImage(pickedFile, fileName, 'assets/$folder');
                           }
                         },
                         buildPickerContainer(100, Icons.cloud_upload, hintUpload, BoxFit.cover, null)
@@ -402,12 +414,38 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                   Center(
                     child: SizedBox(
                       width: 200,
-                      child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
-                          // Obtener la extensión del archivo original
-                          String extension = path.extension(widget.perfilImage!.path);
-                          // Guardar la imagen de perfil en la carpeta
-                          await saveImage(widget.perfilImage!, '${widget.userStudent}$extension', 'assets/perfiles');
+                      child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async { // TOMATE
+                          // Crear la contraseña del estudiante según los pictogramas o imágenes seleccionados para contraseña
+                          String password = await imageCodeToPassword(passwordElements);
 
+                          // Meter al estudiante en la BD
+                          if (await registerStudent(
+                            widget.userStudent, widget.nameStudent, widget.surnameStudent, password, widget.perfilImage!.path, 
+                            widget.passwordType, widget.interfaceIMG ? 1:0, widget.interfacePIC ? 1:0, widget.interfaceTXT ? 1:0
+                          )) 
+                          {
+                              // Obtener la extensión del archivo original
+                              String extension = path.extension(widget.perfilImage!.path);
+                              // Guardar la imagen de perfil en la carpeta
+                              await saveImage(widget.perfilImage!, '${widget.userStudent}$extension', 'assets/perfiles');
+
+                              // Guardar los elementos que deben salir al estudiante para introducir su contraseña
+                              createStudentImgCodePassword(widget.userStudent, selectedElements);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Estudiante registrado con éxito.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error al registrar al estudiante.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                           Navigator.pop(context);
                         }
                       ),
@@ -454,30 +492,29 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
   // Lista para seleccionar pictogramas o imágenes
   final List<ImgCode> selectionElements = [];
 
-  @override
-  Widget build(BuildContext context) {
-    // TOMATE en realidad se cargan de la BD
+  // TOMATE
+  // Para cargar los elementos
+  Future<void> loadGallery() async {
     if (elements.isEmpty) {
       if (widget.passwordType == "pictograms") {
-        elements.addAll(List.generate(
-          10,
-          (index) => ImgCode(
-            path: 'assets/picto_claves/pictograma${index + 1}.png',
-            code: '$index',
-          ),
-        ));
+        elements.addAll(await getImgCodeFromFolder('assets/picto_claves'));
         gallery = 'Pictogramas';
       } else if (widget.passwordType == "images") {
-        elements.addAll(List.generate(
-          8,
-          (index) => ImgCode(
-            path: 'assets/imgs_claves/imagen${index + 1}.png',
-            code: '$index',
-          ),
-        ));
+        elements.addAll(await getImgCodeFromFolder('assets/imgs_claves'));
         gallery = 'Imágenes';
       }
+      setState(() {});
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadGallery();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent.shade100,
       body: Center(
@@ -572,8 +609,32 @@ class AlphanumericPasswordPage extends StatelessWidget {
                       child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
                           if (!passwordController.text.isEmpty && !samePasswordController.text.isEmpty) {
                             if (passwordController.text == samePasswordController.text) {
-                              await saveImage(perfilImage!, userStudent, 'assets/perfiles'); // Guardar la imagen de perfil en la carpeta
-                              Navigator.pop(context);
+                              // TOMATE
+                              // Meter al estudiante en la BD
+                              if (await registerStudent(
+                                userStudent, nameStudent, surnameStudent, passwordController.text, perfilImage!.path, 
+                                'alphanumeric', interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0
+                              )) 
+                              {
+                                // Obtener la extensión del archivo original
+                                String extension = path.extension(perfilImage!.path);
+                                // Guardar la imagen de perfil en la carpeta
+                                await saveImage(perfilImage!, '$userStudent$extension', 'assets/perfiles');
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Estudiante registrado con éxito.'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error al registrar al estudiante.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

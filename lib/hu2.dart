@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:proyecto/gestion_imagenes.dart';
+import 'package:proyecto/image_management.dart';
 import 'ImgCode.dart';
-import 'utils.dart';
+import 'bd_utils.dart';
 
 void main() {
   runApp(MyApp());

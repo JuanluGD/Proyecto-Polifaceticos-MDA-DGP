@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
-import 'package:proyecto/utils.dart';
+import 'package:proyecto/bd_utils.dart';
 
 void main() {
   runApp(MyApp());

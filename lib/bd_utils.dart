@@ -1,18 +1,19 @@
 import 'package:proyecto/Student.dart';
 import 'package:proyecto/bd.dart';
+import 'ImgCode.dart';
 
 String user = 'admin';
 String password = 'admin';
 
-bool loginAdmin(String user, String password){
+bool loginAdmin(String user, String password) {
   return user == 'admin' && password == 'admin';
 }
 
-Future<bool> loginStudent(String user, String password) async{
+Future<bool> loginStudent(String user, String password) async {
 	return await ColegioDatabase.instance.loginStudent(user, password);
 }
 
-Future<bool> login(String user, String password) async{
+Future<bool> login(String user, String password) async {
   if(user == "admin"){
     return loginAdmin(user, password);
   }
@@ -23,7 +24,7 @@ Future<bool> login(String user, String password) async{
 
 Future<bool> registerStudent(String user, name, String surname, String password, 
   String image, String typePassword, int interfaceIMG,
-	int interfacePIC, int interfaceTXT) async{
+	int interfacePIC, int interfaceTXT) async {
 
   if (user == "admin") {
     return false;
@@ -41,21 +42,28 @@ Future<bool> asignLoginType(String user, String typePassword) async {
 	return await ColegioDatabase.instance.asignLoginType(user, typePassword);
 }
 
+Future<void> createStudentImgCodePassword(String user, List<ImgCode> images) async {
+  await ColegioDatabase.instance.insertDecryptEntries(user, images);
+}
 
-Future<bool> modifyNameStudent(String user, String newName) async{
+Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
+  return await ColegioDatabase.instance.getImgCodeFromFolder(folder);
+}
+
+Future<bool> modifyNameStudent(String user, String newName) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "name", newName);
 }
 
-Future<bool> modifyPasswordStudent(String user, String newPassword) async{
+Future<bool> modifyPasswordStudent(String user, String newPassword) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "password", newPassword);
 }
 
 Future<bool> modifyCompleteStudent(String user, String name, String? surname, String password, 
-  String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async{
+  String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async {
   return await ColegioDatabase.instance.modifyCompleteStudent(user, name, surname, password, photo, typePassword, interfaceIMG, interfacePIC, interfaceTXT);
 }
 
-Future<bool> userIsValid(String user) async{
+Future<bool> userIsValid(String user) async {
   return await ColegioDatabase.instance.userIsValid(user);
 }
 

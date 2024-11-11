@@ -187,8 +187,8 @@ class ColegioDatabase{
 
 	Future<List<String>> getStudentPhotos() async {
 		final db = await instance.database;
-		final result = await db.query(tablaStudents, columns: ['photo']);
-		return result.map((map) => map['photo'].toString()).toList();
+		final result = await db.query(tablaStudents, columns: ['image']);
+		return result.map((map) => map['image'].toString()).toList();
 	}
 
 	Future<ImgCode?> getImgCode(String path) async {
@@ -211,6 +211,31 @@ class ColegioDatabase{
 		return result.map((map) => ImgCode.fromMap(map)).toList();
 	}
 
+  Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaImgCode,
+      where: 'path LIKE ?',
+      whereArgs: ['%$folder%']
+    );
+    return result.map((map) => ImgCode.fromMap(map)).toList();
+  }
+
+  Future<void> insertDecryptEntries(String user, List<ImgCode> images) async {
+    final db = await instance.database;
+
+    for (var imgCode in images) {
+      await db.insert(
+        tablaDecrypt,
+        {
+          'user': user,
+          'path': imgCode.path,
+        },
+        conflictAlgorithm: ConflictAlgorithm.ignore, // Evita errores si ya existe la tupla
+      );
+    }
+  }
+
 	Future<List<Decrypt>> getDecryptsByStudent(String user) async {
 		final db = await instance.database;
 		final result = await db.query(
@@ -227,7 +252,7 @@ class ColegioDatabase{
 		return result.map((map) => Decrypt.fromMap(map)).toList();
 	}
 
-  Future<bool> userIsValid(String user) async{
+  Future<bool> userIsValid(String user) async {
     final db = await instance.database;
     final result = await db.query(
       tablaStudents,
