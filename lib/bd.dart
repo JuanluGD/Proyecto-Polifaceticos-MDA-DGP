@@ -210,6 +210,20 @@ class ColegioDatabase{
 		return result.map((map) => ImgCode.fromMap(map)).toList();
 	}
 
+  Future<ImgCode?> getImgCodeFromCode(String code) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaImgCode,
+      where: 'code = ?',
+      whereArgs: [code],
+    );
+    if (result.isNotEmpty) {
+      return ImgCode.fromMap(result.first);
+    } else {
+      return null;
+    }
+  }
+
   Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
     final db = await instance.database;
     final result = await db.query(
@@ -235,15 +249,27 @@ class ColegioDatabase{
     }
   }
 
-	Future<List<Decrypt>> getDecryptsByStudent(String user) async {
-		final db = await instance.database;
-		final result = await db.query(
+	Future<void> deleteDecryptEntries(String user) async {
+    final db = await instance.database;
+
+		await db.delete(
 			tablaDecrypt,
 			where: 'user = ?',
 			whereArgs: [user],
 		);
-		return result.map((map) => Decrypt.fromMap(map)).toList();
-	}
+  }
+
+  Future<List<ImgCode>> getImgCodesByStudent(String user) async {
+    final db = await instance.database;
+    final result = await db.rawQuery('''
+      SELECT imgcode.path, imgcode.code
+      FROM $tablaDecrypt AS decrypt
+      JOIN $tablaImgCode AS imgcode ON decrypt.path = imgcode.path
+      WHERE decrypt.user = ?
+    ''', [user]);
+
+    return result.map((map) => ImgCode.fromMap(map)).toList();
+  }
 
 	Future<List<Decrypt>> getAllDecrypts() async {
 		final db = await instance.database;

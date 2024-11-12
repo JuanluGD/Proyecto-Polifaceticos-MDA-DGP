@@ -2,8 +2,8 @@ import 'package:proyecto/Student.dart';
 import 'package:proyecto/bd.dart';
 import 'ImgCode.dart';
 
-String user = 'admin';
-String password = 'admin';
+String userAdmin = 'admin';
+String passwordAdmin = 'admin';
 
 bool loginAdmin(String user, String password) {
   return user == 'admin' && password == 'admin';
@@ -42,8 +42,20 @@ Future<bool> asignLoginType(String user, String typePassword) async {
 	return await ColegioDatabase.instance.asignLoginType(user, typePassword);
 }
 
+Future<List<Student>> getAllStudents() async {
+	return await ColegioDatabase.instance.getAllStudents();
+}
+
 Future<void> createStudentImgCodePassword(String user, List<ImgCode> images) async {
   await ColegioDatabase.instance.insertDecryptEntries(user, images);
+}
+
+Future<void> deleteStudentImgCodePassword(String user) async {
+  await ColegioDatabase.instance.deleteDecryptEntries(user);
+}
+
+Future<List<ImgCode>> getStudentMenuPassword(String user) async {
+  return await ColegioDatabase.instance.getImgCodesByStudent(user);
 }
 
 Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
@@ -56,6 +68,10 @@ Future<bool> modifyNameStudent(String user, String newName) async {
 
 Future<bool> modifyPasswordStudent(String user, String newPassword) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "password", newPassword);
+}
+
+Future<bool> modifyTypePasswordStudent(String user, String newTypePassword) async {
+	return await ColegioDatabase.instance.modifyStudent(user, "typePassword", newTypePassword);
 }
 
 Future<bool> modifyCompleteStudent(String user, String name, String? surname, String password, 

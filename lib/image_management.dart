@@ -8,8 +8,24 @@ Future<String> imageCodeToPassword(List<ImgCode> pictograms) async {
   String password = "";
   for (int i = 0; i < pictograms.length; i++){
     password += await ColegioDatabase.instance.getCodeImgCode(pictograms[i].path);
+    password += ' ';
   }
   return password;
+}
+
+Future<List<ImgCode>> passwordToImageCode(String passwd) async {
+  final codes = passwd.split(' ');
+
+  List<ImgCode> imgCodes = [];
+
+  for (String code in codes) {
+    final imgCode = await ColegioDatabase.instance.getImgCodeFromCode(code);
+    if (imgCode != null) {
+      imgCodes.add(imgCode);
+    }
+  }
+
+  return imgCodes;
 }
 
 Future<bool> insertImgCode(String path) async {
@@ -17,7 +33,7 @@ Future<bool> insertImgCode(String path) async {
   if (path.contains("picto_claves")) {
     code = path.split("/").last + "_picto";
   }
-  else{
+  else {
     code = path.split("/").last + "_img";
   }
   return await ColegioDatabase.instance.insertImgCode(path, code);

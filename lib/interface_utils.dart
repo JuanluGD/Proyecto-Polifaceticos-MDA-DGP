@@ -207,6 +207,23 @@ Widget buildCheckbox (String text, bool element, bool def, Function(bool) onChan
     },
   );
 }
+Widget buildSizedCheckbox (String text, double size, bool element, bool def, Function(bool) onChanged) {
+  return Row(
+    children: [
+      Checkbox(
+        value: element,
+        onChanged: (bool? value) {
+          onChanged (value ?? def);
+        }
+      ),
+      SizedBox(width: size),
+      Text(
+        text,
+        style: TextStyle(fontSize: 2*size),
+      ),
+    ],
+  );
+}
 
 // Crear elemento de lista con mono-respuesta
 Widget buildRadio (String text, String element, String group, String def, Function(String) onChanged) {
@@ -217,6 +234,24 @@ Widget buildRadio (String text, String element, String group, String def, Functi
     onChanged: (String? value) {
       onChanged(value ?? def);
     },
+  );
+}
+Widget buildSizedRadio (String text, double size, String element, String group, String def, Function(String) onChanged) {
+  return Row(
+    children: [
+      Radio<String>(
+        value: element,
+        groupValue: group,
+        onChanged: (String? value) {
+          onChanged(value ?? def);
+        },
+      ),
+      SizedBox(width: 8),
+      Text(
+        text,
+        style: TextStyle(fontSize: size*2),
+      ),
+    ],
   );
 }
 
@@ -234,9 +269,15 @@ TextStyle buttonTextStyle = TextStyle(color: Colors.white, fontWeight: FontWeigh
 // Estilo de texto de indicadores
 TextStyle hintTextStyle = TextStyle(fontWeight: FontWeight.bold, color: Colors.black54);
 
+// Estilo de texto de informadores
+TextStyle infoTextStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+
 // Estilo de botones para continuar
 ButtonStyle nextButtonStyle = ElevatedButton.styleFrom(backgroundColor: Colors.blue, padding: EdgeInsets.symmetric(vertical: 24.0));
 
 // Estilo de botones para volver
 ButtonStyle returnButtonStyle = ElevatedButton.styleFrom(backgroundColor: Colors.deepOrange[400], padding: EdgeInsets.symmetric(vertical: 24.0));
+
+// Estilo de botones adicionales
+ButtonStyle extraButtonStyle = ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue[200], padding: EdgeInsets.symmetric(vertical: 16.0));
 
