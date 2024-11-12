@@ -345,13 +345,20 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                             if (widget.passwordType == 'pictograms') folder = 'picto_claves';
                             else if (widget.passwordType == 'images') folder = 'imgs_claves';
 
+                            String newName = '';
+
                             // TOMATE
                             // Guardar en carpeta según sea pictograma o imagen
-                            // Si ya existe alguna imagen que se llame asi, renombrarla
-                            if(await pathExists(fileName, 'assets/picto_claves')) {
-                              String newName = await rewritePath('assets/$folder/$fileName');
+                            // Si ya existe alguna imagen que se llame así, renombrarla
+                            if(await pathExists(fileName, 'assets/$folder')) {
+                              newName = await rewritePath('assets/$folder/$fileName');
                               fileName = newName.split("/").last;
                             }
+
+                            // Quitar los espacios del nombre del archivo
+                            newName = removeSpacing(fileName.split("/").last);
+                            fileName = newName;
+
                             // Meter la tupla en la BD
                             await insertImgCode('assets/$folder/$fileName');
                             // Guardar en la carpeta
@@ -384,7 +391,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                             ),
                           );
                         },
-                        buildPickerContainer(100, Icons.photo_library, 'Seleccionar $pluralWord', BoxFit.cover, null)
+                        buildPickerContainer(100, Icons.photo_library, 'Seleccionar $pluralWord existentes', BoxFit.cover, null)
                       ),
                   ),
                 ],
@@ -496,6 +503,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
   // Para cargar los elementos
   Future<void> loadGallery() async {
     if (elements.isEmpty) {
+      setState(() {});
       if (widget.passwordType == "pictograms") {
         elements.addAll(await getImgCodeFromFolder('assets/picto_claves'));
         gallery = 'Pictogramas';
@@ -545,7 +553,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
               SizedBox(
                 width: 400,
                 child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
-                    Navigator.pop(context);
+                    setState(() {}); Navigator.pop(context); setState(() {});
                   }
                 ),
               ),

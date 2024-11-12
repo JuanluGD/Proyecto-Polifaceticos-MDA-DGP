@@ -30,6 +30,10 @@ Future<String> rewritePath(String path) async {
   return new_path += index.toString();
 }
 
+String removeSpacing(String text) {
+  return text.replaceAll(' ', '_');
+}
+
 Future<bool> pathExists(String path, String directory) async{
   final dir = Directory(directory);
   bool exist= false;

@@ -75,7 +75,6 @@ class ColegioDatabase{
 			PRIMARY KEY (user, path)
 			)
 		''');
-
 	}
 
 	Future<bool> loginStudent(String user, String password) async {
