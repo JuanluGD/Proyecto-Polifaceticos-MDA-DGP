@@ -397,6 +397,8 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
     if (widget.student.typePassword == widget.passwordType) {
       selectedElements = await getStudentMenuPassword(widget.student.user);
       passwordElements = await passwordToImageCode(widget.student.password);
+
+      setState(() {});
     }
   }
 

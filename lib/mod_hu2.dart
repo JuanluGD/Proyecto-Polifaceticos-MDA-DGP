@@ -259,7 +259,9 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                     child: SizedBox(
                       width: 200,
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                          setState(() {});
                           Navigator.pop(context);
+                          setState(() {});
                         }
                       ),
                     ),
@@ -363,6 +365,8 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                             await insertImgCode('assets/$folder/$fileName');
                             // Guardar en la carpeta
                             await saveImage(pickedFile, fileName, 'assets/$folder');
+
+                            setState(() {});
                           }
                         },
                         buildPickerContainer(100, Icons.cloud_upload, hintUpload, BoxFit.cover, null)
@@ -390,6 +394,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                               ),
                             ),
                           );
+                          setState(() {});
                         },
                         buildPickerContainer(100, Icons.photo_library, 'Seleccionar $pluralWord existentes', BoxFit.cover, null)
                       ),
@@ -411,6 +416,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                     } else {
                       passwordElements.add(element); // Si no estaba, lo añade
                     }
+                    setState(() {});
                   });
                 }),
               ),
@@ -445,6 +451,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                                   backgroundColor: Colors.green,
                                 ),
                               );
+                              setState(() {});
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -453,7 +460,9 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                               ),
                             );
                           }
+                          setState(() {});
                           Navigator.pop(context);
+                          setState(() {});
                         }
                       ),
                     ),
@@ -463,7 +472,9 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                     child: SizedBox(
                       width: 200,
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                          setState(() {});
                           Navigator.pop(context);
+                          setState(() {});
                         }
                       ),
                     ),
@@ -519,6 +530,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
   void initState() {
     super.initState();
     loadGallery();
+    setState(() {});
   }
 
   @override
@@ -544,7 +556,9 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
                 width: 400,
                 child: buildElevatedButton('Guardar selección', buttonTextStyle, nextButtonStyle, () {
                     widget.updateSelectedElements(selectionElements);
+                    setState(() {});
                     Navigator.pop(context);
+                    setState(() {});
                   }
                 ),
               ),
