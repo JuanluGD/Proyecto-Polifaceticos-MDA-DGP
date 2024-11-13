@@ -493,6 +493,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                                   });
                                 },
                                 passwordType: widget.passwordType,
+                                user: widget.student.user,
                               ),
                             ),
                           );
@@ -587,11 +588,12 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
 // Página para seleccionar pictogramas o imágenes que formarán parte de las posibilidades de contraseña del estudiante
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
-  final String passwordType;
+  final String passwordType, user;
 
   ImgCodeSelectionPage({
     required this.updateSelectedElements,
     required this.passwordType,
+    required this.user,
   });
 
   @override
@@ -617,6 +619,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
         elements.addAll(await getImgCodeFromFolder('assets/imgs_claves'));
         gallery = 'Imágenes';
       }
+      selectionElements.addAll(await getStudentMenuPassword(widget.user));
       setState(() {});
     }
   }
