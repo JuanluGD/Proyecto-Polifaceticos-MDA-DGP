@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 
+
 /*
   Clase ColegioDatabase
   Almacena la base de datos de la aplicación
@@ -15,11 +16,13 @@ class ColegioDatabase{
     Declaramos la instancia de la base de datos,
     que se usarára cada vez que necesitemos acceder a ella.
   */
+
 	static final ColegioDatabase instance = ColegioDatabase._init();
 
 	static Database? _database;
 	
 	ColegioDatabase._init();
+
   /*
     Declaramos los nombres de las tablas que usará la aplicación
   */
@@ -31,12 +34,14 @@ class ColegioDatabase{
     la base de datos en caso de estar creada y la crea
     en caso contrario
   */
+
 	Future<Database> get database async {
 		if(_database != null) return _database!;
 
 		_database = await _initDB('colegio.db');
 		return _database!;	
 	}
+
 	/*
     Método
     @Nombre --> _initDB
@@ -44,6 +49,7 @@ class ColegioDatabase{
     @Argumentos
       - filePath: ruta del archivo donde se guardará la base de datos
   */
+
 	Future<Database> _initDB(String filePath) async {
     try {
       if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
@@ -60,6 +66,7 @@ class ColegioDatabase{
       rethrow;
     }
 	}
+  
   /*
     Método
     @Nombre --> _onCreateDB
@@ -69,8 +76,11 @@ class ColegioDatabase{
       - version: versión de la base de datos
   */
 	Future _onCreateDB(Database db, int version) async{
-    // Tabla Estudiantes.
-    // Contendrá todos los ratos relativos a los estudiantes registrados en la aplicación
+		
+		/*
+			Tabla Estudiantes.
+			Contendrá todos los ratos relativos a los estudiantes registrados en la aplicación
+    */
 		await db.execute('''
 			CREATE TABLE $tablaStudents(
 			user VARCHAR(30) PRIMARY KEY,
@@ -82,20 +92,26 @@ class ColegioDatabase{
 			interfaceIMG TINYINT(1) NOT NULL,
 			interfacePIC TINYINT(1) NOT NULL,
 			interfaceTXT TINYINT(1) NOT NULL,
-      diningRoomTask TINYINT(1) NOT NULL
+      		diningRoomTask TINYINT(1) NOT NULL
 			)
 			
 		''');
-    // Tabla ImgCode
-    // Contendrá los códigos de las imágenes que se usarán para el login de los estudiantes
+
+		/*
+			Tabla imágenes.
+			Contendrá toda la información de las imágenes almacenadas en la aplicación
+    */
 		await db.execute('''
 			CREATE TABLE $tablaImgCode(
 			path VARCHAR(25) PRIMARY KEY,
 			code VARCHAR(25) NOT NULL UNIQUE
 			)
 		''');
-    // Tabla Decrypt
-    // Contendrá las rutas de las imágenes que se usarán para el login de los estudiantes
+
+		/*
+			Tabla Decrypt.
+			Contiene la relación entre las imágenes y los alumnos
+    */
 		await db.execute('''
 			CREATE TABLE $tablaDecrypt(
 			user VARCHAR(30),
@@ -134,6 +150,7 @@ class ColegioDatabase{
       - Student: objeto de la clase Student que contiene todos los datos necesarios para añadir un nuevo alumno a la tabla
                   de estudiantes.
   */
+
 	Future<bool> registerStudent(Student student) async {
 		final db = await instance.database;
 
@@ -145,6 +162,7 @@ class ColegioDatabase{
 			return false;
 		}
 	}
+  
  /*
     Método
     @Nombre --> asignLoginType
@@ -170,6 +188,7 @@ class ColegioDatabase{
 			return false;
 		}
 	}
+  
   /*
     Método
     @Nombre --> modifyStudent
@@ -196,6 +215,7 @@ class ColegioDatabase{
 			return false;
 		}
 	}
+  
   /*
     Método
     @Nombre --> modifyCompleteStudent
@@ -238,6 +258,7 @@ class ColegioDatabase{
 			return false;
 		}
 	}
+
   /*
     Método
     @Nombre --> getAllStudents
@@ -248,6 +269,7 @@ class ColegioDatabase{
 		final result = await db.query(tablaStudents);
 		return result.map((map) => Student.fromMap(map)).toList();
 	}
+
   /*
     Método
     @Nombre --> getStudent
@@ -268,6 +290,7 @@ class ColegioDatabase{
 			return null;
 		}
 	}
+
   /*
     Método
     @Nombre --> getStudentPhotos
@@ -278,6 +301,7 @@ class ColegioDatabase{
 		final result = await db.query(tablaStudents, columns: ['image']);
 		return result.map((map) => map['image'].toString()).toList();
 	}
+
   /*
     Método
     @Nombre --> getImgCode
@@ -298,6 +322,7 @@ class ColegioDatabase{
 			return null;
 		}
 	}
+
   /*
     Método
     @Nombre --> getAllImgCodes
@@ -308,6 +333,7 @@ class ColegioDatabase{
 		final result = await db.query(tablaImgCode);
 		return result.map((map) => ImgCode.fromMap(map)).toList();
 	}
+
 
   Future<ImgCode?> getImgCodeFromCode(String code) async {
     final db = await instance.database;
@@ -371,6 +397,7 @@ class ColegioDatabase{
 		);
   }
 
+
   Future<List<ImgCode>> getImgCodesByStudent(String user) async {
     final db = await instance.database;
     final result = await db.rawQuery('''
@@ -392,6 +419,7 @@ class ColegioDatabase{
 		final result = await db.query(tablaDecrypt);
 		return result.map((map) => Decrypt.fromMap(map)).toList();
 	}
+
   /*
     Método
     @Nombre --> userIsValid
@@ -434,14 +462,14 @@ class ColegioDatabase{
   */
   Future<bool> insertImgCode(String path, String code) async{
 		final db = await instance.database;
-		try {
-			await db.insert(tablaImgCode, {'path': path, 'code': code});
-			return true;
-		} catch (e) {
-			print("Error al insertar el código de la imagen: $e");
-			return false;
-		}
+		final result = await db.query(
+		tablaStudents,
+		where: 'user = ?',
+		whereArgs: [user],
+		);
+		return result.isEmpty;
 	}
+
   /*
     Método
     @Nombre --> getImgCodePath
@@ -458,6 +486,7 @@ class ColegioDatabase{
 		);
 		return result.first['path'].toString();
 	}
+  
   /*
     Método
     @Nombre --> imgCodePathCount

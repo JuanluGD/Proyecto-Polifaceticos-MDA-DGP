@@ -2,8 +2,10 @@ import 'package:proyecto/Student.dart';
 import 'package:proyecto/bd.dart';
 import 'ImgCode.dart';
 
+
 String userAdmin = 'admin';
 String passwordAdmin = 'admin';
+
 /*
     Función
     @Nombre --> loginAdmin
@@ -15,6 +17,7 @@ String passwordAdmin = 'admin';
 bool loginAdmin(String user, String password) {
   return user == 'admin' && password == 'admin';
 }
+
 /*
     Función
     @Nombre --> loginStudent
@@ -26,6 +29,7 @@ bool loginAdmin(String user, String password) {
 Future<bool> loginStudent(String user, String password) async {
 	return await ColegioDatabase.instance.loginStudent(user, password);
 }
+
 /*
     Función
     @Nombre --> login
@@ -43,6 +47,7 @@ Future<bool> login(String user, String password) async {
     return await loginStudent(user, password);
   }
 }
+
 /*
     Función
     @Nombre --> registerStudent
@@ -74,6 +79,7 @@ Future<bool> registerStudent(String user, name, String surname, String password,
 	return await ColegioDatabase.instance.registerStudent(student);
 
 }
+
 /*
     Función
     @Nombre --> asignLoginType
@@ -86,9 +92,11 @@ Future<bool> asignLoginType(String user, String typePassword) async {
 	return await ColegioDatabase.instance.asignLoginType(user, typePassword);
 }
 
+
 Future<List<Student>> getAllStudents() async {
 	return await ColegioDatabase.instance.getAllStudents();
 }
+
 /*
     Función
     @Nombre --> createStudentImgCodePassword
@@ -101,6 +109,7 @@ Future<void> createStudentImgCodePassword(String user, List<ImgCode> images) asy
   await ColegioDatabase.instance.insertDecryptEntries(user, images);
 }
 
+
 Future<void> deleteStudentImgCodePassword(String user) async {
   await ColegioDatabase.instance.deleteDecryptEntries(user);
 }
@@ -108,6 +117,7 @@ Future<void> deleteStudentImgCodePassword(String user) async {
 Future<List<ImgCode>> getStudentMenuPassword(String user) async {
   return await ColegioDatabase.instance.getImgCodesByStudent(user);
 }
+
 /*
     Función
     @Nombre --> getImgCodeFromFolder
@@ -118,6 +128,7 @@ Future<List<ImgCode>> getStudentMenuPassword(String user) async {
 Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
   return await ColegioDatabase.instance.getImgCodeFromFolder(folder);
 }
+
 /*
     Función
     @Nombre --> modifyNameStudent
@@ -129,6 +140,7 @@ Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
 Future<bool> modifyNameStudent(String user, String newName) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "name", newName);
 }
+
 /*
     Función
     @Nombre --> modifyPasswordStudent
@@ -141,9 +153,11 @@ Future<bool> modifyPasswordStudent(String user, String newPassword) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "password", newPassword);
 }
 
+
 Future<bool> modifyTypePasswordStudent(String user, String newTypePassword) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "typePassword", newTypePassword);
 }
+
 /*
     Método
     @Nombre --> modifyCompleteStudent
@@ -164,6 +178,7 @@ Future<bool> modifyCompleteStudent(String user, String name, String? surname, St
   String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async {
   return await ColegioDatabase.instance.modifyCompleteStudent(user, name, surname, password, photo, typePassword, interfaceIMG, interfacePIC, interfaceTXT);
 }
+
 /*
     Método
     @Nombre --> userIsValid
@@ -174,6 +189,7 @@ Future<bool> modifyCompleteStudent(String user, String name, String? surname, St
 Future<bool> userIsValid(String user) async {
   return await ColegioDatabase.instance.userIsValid(user);
 }
+
 /*
     Método
     @Nombre --> userFormat
