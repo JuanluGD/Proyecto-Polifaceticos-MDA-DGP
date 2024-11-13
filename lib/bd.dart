@@ -387,6 +387,14 @@ class ColegioDatabase{
     }
   }
 
+
+  /*
+    Método
+    @Nombre --> deleteDecryptEntries
+    @Funcion --> Permite eliminar la relación entre un alumno y sus imágenes
+    @Argumentos
+      - user: el usuario del alumno 
+  */
 	Future<void> deleteDecryptEntries(String user) async {
     final db = await instance.database;
 
@@ -397,7 +405,13 @@ class ColegioDatabase{
 		);
   }
 
-
+  /*
+    Método
+    @Nombre --> getImgCodesByStudent
+    @Funcion --> Permite obtener todas las imágenes asociadas a un alumno
+    @Argumentos
+      - user: el usuario del alumno del que se obtendrán las imágenes
+  */
   Future<List<ImgCode>> getImgCodesByStudent(String user) async {
     final db = await instance.database;
     final result = await db.rawQuery('''
@@ -462,12 +476,13 @@ class ColegioDatabase{
   */
   Future<bool> insertImgCode(String path, String code) async{
 		final db = await instance.database;
-		final result = await db.query(
-		tablaStudents,
-		where: 'user = ?',
-		whereArgs: [user],
-		);
-		return result.isEmpty;
+		try {
+			await db.insert(tablaImgCode, {'path': path, 'code': code});
+			return true;
+		} catch (e) {
+			print("Error al insertar el código de la imagen: $e");
+			return false;
+		}
 	}
 
   /*

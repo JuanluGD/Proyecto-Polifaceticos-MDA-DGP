@@ -92,7 +92,11 @@ Future<bool> asignLoginType(String user, String typePassword) async {
 	return await ColegioDatabase.instance.asignLoginType(user, typePassword);
 }
 
-
+/*
+    Función
+    @Nombre --> getAllStudents
+    @Funcion --> Devuelve todos los estudiantes registrados en la aplicación
+*/
 Future<List<Student>> getAllStudents() async {
 	return await ColegioDatabase.instance.getAllStudents();
 }
@@ -109,11 +113,25 @@ Future<void> createStudentImgCodePassword(String user, List<ImgCode> images) asy
   await ColegioDatabase.instance.insertDecryptEntries(user, images);
 }
 
-
+ /*
+    Método
+    @Nombre --> deleteStudentImgCodePassword
+    @Funcion --> Permite eliminar la relación entre un alumno y sus imágenes
+    @Argumentos
+      - user: el usuario del alumno
+  */
 Future<void> deleteStudentImgCodePassword(String user) async {
   await ColegioDatabase.instance.deleteDecryptEntries(user);
 }
 
+
+/*
+    Método
+    @Nombre --> getImgCodesByStudent
+    @Funcion --> Permite obtener todas las imágenes asociadas a un alumno
+    @Argumentos
+      - user: el usuario del alumno del que se obtendrán las imágenes
+*/
 Future<List<ImgCode>> getStudentMenuPassword(String user) async {
   return await ColegioDatabase.instance.getImgCodesByStudent(user);
 }
@@ -154,6 +172,14 @@ Future<bool> modifyPasswordStudent(String user, String newPassword) async {
 }
 
 
+/*
+    Función
+    @Nombre --> modifyTypePasswordStudent
+    @Funcion --> Modifica el tipo de contraseña de un estudiante concreto
+    @Argumentos
+        - user: usuario del alumno cuya contraseña será modificada
+        - newTypePassword: el nuevo tipo de contraseña del alumno
+*/
 Future<bool> modifyTypePasswordStudent(String user, String newTypePassword) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "typePassword", newTypePassword);
 }
