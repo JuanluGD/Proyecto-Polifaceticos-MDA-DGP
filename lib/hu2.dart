@@ -431,14 +431,15 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                           // Crear la contraseña del estudiante según los pictogramas o imágenes seleccionados para contraseña
                           String password = await imageCodeToPassword(passwordElements);
 
+                          // Obtener la extensión del archivo original
+                          String extension = path.extension(widget.perfilImage!.path);
+
                           // Meter al estudiante en la BD
                           if (await registerStudent(
-                            widget.userStudent, widget.nameStudent, widget.surnameStudent, password, widget.perfilImage!.path, 
+                            widget.userStudent, widget.nameStudent, widget.surnameStudent, password, 'assets/perfiles/${widget.userStudent}$extension', 
                             widget.passwordType, widget.interfaceIMG ? 1:0, widget.interfacePIC ? 1:0, widget.interfaceTXT ? 1:0
                           )) 
                           {
-                              // Obtener la extensión del archivo original
-                              String extension = path.extension(widget.perfilImage!.path);
                               // Guardar la imagen de perfil en la carpeta
                               await saveImage(widget.perfilImage!, '${widget.userStudent}$extension', 'assets/perfiles');
 
@@ -631,15 +632,16 @@ class AlphanumericPasswordPage extends StatelessWidget {
                       child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
                           if (!passwordController.text.isEmpty && !samePasswordController.text.isEmpty) {
                             if (passwordController.text == samePasswordController.text) {
+                              // Obtener la extensión del archivo original
+                              String extension = path.extension(perfilImage!.path);
+
                               // TOMATE
                               // Meter al estudiante en la BD
                               if (await registerStudent(
-                                userStudent, nameStudent, surnameStudent, passwordController.text, perfilImage!.path, 
+                                userStudent, nameStudent, surnameStudent, passwordController.text, 'assets/perfiles/$userStudent$extension', 
                                 'alphanumeric', interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0
                               )) 
                               {
-                                // Obtener la extensión del archivo original
-                                String extension = path.extension(perfilImage!.path);
                                 // Guardar la imagen de perfil en la carpeta
                                 await saveImage(perfilImage!, '$userStudent$extension', 'assets/perfiles');
 

@@ -171,7 +171,6 @@ Future<bool> modifyPasswordStudent(String user, String newPassword) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "password", newPassword);
 }
 
-
 /*
     Función
     @Nombre --> modifyTypePasswordStudent

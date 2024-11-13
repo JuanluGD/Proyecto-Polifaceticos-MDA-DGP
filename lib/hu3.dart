@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Gestión de Estudiantes',
+      title: 'Lista de Estudiantes',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -57,33 +57,16 @@ class _StudentListPageState extends State<StudentListPage> {
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent.shade100,
       body: Center(
-        child: Container(
-          width: 740,
-          height: 625,
-          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
+        child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
+          Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              SizedBox(height: 15),
               Text(
                 'Lista de Estudiantes',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
+                style: titleTextStyle,
               ),
-              Text(
-                'Selecciona un estudiante para modificar',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.blueAccent,
-                ),
-              ),
-              SizedBox(height: 30),
+              SizedBox(height: 15),
               // Lista de estudiantes en un Expanded para que sea scrollable
               Expanded(
                 child: ListView.builder(
@@ -93,17 +76,47 @@ class _StudentListPageState extends State<StudentListPage> {
                     return Card(
                       margin: EdgeInsets.symmetric(vertical: 8.0),
                       child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: AssetImage(student.image),
+                          radius: 30,
+                        ),
                         title: Text('${student.name} ${student.surname}'),
-                        subtitle: Text('Usuario: ${student.user}'),
-                        onTap: () {
-                          // Navegar a la página de modificación del estudiante
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => StudentModificationPage(student: student),
+                        subtitle: Text(student.user),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.info_outline),
+                              color: Colors.blue,
+                              onPressed:
+                                // Navegar a la página de información del estudiante
+                                () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => StudentInfoPage(student: student),
+                                    ),
+                                  );
+                                  setState(() {});
+                                },
                             ),
-                          );
-                        },
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              color: Colors.blue,
+                              onPressed:
+                                // Navegar a la página de modificación del estudiante
+                                () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => StudentModificationPage(student: student),
+                                    ),
+                                  );
+                                  setState(() {});
+                                },
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -116,6 +129,182 @@ class _StudentListPageState extends State<StudentListPage> {
     );
   }
 }
+
+// Página de información de estudiante
+class StudentInfoPage extends StatefulWidget {
+  final Student student;
+
+  StudentInfoPage({required this.student});
+
+  @override
+  _StudentInfoPageState createState() => _StudentInfoPageState();
+}
+
+class _StudentInfoPageState extends State<StudentInfoPage> {
+  late String passwordType;
+
+  @override
+  void initState(){
+    super.initState();
+    if (widget.student.typePassword == 'pictograms') passwordType = 'Pictogramas';
+    else if (widget.student.typePassword == 'images') passwordType = 'Imágenes';
+    else if (widget.student.typePassword == 'alphanumeric') passwordType = 'Alfanumérica';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 100.0), 
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 15),
+              Center(
+                child: Text(
+                  'Configuración de ${widget.student.name}',
+                  style: titleTextStyle,
+                ),
+              ),
+              Center(
+                child: Text(
+                  'Ver la información de los datos del estudiante',
+                  style: subtitleTextStyle,
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  SizedBox(width: 30),
+                  // Foto del estudiante
+                  Container(
+                    width: 220,
+                    height: 250,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(widget.student.image),
+                        fit: BoxFit.contain,
+                      ),
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 30),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Nombre y Apellido
+                      Text(
+                        '${widget.student.name} ${widget.student.surname ?? ''}',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+                      // Opciones de interfaz
+                      Row(
+                        children: [
+                          SizedBox(width: 15),
+                          Checkbox(
+                            value: widget.student.interfacePIC == 1, 
+                            onChanged: null,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Pictogramas',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          SizedBox(width: 15),
+                          Checkbox(
+                            value: widget.student.interfaceIMG == 1, 
+                            onChanged: null,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Imágenes',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          SizedBox(width: 15),
+                          Checkbox(
+                            value: widget.student.interfaceTXT == 1, 
+                            onChanged: null,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Texto',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          SizedBox(width: 15),
+                          Checkbox(
+                            value: false, 
+                            onChanged: null,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Contenido Audiovisual',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              // Contraseña y tipo
+              Row(
+                children: [
+                  Text('Contraseña: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(passwordType),
+                ],
+              ),
+              SizedBox(height: 20),
+              // Espacio reservado para ver la contraseña
+              Container(
+                padding: EdgeInsets.all(10),
+                color: Colors.grey.shade300,
+                child: Center(
+                  child: Text(
+                    '<espacio reservado para posteriormente implementar que se muestre la contraseña>',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey.shade700),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: SizedBox(
+                  width: 200,
+                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                    setState(() {}); Navigator.pop(context); setState(() {});
+                  }),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 // Página de modificación de estudiante
 class StudentModificationPage extends StatefulWidget {
@@ -272,6 +461,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                           width: 200,
                           child: buildElevatedButton('Cambiar contraseña', buttonTextStyle, extraButtonStyle, () {
                             if (passwordType == 'pictograms' || passwordType == 'images') {
+                              setState(() {});
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => ImgCodePasswordPage(
@@ -280,6 +470,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                                 )),
                               );
                             } else if (passwordType == 'alphanumeric') {
+                              setState(() {});
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => AlphanumericPasswordPage(
@@ -287,6 +478,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                                 )),
                               );
                             }
+                            setState(() {});
                           }),
                         ),
                       ),
@@ -323,7 +515,15 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                               await saveImage(image!, '${widget.student.user}$extension', 'assets/perfiles');
                               
                               // TOMATE
-                              modifyCompleteStudent(widget.student.user, nameStudent, surnameStudent, widget.student.password, image!.path, widget.student.typePassword, interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0);
+                              modifyCompleteStudent(widget.student.user, nameStudent, surnameStudent, widget.student.password, widget.student.image, widget.student.typePassword, interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0);
+
+                              // Actualizar los valores de la interfaz
+                              widget.student.name = nameStudent;
+                              widget.student.surname = surnameStudent;
+                              widget.student.interfaceIMG = interfaceIMG ? 1 : 0;
+                              widget.student.interfacePIC = interfacePIC ? 1 : 0;
+                              widget.student.interfaceTXT = interfaceTXT ? 1 : 0;
+                              widget.student.image = 'assets/perfiles/${widget.student.user}$extension';
 
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -349,6 +549,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                             ),
                           );
                         }
+                        setState(() {});
                       }),
                     ),
                   ),
@@ -357,7 +558,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                     child: SizedBox(
                       width: 200,
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
-                        Navigator.pop(context);
+                        setState(() {}); Navigator.pop(context); setState(() {});
                       }),
                     ),
                   ),
@@ -545,6 +746,9 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                             // Guardar los elementos que deben salir al estudiante para introducir su contraseña
                             createStudentImgCodePassword(widget.student.user, selectedElements);
 
+                            // Actualizar el tipo de contraseña en la interfaz
+                            widget.student.typePassword = widget.passwordType;
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Contraseña cambiada con éxito.'),
@@ -720,6 +924,12 @@ class AlphanumericPasswordPage extends StatelessWidget {
                               // TOMATE
                               // Cambiar la contraseña del estudiante
                               if (await modifyPasswordStudent(student.user, passwordController.text)) {
+                                // Actualizar el tipo de contraseña del estudiante
+                                modifyTypePasswordStudent(student.user, 'alphanumeric');
+
+                                // Actualizar el tipo de contraseña en la interfaz
+                                student.typePassword = 'alphanumeric';
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Contraseña modificada con éxito.'),

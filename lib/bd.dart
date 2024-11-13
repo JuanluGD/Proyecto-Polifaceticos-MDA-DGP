@@ -75,7 +75,7 @@ class ColegioDatabase{
       - db: la base de datos sobre la que se crearán las tablas
       - version: versión de la base de datos
   */
-	Future _onCreateDB(Database db, int version) async{
+	Future _onCreateDB(Database db, int version) async {
 		
 		/*
 			Tabla Estudiantes.
@@ -198,7 +198,7 @@ class ColegioDatabase{
       - data: dato del alumno que será modificado (user, password, etc...)
       - newData: nuevo valor del dato modificado
   */
-	Future<bool> modifyStudent(String user, String data, String newData) async{
+	Future<bool> modifyStudent(String user, String data, String newData) async {
 		final db = await instance.database;
 
 		try {
@@ -233,7 +233,7 @@ class ColegioDatabase{
 
   */
 	Future<bool> modifyCompleteStudent(String user, String name, String? surname,String password, 
-    String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async{
+    String photo, String typePassword, int interfaceIMG, int interfacePIC, int interfaceTXT) async {
 		final db = await instance.database;
 		try {
 			int count = await db.update(
@@ -242,7 +242,7 @@ class ColegioDatabase{
 					'name': name,
 					'surname': surname,
 					'password': password,
-					'photo': photo,
+					'image': photo,
 					'typePassword': typePassword,
 					'interfaceIMG': interfaceIMG,
 					'interfacePIC': interfacePIC,
@@ -457,7 +457,7 @@ class ColegioDatabase{
     @Argumentos
       - path: la ruta de la imágen
   */
-  Future<String> getCodeImgCode(String path) async{
+  Future<String> getCodeImgCode(String path) async {
     final db = await instance.database;
     final result = await db.query(
       tablaImgCode,
@@ -474,7 +474,7 @@ class ColegioDatabase{
       - path: ruta de la imagen
 			- code: código asignado a la imagen
   */
-  Future<bool> insertImgCode(String path, String code) async{
+  Future<bool> insertImgCode(String path, String code) async {
 		final db = await instance.database;
 		try {
 			await db.insert(tablaImgCode, {'path': path, 'code': code});
@@ -492,7 +492,7 @@ class ColegioDatabase{
     @Argumentos
       - code: el código asignado a la imagen que queremos obtener
   */
-	Future<String> getImgCodePath(String code) async{
+	Future<String> getImgCodePath(String code) async {
 		final db = await instance.database;
 		final result = await db.query(
 			tablaImgCode,
@@ -509,7 +509,7 @@ class ColegioDatabase{
     @Argumentos
       - path: la ruta que deberan compartir las imágenes
   */
-	Future<int> imgCodePathCount(String path) async{
+	Future<int> imgCodePathCount(String path) async {
 		final db = await instance.database;
 		final result = await db.query(
 			tablaImgCode,
