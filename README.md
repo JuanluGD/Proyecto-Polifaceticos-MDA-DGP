@@ -48,9 +48,22 @@ git clone https://github.com/juanluGR/Proyecto-Polifaceticos-MDA-DGP.git
 flutter pub get
 ```
 
-### 4. Ejecurar la aplicación.
+### 4. Ejecutar la aplicación (temporal).
+Según el sistema operativo que se utilice, cambiar <so> por el correspondiente. Por ejemplo, para Windows se cambiaría `<so>` por windows.
+
+- Página de inicio de sesión alfanumérica.
 ```bash
-flutter run
+flutter run -d <so> hu1.dart
+```
+
+- Página de alta de estudiante.
+```bash
+flutter run -d <so> hu2.dart
+```
+
+- Página de lista y modificación de estudiantes.
+```bash
+flutter run -d <so> hu3.dart
 ```
 
 ## 📧 Contacto
@@ -58,6 +71,6 @@ Para cualquier duda o sugerencia, puedes contactar con algún miembro del equipo
 - 
 -
 -
--
+- lorenacasfer@correo.ugr.es
 - daniellozanom@correo.ugr.es
 -
