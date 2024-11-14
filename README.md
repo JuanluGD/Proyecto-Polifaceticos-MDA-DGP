@@ -53,17 +53,17 @@ Según el sistema operativo que se utilice, cambiar <so> por el correspondiente.
 
 - Página de inicio de sesión alfanumérica.
 ```bash
-flutter run -d <so> hu1.dart
+flutter run -d <so> ./lib/hu1.dart
 ```
 
 - Página de alta de estudiante.
 ```bash
-flutter run -d <so> hu2.dart
+flutter run -d <so> ./lib/hu2.dart
 ```
 
 - Página de lista y modificación de estudiantes.
 ```bash
-flutter run -d <so> hu3.dart
+flutter run -d <so> ./lib/hu3.dart
 ```
 
 ## 📧 Contacto
