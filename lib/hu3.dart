@@ -72,7 +72,7 @@ class _StudentListPageState extends State<StudentListPage> {
                 child: ListView.builder(
                   itemCount: students.length,
                   itemBuilder: (context, index) {
-                    final student = students[index];
+                    Student student = students[index];
                     return Card(
                       margin: EdgeInsets.symmetric(vertical: 8.0),
                       child: ListTile(
@@ -196,7 +196,7 @@ class _StudentInfoPageState extends State<StudentInfoPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Nombre y Apellido
+                      // Nombre y Apellidos
                       Text(
                         '${widget.student.name} ${widget.student.surname ?? ''}',
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -574,7 +574,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
 
 // Página para la contraseña con pictogramas o imágenes
 class ImgCodePasswordPage extends StatefulWidget {
-  final Student student;
+  Student student;
   final String passwordType;
 
   ImgCodePasswordPage({
@@ -744,7 +744,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                             deleteStudentImgCodePassword(widget.student.user);
 
                             // Guardar los elementos que deben salir al estudiante para introducir su contraseña
-                            createStudentImgCodePassword(widget.student.user, selectedElements);
+                            await createStudentImgCodePassword(widget.student.user, selectedElements);
 
                             // Actualizar el tipo de contraseña en la interfaz
                             widget.student.typePassword = widget.passwordType;
@@ -755,6 +755,10 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                                 backgroundColor: Colors.green,
                               ),
                             );
+
+                            // Recargar al estudiante
+                            widget.student = (await getStudent(widget.student.user))!;
+
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -764,7 +768,15 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                             );
                           }
 
+                          setState(() {});
                           Navigator.pop(context);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StudentModificationPage(student: widget.student),
+                            ),
+                          );
+                          setState(() {});
                         }
                       ),
                     ),
@@ -774,7 +786,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                     child: SizedBox(
                       width: 200,
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
-                          Navigator.pop(context);
+                          setState(() {}); Navigator.pop(context); setState(() {});
                         }
                       ),
                     ),
@@ -924,6 +936,9 @@ class AlphanumericPasswordPage extends StatelessWidget {
                               // TOMATE
                               // Cambiar la contraseña del estudiante
                               if (await modifyPasswordStudent(student.user, passwordController.text)) {
+                                // Eliminar los elementos anteriores asociados al estudiante
+                                deleteStudentImgCodePassword(student.user);
+
                                 // Actualizar el tipo de contraseña del estudiante
                                 modifyTypePasswordStudent(student.user, 'alphanumeric');
 

@@ -92,6 +92,10 @@ Future<bool> asignLoginType(String user, String typePassword) async {
 	return await ColegioDatabase.instance.asignLoginType(user, typePassword);
 }
 
+Future<Student?> getStudent(String user) async {
+  return await ColegioDatabase.instance.getStudent(user);
+}
+
 /*
     Función
     @Nombre --> getAllStudents
