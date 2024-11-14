@@ -29,6 +29,9 @@ class ColegioDatabase{
 	final String tablaStudents = 'students';
 	final String tablaImgCode = 'imgCode';
 	final String tablaDecrypt = 'decrypt';
+	final String tablaClassroom = 'classroom';
+	final String tablaOrder = 'order';
+	final String tablaMenu = 'menu';
   /*
     Metodo inherente a las bases de datos sqlite que devuelve
     la base de datos en caso de estar creada y la crea
@@ -121,7 +124,48 @@ class ColegioDatabase{
 			PRIMARY KEY (user, path)
 			)
 		''');
+
+		
+		/*
+			Tabla  Menu.
+			Contiene los menús disponibles en el colegio.
+		*/
+		await db.execute('''
+			CREATE TABLE $tablaMenu(
+			name VARCHAR(30),
+			pictogram VARCHAR(30),
+			image VARCHAR(30),
+			PRIMARY KEY (name)
+			)
+		''');
+
+		/*
+			Tabla Classroom. 
+			Contiene las clases de las que tendrá constancia la aplicación.
+		*/
+		await db.execute('''
+			CREATE TABLE $tablaClassroom(
+			name VARCHAR(30),
+			PRIMARY KEY (name)
+			)
+		''');
+
+		/*
+			Tabla Order. 
+			Contiene las ordenes de menus que realizarán las distintas clases.
+		*/
+		await db.execute('''
+			CREATE TABLE $tablaOrder(
+			FOREIGN KEY (menuName) REFERENCES $tablaMenu(name),
+			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name),
+			date VARCHAR(30),
+			quantity INTEGER,
+			PRIMARY KEY (menuName, classroomName, date)
+			)
+		''');
 	}
+
+	
 
   /*
     Método
