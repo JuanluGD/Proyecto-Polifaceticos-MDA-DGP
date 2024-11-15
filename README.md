@@ -70,7 +70,7 @@ flutter run -d <so> ./lib/hu3.dart
 Para cualquier duda o sugerencia, puedes contactar con algún miembro del equipo a través de los siguientes email:
 - 
 -
--
+- carlosmunoz@correo.ugr.es
 - lorenacasfer@correo.ugr.es
 - daniellozanom@correo.ugr.es
 - carmenxufdz@correo.ugr.es
