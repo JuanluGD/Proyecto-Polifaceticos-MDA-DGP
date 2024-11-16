@@ -1,101 +1,43 @@
-import 'package:test/test.dart';
-import 'package:proyecto/bd.dart';
-import 'package:proyecto/Student.dart';
-import 'package:proyecto/Admin.dart';
+import 'package:proyecto/bd_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:proyecto/hu1.dart';
 
 void main() {
-  final db = ColegioDatabase.instance;
+  group('Pruebas sobre Widgets', () {
+    //test 1
+    testWidgets('Comprobar que la contraseña sale censurada', (WidgetTester tester) async {
+      // Monta la página de inicio de sesión
+      await tester.pumpWidget(MaterialApp(home: LoginPage()));
 
-  setUp(() async {
-    // Limpia la base de datos eliminando el administrador de prueba antes de cada prueba
-    final database = await db.database;
-    await database.delete(
-      db.tablaAdmin,
-      where: 'DNI = ?',
-      whereArgs: ['00000000B'], // un valor cualquiera de DNI
-    );
+      // Encuentra el campo de contraseña por su etiqueta
+      final passwordField = find.widgetWithText(TextField, 'Contraseña');
+
+      // Verifica que el campo de contraseña tiene la propiedad obscureText en true (censurado)
+      final textField = tester.widget<TextField>(passwordField);
+      expect(textField.obscureText, isTrue);
+    });
   });
 
-  //test de un login exitoso por parte de un admin
-  test('Login exitoso', () async {
-    //creamos una instancia de admin
-    final admin = Admin(
-      dni: '00000000B',
-      name: 'Administrador',
-      surname1: 'admin',
-      surname2: 'admin',
-      password: 'admin',
-      photo: 'img/default',
-    );
+  group('Pruebas sobre Base de Datos', () {
+    //test 1
+    test('Login con credenciales correctas', () async {
+      String user = 'admin';
+      String password = 'admin';
 
-    //insertamos al administrador en la bd
-    await db.insertAdmin(admin);
+      //comprobamos si las credenciales son correctas
+      final loginResult = loginAdmin(user, password);
+      expect(loginResult, true);
+    });
 
-    //comprobamos si las credenciales son correctas
-    final loginResult = await db.loginAdmin(admin.dni, admin.password);
-    expect(loginResult, true);
+    //test 2
+    test('Login con credenciales incorrectas', () async {
+      String user = 'polifaceticos';
+      String password = '1234';
 
-    //limpiamos la bd eliminando el administrador de prueba
-    final database = await db.database;
-    await database.delete(
-      db.tablaAdmin,
-      where: 'DNI = ?',
-      whereArgs: [admin.dni],
-    );
-  });
-
-  test('Login con credenciales incorrectas', () async {
-    final admin = Admin(
-      dni: '00000000B',
-      name: 'Administrador',
-      surname1: 'admin',
-      surname2: 'admin',
-      password: 'admin',
-      photo: 'img/default',
-    );
-
-    await db.insertAdmin(admin);
-
-    final wrongAdmin = Admin(
-      dni: '00000000C', // DNI incorrecto
-      name: 'Administrador',
-      surname1: 'admin',
-      surname2: 'admin',
-      password: 'wrongpassword', // Contraseña incorrecta
-      photo: 'img/default',
-    );
-
-    final loginResult = await db.loginAdmin(wrongAdmin.dni, wrongAdmin.password);
-    expect(loginResult, false);
-
-    final database = await db.database;
-    await database.delete(
-      db.tablaAdmin,
-      where: 'DNI = ?',
-      whereArgs: [admin.dni],
-    );
-  });
-
-  test('Login con campos vacíos', () async {
-    final admin = Admin(
-      dni: '00000000B',
-      name: 'Administrador',
-      surname1: 'admin',
-      surname2: 'admin',
-      password: 'admin',
-      photo: 'img/default',
-    );
-
-    await db.insertAdmin(admin);
-    final loginResult = await db.loginAdmin('','');
-    expect(loginResult, false);
-
-    final database = await db.database;
-    await database.delete(
-      db.tablaAdmin,
-      where: 'DNI = ?',
-      whereArgs: [admin.dni],
-    );
+      //comprobamos si las credenciales son correctas
+      final loginResult = loginAdmin(user, password);
+      expect(loginResult, false);
+    });
   });
 }
-
