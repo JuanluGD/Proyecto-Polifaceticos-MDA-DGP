@@ -8,6 +8,7 @@ import 'package:proyecto/hu3.dart';
 
 void main() {
 
+  // NO FUNCIONAN
   group('Pruebas sobre Widgets', () {
 
     final db = ColegioDatabase.instance;

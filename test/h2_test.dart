@@ -9,6 +9,7 @@ void main() {
   group('Pruebas sobre Widgets', () {
 
     //test 1
+    // CAMBIAR, ESTE TEST SE HACE SOBRE EL BACKEND
     testWidgets('Comprobar que no se permite el uso de caracteres especiales en el usuario', (WidgetTester tester) async {
       // Monta la página de registro de estudiante
       await tester.pumpWidget(MaterialApp(home: StudentRegistrationPage()));
@@ -38,6 +39,7 @@ void main() {
     //test 2
     testWidgets('Comprobar que no se permite el uso de caracteres especiales en la contraseña alfanumérica', (WidgetTester tester) async {
       // Monta la página de contraseña alfanumérica
+      // FALTA IMPLEMENTAR
     });
 
   });
@@ -58,6 +60,7 @@ void main() {
     });
 
     //test 1
+    // DA ERROR
     test('Comprobar que se añaden correctamente en la bd los nuevos estudiantes', () async {
 
       bool isRegisteredJuan = await registerStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);

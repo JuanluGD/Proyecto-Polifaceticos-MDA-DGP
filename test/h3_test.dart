@@ -8,6 +8,7 @@ import 'package:proyecto/hu2.dart';
 void main() {
   group('Pruebas sobre Widgets', () {
     //test 1
+    // QUE?
     testWidgets('Comprobar que se puede asignar cualquier interfaz a cualquier estudiante', (WidgetTester tester) async {
       // Monta la página de registro de estudiante
       await tester.pumpWidget(MaterialApp(home: StudentRegistrationPage()));
@@ -51,6 +52,7 @@ void main() {
     });
 
     //test 1
+    // DA ERROR
     test('Comprobar que asignar la interfaz a un estudiante modifica al estudiante en la base de datos', () async {
 
       bool isRegistered = await registerStudent('juan123', 'Juan', 'Pérez', 'password123', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
