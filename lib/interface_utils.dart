@@ -159,8 +159,8 @@ Widget buildToggleContainer(bool selected, ImgCode element, List<ImgCode> select
       child: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset(
-              element.path,
+            child: Image.file(
+              File(element.path),
               fit: BoxFit.cover,
             ),
           ),

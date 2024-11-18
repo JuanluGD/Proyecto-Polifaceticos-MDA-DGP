@@ -459,7 +459,8 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                         alignment: Alignment.centerRight,
                         child: SizedBox(
                           width: 200,
-                          child: buildElevatedButton('Cambiar contraseña', buttonTextStyle, extraButtonStyle, () {
+                          child: buildElevatedButton('Cambiar contraseña', buttonTextStyle, extraButtonStyle, () async {
+                            List<ImgCode> selectionElements = await getStudentMenuPassword(widget.student.user);
                             if (passwordType == 'pictograms' || passwordType == 'images') {
                               setState(() {});
                               Navigator.push(
@@ -467,6 +468,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
                                 MaterialPageRoute(builder: (context) => ImgCodePasswordPage(
                                   student: widget.student,
                                   passwordType: passwordType,
+                                  selectionElements: selectionElements,
                                 )),
                               );
                             } else if (passwordType == 'alphanumeric') {
@@ -576,10 +578,12 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
 class ImgCodePasswordPage extends StatefulWidget {
   Student student;
   final String passwordType;
+  List<ImgCode> selectionElements;
 
   ImgCodePasswordPage({
     required this.student,
     required this.passwordType,
+    required this.selectionElements,
   });
 
   @override
@@ -691,10 +695,12 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                                   passwordElements = [];
                                   setState(() {
                                     selectedElements = newElements;
+                                    widget.selectionElements = newElements;
                                   });
                                 },
                                 passwordType: widget.passwordType,
                                 user: widget.student.user,
+                                selectionElements : widget.selectionElements,
                               ),
                             ),
                           );
@@ -805,11 +811,14 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
   final String passwordType, user;
+  // Lista para seleccionar pictogramas o imágenes
+  List<ImgCode> selectionElements;
 
   ImgCodeSelectionPage({
     required this.updateSelectedElements,
     required this.passwordType,
     required this.user,
+    required this.selectionElements,
   });
 
   @override
@@ -819,9 +828,6 @@ class ImgCodeSelectionPage extends StatefulWidget {
 class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
   final List<ImgCode> elements = [];
   String gallery = '';
-
-  // Lista para seleccionar pictogramas o imágenes
-  final List<ImgCode> selectionElements = [];
 
   // TOMATE
   // Para cargar los elementos
@@ -835,7 +841,6 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
         elements.addAll(await getImgCodeFromFolder('assets/imgs_claves'));
         gallery = 'Imágenes';
       }
-      selectionElements.addAll(await getStudentMenuPassword(widget.user));
       setState(() {});
     }
   }
@@ -861,14 +866,14 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
               ),
               SizedBox(height: 20),
               Expanded(
-                child: buildTickGrid(4, 8, elements, selectionElements, 6, context),
+                child: buildTickGrid(4, 8, elements, widget.selectionElements, 6, context),
               ),
               SizedBox(height: 20),
               // Botón Guardar
               SizedBox(
                 width: 400,
                 child: buildElevatedButton('Guardar selección', buttonTextStyle, nextButtonStyle, () {
-                    widget.updateSelectedElements(selectionElements);
+                    widget.updateSelectedElements(widget.selectionElements);
                     Navigator.pop(context);
                   }
                 ),
