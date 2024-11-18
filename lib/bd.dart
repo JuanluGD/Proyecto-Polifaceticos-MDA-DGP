@@ -30,7 +30,7 @@ class ColegioDatabase{
 	final String tablaImgCode = 'imgCode';
 	final String tablaDecrypt = 'decrypt';
 	final String tablaClassroom = 'classroom';
-	final String tablaOrder = 'order';
+	final String tablaOrder = 'orders';
 	final String tablaMenu = 'menu';
   /*
     Metodo inherente a las bases de datos sqlite que devuelve
@@ -156,11 +156,13 @@ class ColegioDatabase{
 		*/
 		await db.execute('''
 			CREATE TABLE $tablaOrder(
-			FOREIGN KEY (menuName) REFERENCES $tablaMenu(name),
-			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name),
 			date VARCHAR(30),
 			quantity INTEGER,
-			PRIMARY KEY (menuName, classroomName, date)
+      menuName VARCHAR(30),
+      classroomName VARCHAR(30),
+			PRIMARY KEY (menuName, classroomName, date),
+      FOREIGN KEY (menuName) REFERENCES $tablaMenu(name),
+			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name)
 			)
 		''');
 	}
