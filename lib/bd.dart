@@ -565,4 +565,25 @@ class ColegioDatabase{
 		return result.length;
 	}
 
+  /* 
+    Método
+    @Nombre --> insertOrders
+    @Funcion --> Inserta una comanda en la base de datos
+    @Argumentos
+      - date: fecha de la comanda
+      - quantity: cantidad de menús pedidos
+      - menuName: nombre del menú
+      - classroomName: nombre de la clase que ha realizado la comanda
+  */
+  Future<bool> insertOrders(String date, int quantity, String menuName, String classroomName) async {
+    final db = await instance.database;
+    try {
+      await db.insert(tablaOrders, {'date': date, 'quantity': quantity, 'menuName': menuName, 'classroomName': classroomName});
+      return true;
+    } catch (e) {
+      print("Error al insertar la orden: $e");
+      return false;
+    }
+  }
+
 }
