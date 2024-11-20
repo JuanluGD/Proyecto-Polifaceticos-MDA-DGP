@@ -114,3 +114,14 @@ Future<bool> pathExists(String path, String directory) async{
   }
   return exist;
 }
+
+/*
+    Función
+    @Nombre --> getImgCodeFromFolder
+    @Funcion --> Devuelve los códigos de las imagenes de una carpeta
+    @Argumentos
+        - folder: nombre de la carpeta que contiene las imágenes
+*/
+Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
+  return await ColegioDatabase.instance.getImgCodeFromFolder(folder);
+}
