@@ -1,29 +1,28 @@
 import 'package:proyecto/bd_utils.dart';
 import 'dart:io';
 import 'package:proyecto/bd.dart';
-import 'package:proyecto/Student.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:proyecto/hu3.dart';
+import 'package:path/path.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
 
   // NO FUNCIONAN
-  group('Pruebas sobre Widgets', () {
+  group('Pruebas sobre Widgets', () async {
 
-    final db = ColegioDatabase.instance;
-
-    //Este método se ejecuta siempre antes de cada test y lo que hace es eliminar el archivo físico de la bd local
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'colegio.db');
     setUp(() async {
-      final dbPath = '/home/jesus/AndroidStudioProjects/Proyecto-Polifaceticos-MDA-DGP/.dart_tool/sqflite_common_ffi/databases/colegio.db';
-
-      final dbFile = File(dbPath);
-      if (await dbFile.exists()) {
-        await dbFile.delete();
+      if (await databaseExists(path)) {
+        deleteDatabase(path);
       }
 
-      await db.database;
-
+      await ColegioDatabase.instance.database;
+      await registerStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      await registerStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
     });
 
     // Test 1
@@ -74,24 +73,38 @@ void main() {
     });
   });
 
-  group('Pruebas sobre Base de Datos', () {
-    final db = ColegioDatabase.instance;
-    /*
+  group('Pruebas sobre Base de Datos', () async{
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'colegio.db');
     setUp(() async {
-      // Elimina el archivo físico de la base de datos
-      final dbPath = '/home/jesus/AndroidStudioProjects/Proyecto-Polifaceticos-MDA-DGP/.dart_tool/sqflite_common_ffi/databases/colegio.db';
-
-      final dbFile = File(dbPath);
-      if (await dbFile.exists()) {
-        await dbFile.delete();
+      if (await databaseExists(path)) {
+        deleteDatabase(path);
       }
 
-      await db.database;
+      await ColegioDatabase.instance.database;
+      await registerStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      await registerStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
     });
-    */
     //test 1
     test('Comprobar que los datos del estudiante se han modificado en la base de datos', () async {
-      //bool isRegistered = await registerStudent('juan123', 'Juan', 'Pérez', 'password123', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      expect(await modifyCompleteStudent('juan123', 'Juan', 'Gomez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 0, 0, 1), true);
+      final student = await getStudent('juan123');
+      expect(student!.name, 'Juan');
+      expect(student.surname, 'Gomez');
+    });
+
+    //test 2
+    test('Comprobar que el usuario de un estudiante se ha modificado en la base de datos', () async {
+      expect(await modifyUserStudent('juan123', 'juanito'), true);
+      final student = await getStudent('juanito');
+      expect(student!.user, 'juanito');
+    });
+
+    //test 3
+    test('Comprobar el usuario de un estudiante no se ha modificado en la base de datos', () async {
+      expect(await modifyUserStudent('juan123', 'luciaaa22'), false);
+      final student = await getStudent('juan123');
+      expect(student!.user, 'juan123');
     });
   });
 }

@@ -159,6 +159,17 @@ Future<bool> asignLoginType(String user, String typePassword) async {
 
 /*
   Función
+  @Nombre --> modifyUserStudent
+  @Funcion --> Modifica el usuario de un estudiante concreto 
+  @Argumentos
+    - user: usuario del alumno cuyo nombre será modificado
+    - newUser: el nuevo usuario del alumno
+*/
+Future<bool> modifyUserStudent(String user, String newUser) async {
+  return await ColegioDatabase.instance.modifyStudent(user, "user", newUser);
+}
+/*
+  Función
   @Nombre --> modifyNameStudent
   @Funcion --> Modifica el nombre de un estudiante concreto
   @Argumentos
@@ -191,6 +202,21 @@ Future<bool> modifyPasswordStudent(String user, String newPassword) async {
 */
 Future<bool> modifyTypePasswordStudent(String user, String newTypePassword) async {
 	return await ColegioDatabase.instance.modifyStudent(user, "typePassword", newTypePassword);
+}
+
+/*
+  Función
+  @Nombre --> modifyInterfaceStudent
+  @Función --> Modifica la interfaz de un estudiante concreto
+  @Argumentos
+    - user: usuario del alumno cuya interfaz será modificada
+    - interfaceIMG: determina si el alumno usará la interfaz basada en imágenes
+    - interfacePIC: determina si el alumno usará la interfaz basada en pictogramas
+    - intefaceTXT: determina si el alumno usará la interfaz basada en texto
+*/
+
+Future<bool> modifyInterfaceStudent(String user, int interfaceIMG, int interfacePIC, int interfaceTXT) async {
+  return await ColegioDatabase.instance.modifyInterfaceStudent(user, interfaceIMG, interfacePIC, interfaceTXT);
 }
 
 /*

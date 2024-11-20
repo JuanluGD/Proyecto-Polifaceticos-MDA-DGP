@@ -83,7 +83,7 @@ class ColegioDatabase{
 			user VARCHAR(30) PRIMARY KEY,
 			name VARCHAR(25) NOT NULL,
 			surname VARCHAR(100),
-			image VARCHAR(25) NOT NULL UNIQUE,
+			image VARCHAR(25) NOT NULL,
 			password varchar(500) NOT NULL,
 			typePassword VARCHAR(25) NOT NULL,
 			interfaceIMG TINYINT(1) NOT NULL,
@@ -245,6 +245,37 @@ class ColegioDatabase{
 			return false;
 		}
 	}
+
+  /*
+    Método
+    @Nombre --> modifyInterfaceStudent
+    @Funcion --> Modifica la interfaz que usará un alumno para iniciar sesión
+    @Argumentos
+      - user: usuario del alumno al que se le realizará las modificaciónes
+      - interfaceIMG: determina si el alumno usará la interfaz basada en imágenes
+      - interfacePIC: determina si el alumno usará la interfaz basada en pictogramas
+      - intefaceTXT: determina si el alumno usará la interfaz basada en texto
+  */
+  Future<bool>modifyInterfaceStudent(user, interfaceIMG, interfacePIC, interfaceTXT) async {
+    final db = await instance.database;
+    try {
+      int count = await db.update(
+        tablaStudents,
+        {
+          'interfaceIMG': interfaceIMG,
+          'interfacePIC': interfacePIC,
+          'interfaceTXT': interfaceTXT
+        },
+        where: 'user = ?',
+        whereArgs: [user],
+      );
+
+      return count > 0;
+    } catch (e) {
+      print("Error al modificar la interfaz: $e");
+      return false;
+    }
+  }
   
   /*
     Método

@@ -1,11 +1,16 @@
 import 'package:proyecto/bd_utils.dart';
-import 'dart:io';
-import 'package:proyecto/bd.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proyecto/hu2.dart';
+import 'package:path/path.dart';
+import 'package:proyecto/bd.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-void main() {
+// NO SE QUE LE PASA A ESTE FICHERO QUE NO ME PERMITE PROBAR LOS TEST DESDE AQUI
+void main() async {
+  final dbPath = await getDatabasesPath();
+  final path = join(dbPath, 'colegio.db');
   group('Pruebas sobre Widgets', () {
     //test 1
     // QUE?
@@ -36,31 +41,26 @@ void main() {
     });
   });
 
-  group('Pruebas sobre Base de Datos', () {
-    final db = ColegioDatabase.instance;
+  group('Pruebas sobre Base de Datos', () async {
 
-    setUp(() async {
-      // Elimina el archivo físico de la base de datos (necesario para las pruebas)
-      final dbPath = '/home/jesus/AndroidStudioProjects/Proyecto-Polifaceticos-MDA-DGP/.dart_tool/sqflite_common_ffi/databases/colegio.db';
+      
+      setUp(() async {
+        if (await databaseExists(path)) {
+          deleteDatabase(path);
+        }
+        await registerStudent('juan123', 'Juan', 'Pérez', 'password123', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      });
 
-      final dbFile = File(dbPath);
-      if (await dbFile.exists()) {
-        await dbFile.delete();
-      }
+      //test 1
+      // COMO ESTAS COMPROBANDO ESTO?
+      test('Comprobar que asignar la interfaz a un estudiante modifica al estudiante en la base de datos', () async {
 
-      await db.database;
+        expect(await modifyInterfaceStudent('juan123', 0,0,1), true);
+        final student = await getStudent('juan123');
+        expect(student!.interfaceIMG, 0);
+        expect(student.interfacePIC, 0);
+        expect(student.interfaceTXT, 1);
+
+      });
     });
-
-    //test 1
-    // DA ERROR
-    test('Comprobar que asignar la interfaz a un estudiante modifica al estudiante en la base de datos', () async {
-
-      bool isRegistered = await registerStudent('juan123', 'Juan', 'Pérez', 'password123', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
-      expect(isRegistered, true);
-
-      bool exists = await userIsValid('juan123');
-      expect(exists,true);
-
-    });
-  });
-}
+  }
