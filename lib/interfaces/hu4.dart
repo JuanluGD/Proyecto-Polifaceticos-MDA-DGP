@@ -54,7 +54,7 @@ class _StudentListPageState extends State<StudentListPage> {
   Future<void> deleteStudentInterface(String user) async {
     Student? student = await getStudent(user);
     if (student != null) {
-      await deleteImage(student.image);
+      //await deleteImage(student.image);
       await deleteStudent(user);
     }
   }
@@ -134,6 +134,16 @@ class _StudentListPageState extends State<StudentListPage> {
                                 },
                             ),
                             IconButton(
+                              icon: Icon(Icons.task),
+                              color: Colors.blue,
+                              onPressed:
+                                // Navegar a la página de tareas del estudiante
+                                () async {
+                                  print("no esta implementado jaja"); //TOMATE
+                                  setState(() {});
+                                },
+                            ),
+                            IconButton(
                               icon: Icon(Icons.edit),
                               color: Colors.blue,
                               onPressed:
@@ -152,7 +162,6 @@ class _StudentListPageState extends State<StudentListPage> {
                               icon: Icon(Icons.delete),
                               color: Colors.blue,
                               onPressed:
-                                // Navegar a la página de modificación del estudiante
                                 () async {
                                   await deleteStudentInterface(student.user);
                               
