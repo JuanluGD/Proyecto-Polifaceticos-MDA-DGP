@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto/classes/Student.dart';
 import 'dart:io';
 
 import '../classes/ImgCode.dart';
@@ -253,6 +254,49 @@ Widget buildSizedRadio (String text, double size, String element, String group, 
         style: TextStyle(fontSize: size*2),
       ),
     ],
+  );
+}
+
+Widget AvatarTopCorner(Student student) {
+  return Align(
+    alignment: Alignment.topRight,
+    child: Column(
+      children: [
+        Container(
+        margin: EdgeInsets.only(top: 20, right: 20),
+        child: CircleAvatar(
+          radius: 30,
+          backgroundImage: AssetImage(student.image),
+        ),
+      ),
+        SizedBox(height: 8),
+        Text(
+          student.name,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget BackButton(BuildContext context) {
+  return Align(
+    alignment: Alignment.topLeft,
+    child: GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: Container(
+        margin: EdgeInsets.only(top: 20, left: 20),
+        child: Icon(
+          Icons.arrow_back,
+          color: Colors.white,
+        ),
+      ),
+    ),
   );
 }
 

@@ -548,19 +548,15 @@ class ColegioDatabase{
       - user: el usuario del alumno al que se le asignarán las imágenes
 			- images: las imágenes que usará dicho usuario para iniciar sesión
   */
-  Future<void> insertDecryptEntries(String user, List<ImgCode> images) async {
+  Future<bool> insertDecryptEntries(String user, List<ImgCode> images) async {
     final db = await instance.database;
-
-    for (var imgCode in images) {
-      await db.insert(
-        tablaDecrypt,
-        {
-          'user': user,
-          'path': imgCode.path,
-        },
-        conflictAlgorithm: ConflictAlgorithm.ignore, // Evita errores si ya existe la tupla
-      );
+    
+    final batch = db.batch();
+    for (var img in images) {
+      batch.insert(tablaDecrypt, {'user': user, 'path': img.path});
     }
+    final result = await batch.commit();
+    return result.isNotEmpty;
   }
 
 

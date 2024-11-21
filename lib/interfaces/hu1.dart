@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/interfaces/login.dart' as loginPage;
+
+/// LOGIN ADMINISTRADOR ///
+/// HU1: Como administrador quiero poder acceder a la aplicación con mi usuario y mi contraseña
+
 void main() {
   runApp(MyApp());
 }
@@ -9,21 +13,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login Screen',
+      title: 'Login Admin Screen',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      debugShowCheckedModeBanner: false,
+      home: LoginAdminPage(),
     );
   }
 }
 
-class LoginPage extends StatefulWidget {
+class LoginAdminPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginAdminPageState createState() => _LoginAdminPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginAdminPageState extends State<LoginAdminPage> {
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -110,7 +115,8 @@ class _LoginPageState extends State<LoginPage> {
                             setState(() {
                               _isObscure = !_isObscure;
                             }); 
-                          },),  
+                          },
+                        ),  
                       ),
                     ),
                     SizedBox(height: 10),
@@ -141,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                                   backgroundColor: Colors.red,
                                 ),
                               );
-                            } else if (await login(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
+                            } else if (await loginAdmin(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Usuario o contraseña incorrectos.'),
@@ -151,11 +157,11 @@ class _LoginPageState extends State<LoginPage> {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('OLE.'),
+                                  content: Text('Inicio de sesión correcto.'),
                                   backgroundColor: Colors.green,
                                 ),
                               );
-                              // Navegar a la página del alumno
+                              // TOMATE Navegar a la página del administrador
                             }
                           },
                           style: ElevatedButton.styleFrom(

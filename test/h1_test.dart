@@ -8,7 +8,7 @@ void main() {
     //test 1
     testWidgets('Comprobar que la contraseña sale censurada', (WidgetTester tester) async {
       // Monta la página de inicio de sesión
-      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      await tester.pumpWidget(MaterialApp(home: LoginAdminPage()));
 
       // Encuentra el campo de contraseña por su etiqueta
       final passwordField = find.widgetWithText(TextField, 'Contraseña');

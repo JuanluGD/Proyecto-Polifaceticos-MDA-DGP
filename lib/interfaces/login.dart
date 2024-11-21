@@ -3,6 +3,7 @@ import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/interfaces/hu1.dart' as hu1;
+import 'package:proyecto/interfaces/hu3.dart' as hu3;
 
 void main() {
   runApp(MyApp());
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       home: StudentListPage(),
     );
   }
@@ -87,11 +89,16 @@ class _StudentListPageState extends State<StudentListPage>  {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => hu1.LoginPage(),
+                                  builder: (context) => hu3.LoginAlphanumericPage(user: student.user),
                                 ),
                               );
                             } else {
-                              print("por implementar jaja"); // TOMATE
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => hu3.LoginImagePage(user: student.user),
+                                ),
+                              );
                             }
                           },
                             child: Column(
@@ -132,7 +139,7 @@ class _StudentListPageState extends State<StudentListPage>  {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => hu1.LoginPage(),
+                    builder: (context) => hu1.LoginAdminPage(),
                   ),
                 );
                 // Aquí puedes agregar la lógica que quieras al hacer clic en el texto

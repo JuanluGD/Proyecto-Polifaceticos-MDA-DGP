@@ -8,8 +8,10 @@ import 'package:proyecto/bd_utils.dart';
 
 import 'package:proyecto/classes/ImgCode.dart';
 
-import 'package:proyecto/interfaces/hu3.dart' as hu3;
+import 'package:proyecto/interfaces/hu4.dart' as hu4;
 
+///  DAR DE ALTA A UN ESTUDIANTE  ///
+/// HU2> Como administrador quiero poder dar de alta a un estudiante
 void main() {
   runApp(MyApp());
 }
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       home: StudentRegistrationPage(),
     );
   }
@@ -723,7 +726,7 @@ class _AlphanumericPasswordPage extends State<AlphanumericPasswordPage>{
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                  builder: (context) => hu3.StudentListPage(),
+                                  builder: (context) => hu4.StudentListPage(),
                                 ),
                               );
                               } else {
