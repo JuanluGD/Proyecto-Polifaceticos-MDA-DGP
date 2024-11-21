@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
+import 'package:proyecto/interfaces/login.dart' as loginPage;
+
+/// LOGIN ADMINISTRADOR ///
+/// HU1: Como administrador quiero poder acceder a la aplicación con mi usuario y mi contraseña
 
 void main() {
   runApp(MyApp());
@@ -9,19 +13,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login Screen',
+      title: 'Login Admin Screen',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      debugShowCheckedModeBanner: false,
+      home: LoginAdminPage(),
     );
   }
 }
 
-class LoginPage extends StatelessWidget {
+class LoginAdminPage extends StatefulWidget {
+  @override
+  _LoginAdminPageState createState() => _LoginAdminPageState();
+}
+
+class _LoginAdminPageState extends State<LoginAdminPage> {
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isObscure = true; // Controla si el texto está oculto o visible
 
   @override
   Widget build(BuildContext context) {
@@ -91,12 +102,21 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 20),
                     // Campo de contraseña
                     TextField(
-                      obscureText: true,
+                      obscureText: _isObscure,
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
                         border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.visibility),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isObscure ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            }); 
+                          },
+                        ),  
                       ),
                     ),
                     SizedBox(height: 10),
@@ -127,7 +147,7 @@ class LoginPage extends StatelessWidget {
                                   backgroundColor: Colors.red,
                                 ),
                               );
-                            } else if (await login(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
+                            } else if (await loginAdmin(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Usuario o contraseña incorrectos.'),
@@ -137,11 +157,11 @@ class LoginPage extends StatelessWidget {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('OLE.'),
+                                  content: Text('Inicio de sesión correcto.'),
                                   backgroundColor: Colors.green,
                                 ),
                               );
-                              // Navegar a la página del alumno
+                              // TOMATE Navegar a la página del administrador
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -165,8 +185,13 @@ class LoginPage extends StatelessWidget {
                       child: SizedBox(
                         width: 350,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // Acción de regresar
+                          onPressed: () async {
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => loginPage.StudentListPage(),
+                                ),
+                              );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepOrange[400],
@@ -192,4 +217,6 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+  
+ 
 }

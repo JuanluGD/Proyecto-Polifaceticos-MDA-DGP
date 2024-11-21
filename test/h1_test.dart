@@ -1,14 +1,14 @@
 import 'package:proyecto/bd_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proyecto/hu1.dart';
+import 'package:proyecto/interfaces/hu1.dart';
 
 void main() {
   group('Pruebas sobre Widgets', () {
     //test 1
     testWidgets('Comprobar que la contraseña sale censurada', (WidgetTester tester) async {
       // Monta la página de inicio de sesión
-      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      await tester.pumpWidget(MaterialApp(home: LoginAdminPage()));
 
       // Encuentra el campo de contraseña por su etiqueta
       final passwordField = find.widgetWithText(TextField, 'Contraseña');

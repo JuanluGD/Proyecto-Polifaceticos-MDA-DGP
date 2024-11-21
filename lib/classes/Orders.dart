@@ -1,13 +1,13 @@
 class Orders{
   String date;
-  int cuantity;
+  int quantity;
   String menuName;
   String classroomName;
 
   // Constructor de la clase Orders.
   Orders({
     required this.date,
-    required this.cuantity,
+    required this.quantity,
     required this.menuName,
     required this.classroomName,
   });
@@ -16,7 +16,7 @@ class Orders{
   Map<String, dynamic> toMap() {
     return {
       'date' : date,
-      'cuantity' : cuantity,
+      'quantity' : quantity,
       'menuName' : menuName,
       'classroomName' : classroomName,
     };
@@ -25,7 +25,7 @@ class Orders{
   // Método para convertir un map en un objeto de tipo Orders.
   Orders.fromMap(Map<String, dynamic> map)
     : date = map['date'],
-      cuantity = map['cuantity'],
+      quantity = map['quantity'],
       menuName = map['menuName'],
       classroomName = map['classroomName'];
 }

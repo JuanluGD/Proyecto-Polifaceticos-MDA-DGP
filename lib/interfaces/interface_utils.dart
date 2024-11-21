@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto/classes/Student.dart';
 import 'dart:io';
 
-import 'ImgCode.dart';
-import 'image_utils.dart';
+import '../classes/ImgCode.dart';
+import '../image_utils.dart';
 
 // FUNCIONES PARA CREAR
 
@@ -42,6 +43,7 @@ Widget buildPasswdTextField(String labelText, TextEditingController controller) 
     ),
   );
 }
+
 
 // Crear botón con estilos
 Widget buildElevatedButton(String text, TextStyle textStyle, ButtonStyle buttonStyle, VoidCallback onPressed) {
@@ -254,6 +256,32 @@ Widget buildSizedRadio (String text, double size, String element, String group, 
     ],
   );
 }
+
+Widget AvatarTopCorner(Student student) {
+  return Align(
+    alignment: Alignment.topRight,
+    child: Column(
+      children: [
+        Container(
+        margin: EdgeInsets.only(top: 20, right: 20),
+        child: CircleAvatar(
+          radius: 30,
+          backgroundImage: AssetImage(student.image),
+        ),
+      ),
+        SizedBox(height: 8),
+        Text(
+          student.name,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
 // ESTILOS
 
