@@ -1,7 +1,7 @@
 import 'package:proyecto/bd_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proyecto/hu1.dart';
+import 'package:proyecto/interfaces/hu1.dart';
 
 void main() {
   group('Pruebas sobre Widgets', () {

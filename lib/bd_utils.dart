@@ -1,9 +1,9 @@
-import 'package:proyecto/Classroom.dart';
-import 'package:proyecto/Menu.dart';
-import 'package:proyecto/Orders.dart';
-import 'package:proyecto/Student.dart';
+import 'package:proyecto/classes/Classroom.dart';
+import 'package:proyecto/classes/Menu.dart';
+import 'package:proyecto/classes/Orders.dart';
+import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/bd.dart';
-import 'ImgCode.dart';
+import 'classes/ImgCode.dart';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  LOGIN Y REGISTRO DE USUARIOS ///
@@ -82,6 +82,17 @@ Future<bool> registerStudent(String user, name, String surname, String password,
 
 	return await ColegioDatabase.instance.registerStudent(student);
 
+}
+
+/*
+  Función
+  @Nombre --> deleteStudent
+  @Funcion --> Permite eliminar un alumno de la base de datos
+  @Argumentos
+    - user: usuario del alumno que será eliminado
+*/
+Future<bool> deleteStudent(String user) async {
+  return await ColegioDatabase.instance.deleteStudent(user);
 }
 
 /*

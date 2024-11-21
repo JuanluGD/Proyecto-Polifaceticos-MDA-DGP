@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
-import 'interface_utils.dart';
-import 'image_utils.dart';
-import 'bd_utils.dart';
-import 'image_management.dart';
+import 'package:proyecto/interfaces/interface_utils.dart';
+import 'package:proyecto/image_utils.dart';
+import 'package:proyecto/bd_utils.dart';
 
-import 'ImgCode.dart';
-import 'Student.dart';
+import 'package:proyecto/classes/ImgCode.dart';
+import 'package:proyecto/classes/Student.dart';
+
+import 'package:proyecto/interfaces/hu2.dart' as hu2;
 
 void main() {
   runApp(MyApp());
@@ -45,6 +46,13 @@ class _StudentListPageState extends State<StudentListPage> {
       setState(() {});
     }
   }
+  Future<void> deleteStudentInterface(String user) async {
+    Student? student = await getStudent(user);
+    if (student != null) {
+      await deleteImage(student.image);
+      await deleteStudent(user);
+    }
+  }
 
   @override
   void initState() {
@@ -67,6 +75,26 @@ class _StudentListPageState extends State<StudentListPage> {
                 style: titleTextStyle,
               ),
               SizedBox(height: 15),
+              Expanded( 
+                child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => hu2.StudentRegistrationPage(), // Navegar a la página de registro
+                    ),
+                  );
+                },
+                child: Card(
+                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  child: ListTile(
+                    title: Center(
+                      child: Icon(Icons.add, size: 30, color: Colors.black26), 
+                    ),
+                  ),
+                ),
+                )
+              ),
               // Lista de estudiantes en un Expanded para que sea scrollable
               Expanded(
                 child: ListView.builder(
@@ -113,6 +141,19 @@ class _StudentListPageState extends State<StudentListPage> {
                                     ),
                                   );
                                   setState(() {});
+                                },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              color: Colors.blue,
+                              onPressed:
+                                // Navegar a la página de modificación del estudiante
+                                () async {
+                                  await deleteStudentInterface(student.user);
+                              
+                                  setState((){
+                                    students.removeAt(index);
+                                  });
                                 },
                             ),
                           ],

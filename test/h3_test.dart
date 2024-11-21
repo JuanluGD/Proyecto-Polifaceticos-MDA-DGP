@@ -1,7 +1,7 @@
 import 'package:proyecto/bd_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proyecto/hu2.dart';
+import 'package:proyecto/interfaces/hu2.dart';
 import 'package:path/path.dart';
 import 'package:proyecto/bd.dart';
 import 'package:sqflite/sqflite.dart';

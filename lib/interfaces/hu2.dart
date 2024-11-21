@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
-import 'interface_utils.dart';
-import 'image_utils.dart';
-import 'bd_utils.dart';
-import 'image_management.dart';
+import 'package:proyecto/interfaces/interface_utils.dart';
+import 'package:proyecto/image_utils.dart';
+import 'package:proyecto/bd_utils.dart';
 
-import 'ImgCode.dart';
+import 'package:proyecto/classes/ImgCode.dart';
+
+import 'package:proyecto/interfaces/hu3.dart' as hu3;
 
 void main() {
   runApp(MyApp());
@@ -38,7 +39,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
   bool interfaceTXT = false;
   bool interfaceAV = false;
 
-  String passwordType = "alphanumeric"; // Valor inicial para la selección de contraseña
+  String typePassword = "alphanumeric"; // Valor inicial para la selección de contraseña
 
   // Para almacenar la imagen que se suba
   File? image;
@@ -138,19 +139,19 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                           'Selecciona el tipo de contraseña del estudiante',
                           style: hintTextStyle,
                         ),
-                        buildRadio('Pictogramas', 'pictograms', passwordType, 'alphanumeric', (String value) {
+                        buildRadio('Pictogramas', 'pictograms', typePassword, 'alphanumeric', (String value) {
                           setState(() {
-                            passwordType = value;
+                            typePassword = value;
                           });
                         }),
-                        buildRadio('Imágenes', 'images', passwordType, 'alphanumeric', (String value) {
+                        buildRadio('Imágenes', 'images', typePassword, 'alphanumeric', (String value) {
                           setState(() {
-                            passwordType = value;
+                            typePassword = value;
                           });
                         }),
-                        buildRadio('Alfanumérica', 'alphanumeric', passwordType, 'alphanumeric', (String value) {
+                        buildRadio('Alfanumérica', 'alphanumeric', typePassword, 'alphanumeric', (String value) {
                           setState(() {
-                            passwordType = value;
+                            typePassword = value;
                           });
                         }),
                       ],
@@ -199,7 +200,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                 );
                               } else {
                                 if (image != null) {
-                                  if (passwordType == 'pictograms' || passwordType == 'images') {
+                                  if (typePassword == 'pictograms' || typePassword == 'images') {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -212,11 +213,11 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                           interfaceTXT: interfaceTXT,
                                           interfaceAV: interfaceAV,
                                           perfilImage: image!,
-                                          passwordType: passwordType,
+                                          typePassword: typePassword,
                                         ),
                                       ),
                                     );
-                                  } else if (passwordType == 'alphanumeric') {
+                                  } else if (typePassword == 'alphanumeric') {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (context) => AlphanumericPasswordPage(
@@ -278,7 +279,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 
 // Página para la contraseña con pictogramas o imágenes
 class ImgCodePasswordPage extends StatefulWidget {
-  final String userStudent, nameStudent, surnameStudent, passwordType;
+  final String userStudent, nameStudent, surnameStudent, typePassword;
   final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
   final File? perfilImage;
 
@@ -291,7 +292,7 @@ class ImgCodePasswordPage extends StatefulWidget {
     required this.interfaceTXT,
     required this.interfaceAV,
     required this.perfilImage,
-    required this.passwordType,
+    required this.typePassword,
   });
 
   @override
@@ -307,11 +308,11 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
   @override
   Widget build(BuildContext context) {
     String hintUpload = '', pluralWord = '';
-    if (widget.passwordType == 'pictograms') {
+    if (widget.typePassword == 'pictograms') {
       hintUpload = 'Sube un pictograma';
       pluralWord = 'pictogramas';
     }
-    else if (widget.passwordType == 'images') {
+    else if (widget.typePassword == 'images') {
       hintUpload = 'Sube una imagen';
       pluralWord = 'imágenes';
     }
@@ -344,8 +345,8 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                             String fileName = pickedFile.uri.pathSegments.last;
                             String folder = '';
 
-                            if (widget.passwordType == 'pictograms') folder = 'picto_claves';
-                            else if (widget.passwordType == 'images') folder = 'imgs_claves';
+                            if (widget.typePassword == 'pictograms') folder = 'picto_claves';
+                            else if (widget.typePassword == 'images') folder = 'imgs_claves';
 
                             String newName = '';
 
@@ -390,7 +391,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                                     selectedElements = newElements;
                                   });
                                 },
-                                passwordType: widget.passwordType,
+                                typePassword: widget.typePassword,
                               ),
                             ),
                           );
@@ -437,7 +438,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                           // Meter al estudiante en la BD
                           if (await registerStudent(
                             widget.userStudent, widget.nameStudent, widget.surnameStudent, password, 'assets/perfiles/${widget.userStudent}$extension', 
-                            widget.passwordType, widget.interfaceIMG ? 1:0, widget.interfacePIC ? 1:0, widget.interfaceTXT ? 1:0
+                            widget.typePassword, widget.interfaceIMG ? 1:0, widget.interfacePIC ? 1:0, widget.interfaceTXT ? 1:0
                           )) 
                           {
                               // Guardar la imagen de perfil en la carpeta
@@ -452,6 +453,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                                   backgroundColor: Colors.green,
                                 ),
                               );
+                              
                               setState(() {});
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -493,11 +495,11 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
 // Página para seleccionar pictogramas o imágenes que formarán parte de las posibilidades de contraseña del estudiante
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
-  final String passwordType;
+  final String typePassword;
 
   ImgCodeSelectionPage({
     required this.updateSelectedElements,
-    required this.passwordType,
+    required this.typePassword,
   });
 
   @override
@@ -516,10 +518,10 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
   Future<void> loadGallery() async {
     if (elements.isEmpty) {
       setState(() {});
-      if (widget.passwordType == "pictograms") {
+      if (widget.typePassword == "pictograms") {
         elements.addAll(await getImgCodeFromFolder('assets/picto_claves'));
         gallery = 'Pictogramas';
-      } else if (widget.passwordType == "images") {
+      } else if (widget.typePassword == "images") {
         elements.addAll(await getImgCodeFromFolder('assets/imgs_claves'));
         gallery = 'Imágenes';
       }
@@ -581,15 +583,49 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
 }
 
 // Página para la contraseña alfanumérica
-class AlphanumericPasswordPage extends StatelessWidget {
+class AlphanumericPasswordPage extends StatefulWidget {
   final String userStudent, nameStudent, surnameStudent;
   final bool interfacePIC , interfaceIMG, interfaceTXT, interfaceAV;
   final File? perfilImage;
 
+  bool is_obscure = true;
+
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController samePasswordController = TextEditingController();
+  AlphanumericPasswordPage({
+    required this.userStudent,
+    required this.nameStudent,
+    required this.surnameStudent,
+    required this.interfacePIC,
+    required this.interfaceIMG,
+    required this.interfaceTXT,
+    required this.interfaceAV,
+    required this.perfilImage,
+  });
+  @override
+  _AlphanumericPasswordPage createState() => _AlphanumericPasswordPage(
+    userStudent: userStudent,
+    nameStudent: nameStudent,
+    surnameStudent: surnameStudent,
+    interfacePIC: interfacePIC,
+    interfaceIMG: interfaceIMG,
+    interfaceTXT: interfaceTXT,
+    interfaceAV: interfaceAV,
+    perfilImage: perfilImage,
+  );
+}
+
+class _AlphanumericPasswordPage extends State<AlphanumericPasswordPage>{
+  final String userStudent, nameStudent, surnameStudent;
+  final bool interfacePIC , interfaceIMG, interfaceTXT, interfaceAV;
+  final File? perfilImage;
+
+  bool is_obscure = true;
+
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController samePasswordController = TextEditingController();
 
-  AlphanumericPasswordPage({
+  _AlphanumericPasswordPage({
     required this.userStudent,
     required this.nameStudent,
     required this.surnameStudent,
@@ -619,9 +655,41 @@ class AlphanumericPasswordPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Spacer(),
-              buildPasswdTextField('Contraseña*', passwordController),
+              TextField(
+                controller: passwordController,
+                obscureText: is_obscure,
+                decoration: InputDecoration(
+                  labelText: "Introduce la contraseña*",
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                  icon: Icon(
+                    is_obscure ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      is_obscure = !is_obscure;
+                    }); 
+                  },),  
+                ),
+              ),
               SizedBox(height: 10),
-              buildPasswdTextField('Repetir contraseña*', samePasswordController),
+              TextField(
+                controller: samePasswordController,
+                obscureText: is_obscure,
+                decoration: InputDecoration(
+                  labelText: "Repita la contraseña*",
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                  icon: Icon(
+                    is_obscure ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      is_obscure = !is_obscure;
+                    }); 
+                  },),  
+                ),
+              ),
               Spacer(),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -651,6 +719,13 @@ class AlphanumericPasswordPage extends StatelessWidget {
                                     backgroundColor: Colors.green,
                                   ),
                                 );
+                        
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                  builder: (context) => hu3.StudentListPage(),
+                                ),
+                              );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

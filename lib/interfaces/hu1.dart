@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
-
+import 'package:proyecto/interfaces/login.dart' as loginPage;
 void main() {
   runApp(MyApp());
 }
@@ -18,10 +18,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isObscure = true; // Controla si el texto está oculto o visible
 
   @override
   Widget build(BuildContext context) {
@@ -91,12 +97,20 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 20),
                     // Campo de contraseña
                     TextField(
-                      obscureText: true,
+                      obscureText: _isObscure,
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
                         border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.visibility),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isObscure ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            }); 
+                          },),  
                       ),
                     ),
                     SizedBox(height: 10),
@@ -165,8 +179,13 @@ class LoginPage extends StatelessWidget {
                       child: SizedBox(
                         width: 350,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // Acción de regresar
+                          onPressed: () async {
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => loginPage.StudentListPage(),
+                                ),
+                              );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepOrange[400],
@@ -192,4 +211,6 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+  
+ 
 }

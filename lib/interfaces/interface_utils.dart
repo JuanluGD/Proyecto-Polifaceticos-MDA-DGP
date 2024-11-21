@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-import 'ImgCode.dart';
-import 'image_utils.dart';
+import '../classes/ImgCode.dart';
+import '../image_utils.dart';
 
 // FUNCIONES PARA CREAR
 
@@ -42,6 +42,7 @@ Widget buildPasswdTextField(String labelText, TextEditingController controller) 
     ),
   );
 }
+
 
 // Crear botón con estilos
 Widget buildElevatedButton(String text, TextStyle textStyle, ButtonStyle buttonStyle, VoidCallback onPressed) {

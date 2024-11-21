@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:proyecto/Classroom.dart';
-import 'package:proyecto/Menu.dart';
-import 'package:proyecto/Orders.dart';
-import 'package:proyecto/Student.dart';
-import 'package:proyecto/ImgCode.dart';
-import 'package:proyecto/Decrypt.dart';
+import 'package:proyecto/classes/Classroom.dart';
+import 'package:proyecto/classes/Menu.dart';
+import 'package:proyecto/classes/Orders.dart';
+import 'package:proyecto/classes/Student.dart';
+import 'package:proyecto/classes/ImgCode.dart';
+import 'package:proyecto/classes/Decrypt.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -319,6 +319,28 @@ class ColegioDatabase{
 			return false;
 		}
 	}
+
+  /*
+    Método
+    @Nombre --> deleteStudent
+    @Funcion --> Elimina un alumno de la base de datos
+    @Argumentos
+      - user: usuario del alumno que será eliminado
+  */
+  Future<bool> deleteStudent(String user) async {
+    final db = await instance.database;
+    try {
+      int count = await db.delete(
+        tablaStudents, 
+        where: 'user = ?', 
+        whereArgs:[user]
+      );
+      return count > 0;
+    } catch (e) {
+      print("Error al eliminar el estudiante: $e");
+      return false;
+    }
+  }
 
     /*
     Método
