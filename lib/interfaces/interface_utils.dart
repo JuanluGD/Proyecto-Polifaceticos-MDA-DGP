@@ -282,23 +282,6 @@ Widget AvatarTopCorner(Student student) {
   );
 }
 
-Widget BackButton(BuildContext context) {
-  return Align(
-    alignment: Alignment.topLeft,
-    child: GestureDetector(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Container(
-        margin: EdgeInsets.only(top: 20, left: 20),
-        child: Icon(
-          Icons.arrow_back,
-          color: Colors.white,
-        ),
-      ),
-    ),
-  );
-}
 
 // ESTILOS
 

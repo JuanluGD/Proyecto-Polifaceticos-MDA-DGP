@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      debugShowCheckedModeBanner: false,
+      
       home: StudentRegistrationPage(),
     );
   }
@@ -262,9 +262,14 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                   Center(
                     child: SizedBox(
                       width: 200,
-                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
                           setState(() {});
-                          Navigator.pop(context);
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                              builder: (context) => hu4.StudentListPage(),
+                            ),
+                          );
                           setState(() {});
                         }
                       ),
@@ -456,7 +461,12 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                                   backgroundColor: Colors.green,
                                 ),
                               );
-                              
+                              await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                  builder: (context) => hu4.StudentListPage(),
+                                ),
+                              );
                               setState(() {});
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

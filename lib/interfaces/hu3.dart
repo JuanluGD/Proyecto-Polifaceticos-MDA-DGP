@@ -243,7 +243,9 @@ class _LoginImagePageState extends State<LoginImagePage> {
                           return GestureDetector(
                             onTap: () {
                               print("por implementar jaja"); // TOMATE
-                              passwordController.text += imagenes[index].code;
+                              print(imagenes[index].code);
+                              passwordController.text += imagenes[index].code + ' ';
+                              print(passwordController.text);
                               // habria que hacer q el seleccionado se resalte
                             },
                             child: Container(
@@ -331,6 +333,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                 ),
             ),
             ),
+            AvatarTopCorner(student)
           ],
         ),
     );
