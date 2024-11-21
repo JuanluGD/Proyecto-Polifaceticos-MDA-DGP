@@ -147,6 +147,57 @@ class ColegioDatabase{
 			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name)
 			)
 		''');
+
+    /// INSERTAR DATOS DE PRUEBA ///
+    await db.execute('''
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('alissea', 'Alicia', '', 'assets/perfiles/alissea.png', 'rosa.png_picto azul.png_picto ', 'pictograms', 0, 1, 0, 0);
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('alex123', 'Alex', '', 'assets/perfiles/alex123.png', '1234', 'alphanumeric', 0, 0, 1, 0);
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('juancito', 'Juan', '', 'assets/perfiles/juancito.png', 'azul.png_img', 'images', 1, 0, 0, 0);
+   ''');
+
+    await db.execute('''
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/picto_claves/amarillo.jpg', 'amarillo.jpg_picto');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/picto_claves/azul.png', 'azul.png_picto');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/picto_claves/morado.jpg', 'morado.jpg_picto');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/picto_claves/naranja.png', 'naranja.png_picto');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/picto_claves/rojo.jpg', 'rojo.jpg_picto');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/picto_claves/rosa.png', 'rosa.png_picto');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/imgs_claves/amarillo.jpg', 'amarillo.jpg_img');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/imgs_claves/azul.png', 'azul.png_img');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/imgs_claves/morado.jpg', 'morado.jpg_img');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/imgs_claves/naranja.png', 'naranja.png_img');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/imgs_claves/rojo.jpg', 'rojo.jpg_img');
+      INSERT INTO $tablaImgCode (path, code) VALUES ('assets/imgs_claves/rosa.png', 'rosa.png_img');
+    ''');
+
+    await db.execute('''
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/rojo.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/naranja.png');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/amarillo.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/azul.png');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/morado.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/rosa.png');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/rojo.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/naranja.png');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/amarillo.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/azul.png');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/morado.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/rosa.png');
+    '''); 
+
+    /// INSERTAR MENUS ///
+    await db.execute('''
+      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Vegetariano', 'assets/picto_menu/vegetariano.png', 'assets/img_menu/vegetariano.jpg');
+      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Carne', 'assets/picto_menu/carne.png', 'assets/img_menu/carne.jpg');
+      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Sin gluten', 'assets/picto_menu/sin_gluten.png', 'assets/img_menu/sin_gluten.png');
+    ''');
+
+    /// INSERTAR CLASES ///
+    await db.execute('''
+      INSERT INTO $tablaClassroom (name) VALUES ('Clase A');
+      INSERT INTO $tablaClassroom (name) VALUES ('Clase B');
+      INSERT INTO $tablaClassroom (name) VALUES ('Clase C');
+    ''');
 	}
 
 

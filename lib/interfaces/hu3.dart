@@ -242,11 +242,10 @@ class _LoginImagePageState extends State<LoginImagePage> {
                         itemBuilder: (context, index){
                           return GestureDetector(
                             onTap: () {
-                              print("por implementar jaja"); // TOMATE
-                              print(imagenes[index].code);
                               passwordController.text += imagenes[index].code + ' ';
-                              print(passwordController.text);
                               // habria que hacer q el seleccionado se resalte
+                              // que solo se pueda seleccionar una vez y si se le da otra
+                              // se deselecciona
                             },
                             child: Container(
                               decoration: BoxDecoration(
