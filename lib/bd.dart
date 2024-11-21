@@ -177,12 +177,12 @@ class ColegioDatabase{
       INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/azul.png');
       INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/morado.jpg');
       INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/rosa.png');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/rojo.jpg');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/naranja.png');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/amarillo.jpg');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/azul.png');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/morado.jpg');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_clave/rosa.png');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/rojo.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/naranja.png');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/amarillo.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/azul.png');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/morado.jpg');
+      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/rosa.png');
     '''); 
 
     /// INSERTAR MENUS ///
@@ -194,9 +194,9 @@ class ColegioDatabase{
 
     /// INSERTAR CLASES ///
     await db.execute('''
-      INSERT INTO $tablaClassroom (name) VALUES ('Clase A');
-      INSERT INTO $tablaClassroom (name) VALUES ('Clase B');
-      INSERT INTO $tablaClassroom (name) VALUES ('Clase C');
+      INSERT INTO $tablaClassroom (name) VALUES ('A');
+      INSERT INTO $tablaClassroom (name) VALUES ('B');
+      INSERT INTO $tablaClassroom (name) VALUES ('C');
     ''');
 	}
 

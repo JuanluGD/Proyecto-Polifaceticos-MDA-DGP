@@ -8,35 +8,28 @@ import 'package:proyecto/interfaces/login.dart' as loginPage;
 /// HU3: Como estudiante quiero poder acceder a la aplicación de forma personalizada.
 
 class LoginAlphanumericPage extends StatefulWidget {
-  final String user;
+  final Student student;
 
-  LoginAlphanumericPage({required this.user});
+  LoginAlphanumericPage({required this.student});
   @override
-  _LoginAlphanumericPageState createState() => _LoginAlphanumericPageState(user: user);
+  _LoginAlphanumericPageState createState() => _LoginAlphanumericPageState(student: student);
 }
 
 class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
-  final String user;
-  late final Student student;
+  final Student student;
   _LoginAlphanumericPageState({
-    required this.user
+    required this.student
     });
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isObscure = true; // Controla si el texto está oculto o visible
 
-  Future<void> loadStudent() async {
-    setState(() {});
-    student = (await getStudent(user))!;
-    userController.text = student.user;
-    setState(() {});
-  }
 
   @override
   void initState() {
     super.initState();
-    loadStudent();
+    userController.text = student.user;
   }
   @override
   Widget build(BuildContext context) {
@@ -173,35 +166,33 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
 }
 
 class LoginImagePage extends StatefulWidget {
-  final String user;
+  final Student student;
 
-  LoginImagePage({required this.user});
+  LoginImagePage({required this.student});
   @override
-  _LoginImagePageState createState() => _LoginImagePageState(user: user);
+  _LoginImagePageState createState() => _LoginImagePageState(student: student);
 }
 
 class _LoginImagePageState extends State<LoginImagePage> {
-  final String user;
-  late final Student student;
+  final Student student;
   late final List<ImgCode> imagenes;
 
   _LoginImagePageState({
-    required this.user
+    required this.student
     });
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController passwordController = TextEditingController();// Controla si el texto está oculto o visible
 
-  Future<void> loadStudent() async {
+  Future<void> loadImages() async {
     setState(() {});
-    student = (await getStudent(user))!;
-    imagenes = await getStudentMenuPassword(user);
+    imagenes = await getStudentMenuPassword(student.user);
     setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    loadStudent();
+    loadImages();
   }
 
   @override
@@ -274,7 +265,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                               backgroundColor: Colors.red,
                             ),
                           );
-                        } else if (await loginStudent(user, passwordController.text) == false) { // Si del check de la BD se recupera false
+                        } else if (await loginStudent(student.user, passwordController.text) == false) { // Si del check de la BD se recupera false
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Usuario o contraseña incorrectos.'),

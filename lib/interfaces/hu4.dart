@@ -10,6 +10,7 @@ import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
 
 import 'package:proyecto/interfaces/hu2.dart' as hu2;
+import 'adminInterface.dart' as adminInterface;
 
 /// MODIFICAR ESTUDIANTE Y TIPO DE INTERFAZ ///
 /// HU4: Como administrador quiero poder elegir qué tipo de interfaz se le va a mostrar a cada estudiante.
@@ -165,6 +166,21 @@ class _StudentListPageState extends State<StudentListPage> {
                       ),
                     );
                   },
+                ),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: SizedBox(
+                  width: 400,
+                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => adminInterface.adminInterface(),
+                        ),
+                      );
+                    }
+                  ),
                 ),
               ),
             ],

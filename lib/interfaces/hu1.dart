@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/interfaces/login.dart' as loginPage;
+import 'package:proyecto/interfaces/adminInterface.dart' as adminInterface;
 
 /// LOGIN ADMINISTRADOR ///
 /// HU1: Como administrador quiero poder acceder a la aplicación con mi usuario y mi contraseña
@@ -161,7 +162,12 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                                   backgroundColor: Colors.green,
                                 ),
                               );
-                              // TOMATE Navegar a la página del administrador
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => adminInterface.adminInterface(),
+                                ),
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(

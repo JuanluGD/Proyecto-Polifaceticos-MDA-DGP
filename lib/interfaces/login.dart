@@ -89,14 +89,14 @@ class _StudentListPageState extends State<StudentListPage>  {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => hu3.LoginAlphanumericPage(user: student.user),
+                                  builder: (context) => hu3.LoginAlphanumericPage(student : student),
                                 ),
                               );
                             } else {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => hu3.LoginImagePage(user: student.user),
+                                  builder: (context) => hu3.LoginImagePage(student : student),
                                 ),
                               );
                             }

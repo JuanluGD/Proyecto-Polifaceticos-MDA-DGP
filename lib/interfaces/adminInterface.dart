@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
+import 'hu4.dart' as hu4;
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
+class adminInterface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,13 +13,14 @@ class MyApp extends StatelessWidget {
             740,
             650,
             EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+            context
           ),
         ),
       ),
     );
   }
 
-  Widget buildMainContainer(double width, double height, EdgeInsets padding) {
+  Widget buildMainContainer(double width, double height, EdgeInsets padding, BuildContext context) {
     return Container(
       width: width,
       height: height,
@@ -38,13 +36,20 @@ class MyApp extends StatelessWidget {
             _buildOption(
               icon: Icons.group,
               label: 'Listado de alumnos',
-              onTap: () => print('Listado de alumnos seleccionado'),
+              onTap: ()  async{
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => hu4.StudentListPage()),
+                );
+              },
             ),
             SizedBox(width: 40),
             _buildOption(
               icon: Icons.checklist,
               label: 'Tareas',
-              onTap: () => print('Tareas seleccionado'),
+              onTap: (){
+                print('Tareas seleccionado');
+              } ,
             ),
             SizedBox(width: 40),
             _buildOption(
