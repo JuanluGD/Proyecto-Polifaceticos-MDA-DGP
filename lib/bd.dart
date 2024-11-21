@@ -187,9 +187,9 @@ class ColegioDatabase{
 
     /// INSERTAR MENUS ///
     await db.execute('''
-      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Vegetariano', 'assets/picto_menu/vegetariano.png', 'assets/img_menu/vegetariano.jpg');
-      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Carne', 'assets/picto_menu/carne.png', 'assets/img_menu/carne.jpg');
-      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Sin gluten', 'assets/picto_menu/sin_gluten.png', 'assets/img_menu/sin_gluten.png');
+      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Vegetariano', 'assets/picto_menu/vegetariano.png', 'assets/imgs_menu/vegetariano.jpg');
+      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Carne', 'assets/picto_menu/carne.png', 'assets/imgs_menu/carne.jpg');
+      INSERT INTO $tablaMenu (name, pictogram, image) VALUES ('Sin gluten', 'assets/picto_menu/sin_gluten.png', 'assets/imgs_menu/sin_gluten.png');
     ''');
 
     /// INSERTAR CLASES ///

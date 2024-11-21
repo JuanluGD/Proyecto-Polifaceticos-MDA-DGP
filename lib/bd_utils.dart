@@ -432,7 +432,7 @@ Future<Classroom?> getClassroom(String name) async {
 Future<bool> insertOrders(int quantity, String menuName, String classroomName) async {
   DateTime now = DateTime.now();
   String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
-  Orders order = Orders(date: date, cuantity: quantity, menuName: menuName, classroomName: classroomName);
+  Orders order = Orders(date: date, quantity: quantity, menuName: menuName, classroomName: classroomName);
   return await ColegioDatabase.instance.insertOrders(order);
 }
 
