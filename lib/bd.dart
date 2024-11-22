@@ -150,7 +150,6 @@ class ColegioDatabase{
 			)
 		''');
 
-
     /// INSERTAR DATOS DE PRUEBA ///
     await db.execute('''
       INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('alissea', 'Alicia', '', 'assets/perfiles/alissea.png', 'rosa.png_picto azul.png_picto ', 'pictograms', 0, 1, 0, 0);
@@ -197,10 +196,10 @@ class ColegioDatabase{
 
     /// INSERTAR CLASES ///
     await db.execute('''
+      INSERT INTO $tablaClassroom (name, image) VALUES ('A', 'assets/imgs_aulas/a.png');
+      INSERT INTO $tablaClassroom (name, image) VALUES ('B', 'assets/imgs_aulas/b.png');
+      INSERT INTO $tablaClassroom (name, image) VALUES ('C', 'assets/imgs_aulas/c.png');
 
-      INSERT INTO $tablaClassroom (name, image) VALUES ('A', 'assets/imgs_clases/a.png');
-      INSERT INTO $tablaClassroom (name, image) VALUES ('B', 'assets/imgs_clases/b.png');
-      INSERT INTO $tablaClassroom (name, image) VALUES ('C', 'assets/imgs_clases/c.png');
     ''');
 
 	}
@@ -980,6 +979,16 @@ class ColegioDatabase{
       print("Error al obtener la orden: $e");
       return null;
     }
+  }
+
+  Future<bool> classCompleted(Classroom classroom, String date) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaOrders,
+      where: 'classroomName = ? AND date = ?',
+      whereArgs: [classroom.name, date],
+    );
+    return result.isNotEmpty;
   }
 
 

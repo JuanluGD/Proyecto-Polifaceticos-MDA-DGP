@@ -512,6 +512,12 @@ Future<Orders?> getOrder(String date, String classroomName, String menuName) asy
   return await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
 }
 
+Future<void> classCompleted(Classroom classroom) async{
+  DateTime now = DateTime.now();
+  String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+  classroom.task_completed = await ColegioDatabase.instance.classCompleted(classroom, date);
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
