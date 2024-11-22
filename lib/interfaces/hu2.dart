@@ -31,6 +31,8 @@ class MyApp extends StatelessWidget {
 }
 
 class StudentRegistrationPage extends StatefulWidget {
+  const StudentRegistrationPage({super.key});
+
   @override
   _StudentRegistrationPageState createState() =>
       _StudentRegistrationPageState();
@@ -264,12 +266,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                       width: 200,
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
                           setState(() {});
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                              builder: (context) => hu4.StudentListPage(),
-                            ),
-                          );
+                          Navigator.pop(context);
                           setState(() {});
                         }
                       ),

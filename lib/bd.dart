@@ -108,8 +108,8 @@ class ColegioDatabase{
 		await db.execute('''
 			CREATE TABLE $tablaDecrypt(
 			user VARCHAR(30),
-			path VARCHAR(25),
-			FOREIGN KEY (user) REFERENCES $tablaStudents(user),
+			path VARCHAR(25), 
+			FOREIGN KEY (user) REFERENCES $tablaStudents(user) ON DELETE CASCADE,
 			FOREIGN KEY (path) REFERENCES $tablaImgCode(path),
 			PRIMARY KEY (user, path)
 			)

@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _loadStudent() async {
-    student = (await getStudent('alissea'))!;
+    student = (await getStudent('juancito'))!;
     setState(() {});
   }
 
@@ -88,75 +88,80 @@ class _ClassSelectionState extends State<ClassSelection> {
 
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent.shade100,
-      body: Center(
-        child: buildMainContainer(
-          740,
-          625,
-          EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 15),
-              Text(
-                'Comandas',
-                style: titleTextStyle,
-              ),
-              SizedBox(height: 15),
-              // Fila de botones para cada clase
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 16.0,
-                  crossAxisSpacing: 16.0,
-                  children: [
-                    ...appState.classroom_names.map((className) {
-                      return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () async{
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CommandListPage(
-                                    className: className,
-                                    student: student,
+      body: Stack( 
+        children:[
+          Center(
+            child: buildMainContainer(
+              740,
+              625,
+              EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 15),
+                  Text(
+                    'Comandas',
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 15),
+                  // Fila de botones para cada clase
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 16.0,
+                      crossAxisSpacing: 16.0,
+                      children: [
+                        ...appState.classroom_names.map((className) {
+                          return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onTap: () async{
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CommandListPage(
+                                        className: className,
+                                        student: student,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(16.0),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromRGBO(0, 160, 223, 1),
+                                    borderRadius: BorderRadius.circular(
+                                        8.0), // Bordes redondeados si se desea
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4.0,
+                                        offset: Offset(2, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'Clase ${className}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: const Color.fromRGBO(0, 160, 223, 1),
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // Bordes redondeados si se desea
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 4.0,
-                                    offset: Offset(2, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Clase ${className}',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ));
-                    }).toList(),
-                  ],
-                ),
+                              ));
+                        }).toList(),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          avatarTopCorner(student),
+        ],
       ),
     );
   }
@@ -215,9 +220,6 @@ class _CommandListPageState extends State<CommandListPage> {
         images.add(m.image);
       }
     }
-
-
-    
     setState(() {});
   }
 
@@ -406,13 +408,8 @@ class _CommandListPageState extends State<CommandListPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ElevatedButton(
-                          onPressed: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ClassSelection(student: student),
-                              ),
-                            );
+                          onPressed: () {
+                            Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(255, 255, 168, 37),
@@ -469,7 +466,7 @@ class _CommandListPageState extends State<CommandListPage> {
               ),
             ),
           ),
-          AvatarTopCorner(student)
+          avatarTopCorner(student)
         ],
       ),
     );
