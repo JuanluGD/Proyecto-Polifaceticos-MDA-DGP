@@ -14,6 +14,8 @@ for branch in $branches; do
     git merge origin/main || {
         echo "Conflictos encontrados en $branch. Resuélvelos manualmente."
     }
+
+    git push
 done
 
 # Volver a la rama main
