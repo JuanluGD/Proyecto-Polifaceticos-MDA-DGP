@@ -1,12 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
+import 'package:proyecto/interfaces/hu6.dart';
 import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/interfaces/login.dart' as loginPage;
 ///  LOGINS ESTUDIANTES  ///
 /// HU3: Como estudiante quiero poder acceder a la aplicación de forma personalizada.
+void main() {
+  runApp(MyApp());
+}
 
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Student student;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStudent();
+  }
+
+  Future<void> _loadStudent() async {
+    student = (await getStudent('alissea'))!;
+    setState(() {});
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    if (student == null) {
+      return CircularProgressIndicator();
+    }
+
+    return ChangeNotifierProvider(
+      create: (context) => MyAppState(),
+      child: MaterialApp(
+        title: 'Comandas',
+        // theme: ThemeData(
+        //   // useMaterial3: true,
+        //   // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        // ),
+        home: ClassSelection(student: student),
+      ),
+    );
+  }
+}
 class LoginAlphanumericPage extends StatefulWidget {
   final Student student;
 
@@ -131,14 +176,8 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
                   ),
                   SizedBox(height: 10),
                   ElevatedButton(
-                    
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => loginPage.StudentListPage(),
-                        ),
-                      );
+                    onPressed: () {
+                      Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepOrange[400],
@@ -158,7 +197,7 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
               ),
             ),
           ),
-          AvatarTopCorner(student)
+          avatarTopCorner(student)
         ],
       ),
     );
@@ -296,13 +335,8 @@ class _LoginImagePageState extends State<LoginImagePage> {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => loginPage.StudentListPage(),
-                          ),
-                        );
+                      onPressed: () {
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepOrange[400],
@@ -323,7 +357,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                 ),
             ),
             ),
-            AvatarTopCorner(student)
+            avatarTopCorner(student)
           ],
         ),
     );
