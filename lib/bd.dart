@@ -455,6 +455,25 @@ class ColegioDatabase{
 		return result.map((map) => map['image'].toString()).toList();
 	}
 
+  // TOMATE
+  Future<int?> getSpacesPasswordCount(String user) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaStudents,
+      columns: ['password'],
+      where: 'user = ?',
+      whereArgs: [user],
+    );
+
+    if (result.isNotEmpty) {
+      final String password = result.first['password'] as String;
+      return password.split(' ').length;
+    } else {
+      return null;
+    }
+  }
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////  
 ///  MÉTODOS PARA LA TABLA DE IMÁGENES  ///
 

@@ -174,7 +174,7 @@ Widget buildToggleContainer(bool selected, ImgCode element, List<ImgCode> select
                   ? buildIndexViewContainer(selectedElements, element)
                   : Icon(
                       Icons.check_circle,
-                      color: Colors.blue,
+                      color: Colors.blue
                     ),
             ),
         ],

@@ -96,7 +96,7 @@ class _StudentListPageState extends State<StudentListPage>  {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => hu3.LoginImagePage(student : student),
+                                  builder: (context) => hu3.LoginImgCodePage(student : student),
                                 ),
                               );
                             }

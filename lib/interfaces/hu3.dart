@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
+import 'package:proyecto/image_utils.dart';
 import 'package:proyecto/interfaces/hu6.dart';
 import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/interfaces/login.dart' as loginPage;
@@ -40,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginImagePage(student: student)
+      home: LoginImgCodePage(student: student)
       );
   }
 }
@@ -196,27 +197,36 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
   }
 }
 
-class LoginImagePage extends StatefulWidget {
+class LoginImgCodePage extends StatefulWidget {
   final Student student;
 
-  LoginImagePage({required this.student});
+  LoginImgCodePage({required this.student});
   @override
-  _LoginImagePageState createState() => _LoginImagePageState(student: student);
+  _LoginImgCodePageState createState() => _LoginImgCodePageState(student: student);
 }
 
-class _LoginImagePageState extends State<LoginImagePage> {
+class _LoginImgCodePageState extends State<LoginImgCodePage> {
   final Student student;
-  late final List<ImgCode> imagenes;
+  List<ImgCode> imagesSelection = [];
+  List<ImgCode> imagesPassword = [];
 
-  _LoginImagePageState({
+  _LoginImgCodePageState({
     required this.student
-    });
+  });
+
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController passwordController = TextEditingController();// Controla si el texto está oculto o visible
 
   Future<void> loadImages() async {
     setState(() {});
-    imagenes = await getStudentMenuPassword(student.user);
+    imagesSelection = await getStudentMenuPassword(student.user);
+    setState(() {});
+  }
+
+  int? imagesMax;
+
+  Future<void> loadPasswordCount() async {
+    imagesMax = await getImagePasswdCount(student.user);
     setState(() {});
   }
 
@@ -224,6 +234,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
   void initState() {
     super.initState();
     loadImages();
+    loadPasswordCount();
   }
 
   @override
@@ -254,17 +265,20 @@ class _LoginImagePageState extends State<LoginImagePage> {
                     SizedBox(height: 20),
                     //Grid de imagenes
                     Expanded(
+                      child: buildTickGrid(3, 8, imagesSelection, imagesPassword, imagesMax!, context),
+                    ),
+                    /*Expanded(
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           mainAxisSpacing: 16.0,
                           crossAxisSpacing: 16.0,
                         ),
-                        itemCount: imagenes.length,
+                        itemCount: imagesSelection.length,
                         itemBuilder: (context, index){
                           return GestureDetector(
                             onTap: () {
-                              passwordController.text += imagenes[index].code + ' ';
+                              passwordController.text += imagesSelection[index].code + ' ';
                               // habria que hacer q el seleccionado se resalte
                               // que solo se pueda seleccionar una vez y si se le da otra
                               // se deselecciona
@@ -277,7 +291,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.asset(
-                                  imagenes[index].path,
+                                  imagesSelection[index].path,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -285,7 +299,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                           );
                         }
                       ),
-                    ),
+                    ),*/
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async{
