@@ -481,6 +481,27 @@ Future<bool> modifyOrders(String menuName, String classroomName, int newQuantity
   }
   return await ColegioDatabase.instance.modifyOrders(order, newQuantity);
 }
+
+/*
+@Nombre --> getQuantity
+@Funcion --> Obtiene la cantidad asociada a una orden.
+@Argumentos
+  - date: fecha de la orden
+  - classroomName: nombre del aula
+  - menuName: nombre del menú
+*/
+Future<int> getQuantity(String date, String classroomName, String menuName) async {
+  Orders? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
+  if(order == null){
+    return 0;
+  } else {
+    return order.quantity;
+  }
+}
+
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREA MENU ///
 /*

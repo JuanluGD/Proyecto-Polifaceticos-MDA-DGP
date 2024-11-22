@@ -195,11 +195,14 @@ class _CommandListPageState extends State<CommandListPage> {
 
   // Para cargar los menús.
   Future<void> loadMenus() async {
+    
+    DateTime now = DateTime.now();
+    String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
     if (menus.isEmpty) {
       setState(() {});
       menus.addAll(await getAllMenus());
       for (var menu in menus) {
-        orders_aux.addAll({menu.name: 0});
+        orders_aux[menu.name] = await getQuantity(date, className, menu.name);
       }
     }
     if(student.interfacePIC == 1){
@@ -236,9 +239,9 @@ class _CommandListPageState extends State<CommandListPage> {
   }
 
   Future<void> createOrders(Map<String, int> orders_aux) async {
+    orders.clear();
     DateTime now = DateTime.now();
     String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
-    orders.clear();
     for (var menu in orders_aux.keys) {
       if (orders_aux[menu]! > 0) {
         orders.add(Orders(date: date, quantity: orders_aux[menu]!, menuName: menu, classroomName: className));
