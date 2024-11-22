@@ -131,6 +131,7 @@ class ColegioDatabase{
 		await db.execute('''
 			CREATE TABLE $tablaClassroom(
 			name VARCHAR(30),
+      image VARCHAR(50),
 			PRIMARY KEY (name)
 			)
 		''');
@@ -148,7 +149,12 @@ class ColegioDatabase{
 			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name)
 			)
 		''');
+<<<<<<< Updated upstream
 
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
 
     /// INSERTAR DATOS DE PRUEBA ///
     await db.execute('''
@@ -196,10 +202,18 @@ class ColegioDatabase{
 
     /// INSERTAR CLASES ///
     await db.execute('''
+<<<<<<< Updated upstream
       INSERT INTO $tablaClassroom (name) VALUES ('A');
       INSERT INTO $tablaClassroom (name) VALUES ('B');
       INSERT INTO $tablaClassroom (name) VALUES ('C');
     ''');
+=======
+      INSERT INTO $tablaClassroom (name, image) VALUES ('A', 'assets/imgs_clases/a.png');
+      INSERT INTO $tablaClassroom (name, image) VALUES ('B', 'assets/imgs_clases/b.png');
+      INSERT INTO $tablaClassroom (name, image) VALUES ('C', 'assets/imgs_clases/c.png');
+    ''');
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 	}
 
 

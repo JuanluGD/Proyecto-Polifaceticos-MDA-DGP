@@ -370,8 +370,8 @@ Future<Menu?> getMenu(String name) async {
   @Argumentos
     - name: nombre del aula
 */
-Future<bool> insertClassroom(String name) async {
-  Classroom classroom = Classroom(name: name);
+Future<bool> insertClassroom(String name, String image) async {
+  Classroom classroom = Classroom(name: name, image: image);
   return await ColegioDatabase.instance.insertClassroom(classroom);
 }
 
