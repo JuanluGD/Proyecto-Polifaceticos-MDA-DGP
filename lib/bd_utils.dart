@@ -500,6 +500,18 @@ Future<int> getQuantity(String date, String classroomName, String menuName) asyn
 }
 
 
+/*
+@Nombre --> getOrder
+@Funcion --> Obtiene una orden.
+@Argumentos
+  - date: fecha de la orden
+  - classroomName: nombre del aula de la orden.
+  - menuName: nombre del menú de la orden.
+*/
+Future<Orders?> getOrder(String date, String classroomName, String menuName) async {
+  return await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
