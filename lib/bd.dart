@@ -199,6 +199,7 @@ class ColegioDatabase{
       INSERT INTO $tablaClassroom (name, image) VALUES ('A', 'assets/imgs_aulas/a.png');
       INSERT INTO $tablaClassroom (name, image) VALUES ('B', 'assets/imgs_aulas/b.png');
       INSERT INTO $tablaClassroom (name, image) VALUES ('C', 'assets/imgs_aulas/c.png');
+
     ''');
 
 	}
