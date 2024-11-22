@@ -29,6 +29,7 @@ class ColegioDatabase{
 	final String tablaClassroom = 'classroom';
 	final String tablaOrders = 'orders';
 	final String tablaMenu = 'menu';
+  final String tablaTask = 'task';
   /*
     Metodo inherente a las bases de datos sqlite que devuelve
     la base de datos en caso de estar creada y la crea
@@ -147,6 +148,7 @@ class ColegioDatabase{
 			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name)
 			)
 		''');
+
 
     /// INSERTAR DATOS DE PRUEBA ///
     await db.execute('''

@@ -29,27 +29,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _loadStudent() async {
-    student = (await getStudent('alissea'))!;
+    student = (await getStudent('juancito'))!;
     setState(() {});
   }
   
   @override
   Widget build(BuildContext context) {
-    if (student == null) {
-      return CircularProgressIndicator();
-    }
-
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'Comandas',
-        // theme: ThemeData(
-        //   // useMaterial3: true,
-        //   // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        // ),
-        home: ClassSelection(student: student),
+    return MaterialApp(
+      title: 'Login Estudiante',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
-    );
+      home: LoginImagePage(student: student)
+      );
   }
 }
 class LoginAlphanumericPage extends StatefulWidget {
