@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:proyecto/classes/Task.dart';
 
 import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/image_utils.dart';
@@ -10,7 +11,7 @@ import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
 
 import 'package:proyecto/interfaces/hu2.dart' as hu2;
-import 'adminInterface.dart' as adminInterface;
+//import 'adminInterface.dart' as adminInterface;
 
 import 'package:proyecto/interfaces/hu6.dart' as hu6;
 
@@ -101,7 +102,7 @@ class _StudentListPageState extends State<StudentListPage> {
                       Row(
                         children: [
                           Image.asset(
-                            'assets/picto_numeros/1.png',
+                            'assets/numeros/1.png',
                             width: 80,
                             height: 80,
                           ),
@@ -112,7 +113,7 @@ class _StudentListPageState extends State<StudentListPage> {
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => hu6.MyApp(), // Asegúrate de que esta es la clase correcta
+                                    builder: (context) => hu6.MyApp(student: student), // Asegúrate de que esta es la clase correcta
                                   ),
                                 );
                               },
@@ -123,78 +124,147 @@ class _StudentListPageState extends State<StudentListPage> {
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-                                  child: Center(
-                                    child: Text(
-                                      'Comandas comedor',
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Comandas comedor',
+                                        style: TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Image.asset(
+                                        'assets/imgs_menu/comedor.png',
+                                        width: 60,
+                                        height: 60,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/numeros/2.png',
+                            width: 80,
+                            height: 80,
+                          ),
+                          Expanded(
+                            child: Card(
+                              margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Inventario',
                                       style: TextStyle(
                                         fontSize: 28,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
+                                    Image.asset(
+                                      'assets/apuntar.png',
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      Row(
-                        children: [
-                          Image.asset(
-                            'assets/picto_numeros/2.png',
-                            width: 80,
-                            height: 80,
-                          ),
-                          Expanded(
-                            child: Card(
-                              margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
+                      // Cargar tareas dinámicas desde el Future
+                      FutureBuilder<List<Task>>(
+                        future: getAllTasks(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Center(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-                                child: Center(
-                                  child: Text(
-                                    'Inventario',
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                padding: EdgeInsets.all(20.0),
+                                child: Text(
+                                  'No se pudieron cargar las tareas adicionales.',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.red,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Image.asset(
-                            'assets/picto_numeros/3.png',
-                            width: 80,
-                            height: 80,
-                          ),
-                          Expanded(
-                            child: Card(
-                              margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
+                            );
+                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return Center(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-                                child: Center(
-                                  child: Text(
-                                    '...',
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                padding: EdgeInsets.all(20.0),
+                                child: Text(
+                                  'No hay tareas adicionales disponibles.',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.grey,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
+                            );
+                          } else {
+                            List<Task> tareas = snapshot.data!;
+                            return Column(
+                              children: tareas.asMap().entries.map((entry) {
+                                int index = entry.key; // Índice de la tarea
+                                Task tarea = entry.value; // Tarea actual
+                                return Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/numeros/${index + 3}.png', // Comienza desde el número 3
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                    Expanded(
+                                      child: Card(
+                                        margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(16.0),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                tarea.name,
+                                                style: TextStyle(
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Image.asset(
+                                                tarea.image,
+                                                width: 60,
+                                                height: 60,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -204,12 +274,12 @@ class _StudentListPageState extends State<StudentListPage> {
                     child: SizedBox(
                       width: 400,
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
-                          await Navigator.push(
+                          /*await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => adminInterface.adminInterface(),
                             ),
-                          );
+                          );*/
                         }
                       ),
                     ),
@@ -218,7 +288,7 @@ class _StudentListPageState extends State<StudentListPage> {
               ),
             ),
           ),
-        AvatarTopCorner(student),
+        avatarTopCorner(student),
         ],
       ),
     );
