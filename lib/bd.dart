@@ -117,7 +117,7 @@ class ColegioDatabase{
 			user VARCHAR(30),
 			path VARCHAR(25), 
 			FOREIGN KEY (user) REFERENCES $tablaStudents(user) ON DELETE CASCADE,
-			FOREIGN KEY (path) REFERENCES $tablaImgCode(path),
+			FOREIGN KEY (path) REFERENCES $tablaImgCode(path) ON DELETE CASCADE,
 			PRIMARY KEY (user, path)
 			)
 		''');
@@ -151,8 +151,8 @@ class ColegioDatabase{
       menuName VARCHAR(30),
       classroomName VARCHAR(30),
 			PRIMARY KEY (menuName, classroomName, date),
-      FOREIGN KEY (menuName) REFERENCES $tablaMenu(name),
-			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name)
+      FOREIGN KEY (menuName) REFERENCES $tablaMenu(name) ON DELETE CASCADE,
+			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name) ON DELETE CASCADE
 			)
 		''');
 
