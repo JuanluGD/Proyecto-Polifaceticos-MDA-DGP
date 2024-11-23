@@ -65,6 +65,7 @@ Widget buildPickerRegion(VoidCallback onTap, Widget child) {
     child: MouseRegion(
       cursor: SystemMouseCursors.click,
       child: child,
+       
     ),
   );
 }

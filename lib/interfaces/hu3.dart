@@ -4,7 +4,9 @@ import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/image_utils.dart';
 import 'package:proyecto/interfaces/interface_utils.dart';
+
 import 'package:proyecto/interfaces/hu1.dart' as hu1;
+import 'package:proyecto/interfaces/hu9.dart' as hu9;
 ///  LOGINS ESTUDIANTES  ///
 /// HU3: Como estudiante quiero poder acceder a la aplicación de forma personalizada.
 
@@ -266,7 +268,12 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
                         );
                       } else {
                         print('Inicio de sesión correcto.');
-                        // TOMATE Navegar a la página del alumno
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => hu9.StudentInterfacePage(student: widget.student),
+                          ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -431,7 +438,12 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                           );
                         } else {
                           print('Inicio de sesión correcto.');
-                          // TOMATE Navegar a la página del alumno
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => hu9.StudentInterfacePage(student: widget.student),
+                            ),
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
