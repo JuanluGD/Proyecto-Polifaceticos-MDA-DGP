@@ -8,10 +8,12 @@ import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/bd_utils.dart';
 
 import 'package:proyecto/classes/Student.dart';
+
+import 'package:proyecto/interfaces/hu9.dart' as hu9;
 /// TAREA MENU COMEDOR
 /// HU6: Como alumno quiero poder realizar la tarea de comandas
 Future<void> main() async {
-  Student student = (await getStudent('juancito'))!;
+  Student student = (await getStudent('alex123'))!;
   runApp(MyApp(student: student));
 }
 
@@ -80,6 +82,7 @@ class MyAppState extends ChangeNotifier {
 class ClassSelection extends StatefulWidget {
   final Student student;
   const ClassSelection({super.key, required this.student});
+
   @override
   _ClassSelectionState createState() => _ClassSelectionState();
 }
@@ -183,6 +186,17 @@ class _ClassSelectionState extends State<ClassSelection> {
                       ],
                     ),
                   ),
+                  if( appState.classrooms.every((c) => c.task_completed == true))
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      width: 400,
+                      child: buildElevatedButton('Terminar', buttonTextStyle, nextButtonStyle, () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -249,7 +263,7 @@ class _CommandListPageState extends State<CommandListPage> {
     loadMenus();
   }
 
-  void addMenuCuantity(String menuName) {
+  void addMenuQuantity(String menuName) {
     if ((orders_aux[menuName] ?? 0) < 8) 
       orders_aux[menuName] = (orders_aux[menuName] ?? 0) + 1;
     
@@ -415,7 +429,7 @@ class _CommandListPageState extends State<CommandListPage> {
                                         iconSize: 30, // Aumenta el tamaño del icono
                                         onPressed: () {
                                           setState(() {
-                                            addMenuCuantity(menu.name);
+                                            addMenuQuantity(menu.name);
                                           });
                                         },
                                       ),
@@ -464,7 +478,7 @@ class _CommandListPageState extends State<CommandListPage> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => FinishedOrder(student: widget.student, classroom: widget.classroom),
+                                builder: (context) => FinishedTask(student: widget.student),
                               ),
                             );
                           },
@@ -564,6 +578,105 @@ class _FinishedOrderState extends State<FinishedOrder> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ClassSelection(student: widget.student),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // Bordes redondeados
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min, // Ajusta el tamaño del botón al contenido
+                          children: [
+                            Text(
+                              'Seguir',
+                              style: TextStyle(
+                                color: Colors.white, // Letras en blanco
+                                fontSize: 24, // Tamaño más grande
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 10), // Espaciado entre texto e ícono
+                            Icon(
+                              Icons.arrow_forward,
+                              color: Colors.white, // Ícono en blanco
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            avatarTopCorner(widget.student), // Muestra el avatar en la esquina superior
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FinishedTask extends StatefulWidget{
+ final Student student;
+  const
+ FinishedTask({required this.student}); 
+
+  @override
+  _FinishedTaskState createState() => _FinishedTaskState();
+}
+
+
+class _FinishedTaskState extends State<FinishedTask> {
+  @override
+  void initState() {
+    super.initState();
+  }
+ @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.lightBlueAccent.shade100, // Fondo azul claro
+        body: Stack(
+          children: [
+            Center(
+              child: buildMainContainer(
+                740, // Ancho del contenedor
+                625, // Alto del contenedor
+                EdgeInsets.all(20), // Margen interno
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(16), // Márgenes alrededor del texto
+                      child: (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
+                          ? Image(
+                              image: AssetImage("assets/tareas/terminada.png"),
+                            )
+                          : Text(
+                              '¡Tarea terminada!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 60,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                    ),
+                    SizedBox(height: 60), // Espaciado adicional
+                    Center( // Asegura que el botón esté centrado horizontalmente
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          // TOMATE marcar como completada la tarea del comedor del alumno
+                          // PORQUE NO FUNCIONA?
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => hu9.StudentInterfacePage(student: widget.student),
                             ),
                           );
                         },

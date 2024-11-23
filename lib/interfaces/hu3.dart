@@ -267,7 +267,6 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
                           ),
                         );
                       } else {
-                        print('Inicio de sesión correcto.');
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -437,7 +436,6 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                             ),
                           );
                         } else {
-                          print('Inicio de sesión correcto.');
                           await Navigator.push(
                             context,
                             MaterialPageRoute(

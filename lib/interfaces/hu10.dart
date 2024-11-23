@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/classes/Task.dart';
 import 'package:proyecto/interfaces/interface_utils.dart';
-import 'package:proyecto/image_utils.dart';
 import 'package:proyecto/bd_utils.dart';
 
 import 'hu2.dart' as hu2;
