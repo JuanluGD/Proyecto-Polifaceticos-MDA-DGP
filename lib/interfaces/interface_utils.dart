@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/classes/Student.dart';
+import 'package:proyecto/classes/Task.dart';
 import 'dart:io';
 
 import '../classes/ImgCode.dart';
@@ -174,7 +175,7 @@ Widget buildToggleContainer(bool selected, ImgCode element, List<ImgCode> select
                   ? buildIndexViewContainer(selectedElements, element)
                   : Icon(
                       Icons.check_circle,
-                      color: Colors.blue,
+                      color: Colors.blue
                     ),
             ),
         ],
@@ -257,7 +258,8 @@ Widget buildSizedRadio (String text, double size, String element, String group, 
   );
 }
 
-Widget AvatarTopCorner(Student student) {
+// Muestra el estudiante actual arriba a la derecha
+Widget avatarTopCorner(Student student) {
   return Align(
     alignment: Alignment.topRight,
     child: Column(
@@ -288,6 +290,92 @@ Widget AvatarTopCorner(Student student) {
   );
 }
 
+// crear listas de objetos
+Widget buildCustomList({
+  required List<dynamic> items,
+  required List<Widget> Function(BuildContext context, dynamic item, int index)? buildChildren,
+  required String title,
+  required bool addButton,
+  Widget? nextPage,
+  required BuildContext context
+}) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SizedBox(height: 15),
+      Text(
+        title,
+        style: titleTextStyle,
+      ),
+      SizedBox(height: 15),
+      if (addButton)
+        SizedBox(
+          height: 70, // Ajusta la altura aquí según lo necesites
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => nextPage!, // Navegar a la página de registro
+                  ),
+                );
+              },
+              child: Card(
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                child: ListTile(
+                  title: Center(
+                    child: Icon(Icons.add, size: 30, color: Colors.black26),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      if(addButton)
+        SizedBox(height:0),
+      // Lista de estudiantes en un Expanded para que sea scrollable
+      Expanded(
+        child: ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return Card(
+              margin: EdgeInsets.symmetric(vertical: 8.0),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: AssetImage(item.image),
+                  radius: 30,
+                ),
+                title: Text('${item.name} ${item is Student ? item.surname ?? '' : ''}'),
+                subtitle: item is Student ? Text(item.user) 
+                        : item is Task ? Text(item.description)
+                        : null,
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: buildChildren != null
+                    ? buildChildren(context, item, index) // Usa hijos personalizados
+                    : [], // Sin hijos si no se especifica,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+      SizedBox(height: 20),
+      Center(
+        child: SizedBox(
+          width: 400,
+          child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+              Navigator.pop(context);
+            }
+          ),
+        ),
+      ),
+    ],
+  );
+}
 
 // ESTILOS
 

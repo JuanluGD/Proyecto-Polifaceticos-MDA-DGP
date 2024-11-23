@@ -3,6 +3,7 @@ import 'package:proyecto/classes/Menu.dart';
 import 'package:proyecto/classes/Orders.dart';
 import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/bd.dart';
+import 'package:proyecto/classes/Task.dart';
 import 'classes/ImgCode.dart';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ Future<bool> login(String user, String password) async {
 
 /*
   Función
-  @Nombre --> registerStudent
+  @Nombre --> insertStudent
   @Funcion --> Registra un alumno en la base de datos
   @Argumentos
     - user: usuario del alumno que será registrado
@@ -68,7 +69,7 @@ Future<bool> login(String user, String password) async {
     - intefaceTXT: determina si el alumno usará la interfaz basada en texto
 
 */
-Future<bool> registerStudent(String user, name, String surname, String password, 
+Future<bool> insertStudent(String user, name, String surname, String password, 
   String image, String typePassword, int interfaceIMG,
 	int interfacePIC, int interfaceTXT) async {
 
@@ -80,7 +81,7 @@ Future<bool> registerStudent(String user, name, String surname, String password,
     image: image, typePassword: typePassword, interfaceIMG: interfaceIMG,
 		interfacePIC: interfacePIC, interfaceTXT: interfaceTXT);
 
-	return await ColegioDatabase.instance.registerStudent(student);
+	return await ColegioDatabase.instance.insertStudent(student);
 
 }
 
@@ -152,6 +153,7 @@ bool userFormat(String texto) {
   final regex = RegExp(r'^[a-zA-Z0-9]+$');
   return regex.hasMatch(texto);
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE ALUMNOS ///
@@ -370,8 +372,8 @@ Future<Menu?> getMenu(String name) async {
   @Argumentos
     - name: nombre del aula
 */
-Future<bool> insertClassroom(String name) async {
-  Classroom classroom = Classroom(name: name);
+Future<bool> insertClassroom(String name, String image) async {
+  Classroom classroom = Classroom(name: name, image: image);
   return await ColegioDatabase.instance.insertClassroom(classroom);
 }
 
@@ -481,6 +483,45 @@ Future<bool> modifyOrders(String menuName, String classroomName, int newQuantity
   }
   return await ColegioDatabase.instance.modifyOrders(order, newQuantity);
 }
+
+/*
+@Nombre --> getQuantity
+@Funcion --> Obtiene la cantidad asociada a una orden.
+@Argumentos
+  - date: fecha de la orden
+  - classroomName: nombre del aula
+  - menuName: nombre del menú
+*/
+Future<int> getQuantity(String date, String classroomName, String menuName) async {
+  Orders? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
+  if(order == null){
+    return 0;
+  } else {
+    return order.quantity;
+  }
+}
+
+
+/*
+@Nombre --> getOrder
+@Funcion --> Obtiene una orden.
+@Argumentos
+  - date: fecha de la orden
+  - classroomName: nombre del aula de la orden.
+  - menuName: nombre del menú de la orden.
+*/
+Future<Orders?> getOrder(String date, String classroomName, String menuName) async {
+  return await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
+}
+
+Future<void> classCompleted(Classroom classroom) async{
+  DateTime now = DateTime.now();
+  String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+  classroom.task_completed = await ColegioDatabase.instance.classCompleted(classroom, date);
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREA MENU ///
 /*
@@ -539,4 +580,32 @@ Future<bool> asignMenuTask(String user) async {
 */
 Future<bool> hasMenuTask(String user) async {
   return await ColegioDatabase.instance.hasMenuTask(user);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+///  GESTIÓN DE TAREAS PROVISIONALES ///
+/// 
+Future<bool> insertTask(String name, String description, String image) async {
+  Task task = Task(name: name, description: description, image: image);
+  return await ColegioDatabase.instance.insertTask(task);
+}
+
+Future<bool> modifyTaskName(String name, String newName) async {
+  return await ColegioDatabase.instance.modifyTask(name, "name", newName);
+}
+
+Future<bool> modifyTaskDescription(String name, String newDescription) async {
+  return await ColegioDatabase.instance.modifyTask(name, "description", newDescription);
+}
+
+Future<bool> deleteTask(String name) async {
+  return await ColegioDatabase.instance.deleteTask(name);
+}
+
+Future<List<Task>> getAllTasks() async {
+  return await ColegioDatabase.instance.getAllTasks();
+}
+
+Future<Task?> getTask(String name) async {
+  return await ColegioDatabase.instance.getTask(name);
 }

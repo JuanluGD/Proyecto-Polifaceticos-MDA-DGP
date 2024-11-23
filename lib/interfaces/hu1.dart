@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
-import 'package:proyecto/interfaces/login.dart' as loginPage;
-import 'package:proyecto/interfaces/adminInterface.dart' as adminInterface;
+import 'hu4.dart' as hu4;
+import 'hu10.dart' as hu10;
+import 'interface_utils.dart';
 
 /// LOGIN ADMINISTRADOR ///
 /// HU1: Como administrador quiero poder acceder a la aplicación con mi usuario y mi contraseña
@@ -19,12 +20,17 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: LoginAdminPage(),
+      home: adminInterface(),
     );
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE LOGIN ADMINISTRADOR
+// //////////////////////////////////////////////////////////////////////////////////////////
 class LoginAdminPage extends StatefulWidget {
+  const LoginAdminPage({super.key});
+
   @override
   _LoginAdminPageState createState() => _LoginAdminPageState();
 }
@@ -156,16 +162,16 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                                 ),
                               );
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Inicio de sesión correcto.'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => adminInterface.adminInterface(),
+                                  builder: (context) => adminInterface(),
+                                ),
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => adminInterface(),
                                 ),
                               );
                             }
@@ -191,13 +197,8 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                       child: SizedBox(
                         width: 350,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => loginPage.StudentListPage(),
-                                ),
-                              );
+                          onPressed: () {
+                            Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepOrange[400],
@@ -223,6 +224,107 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
       ),
     );
   }
-  
- 
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ PRINCIPAL DEL ADMINISTRADOR
+// //////////////////////////////////////////////////////////////////////////////////////////
+class adminInterface extends StatelessWidget {
+  const adminInterface({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740,650,EdgeInsets.all(20), 
+          Stack(
+            children: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildOption(
+                      icon: Icons.group,
+                      label: 'Listado de alumnos',
+                      onTap: ()  async{
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => hu4.StudentListPage()),
+                        );
+                      },
+                    ),
+                    SizedBox(width: 40),
+                    _buildOption(
+                      icon: Icons.checklist,
+                      label: 'Tareas',
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => hu10.TaskListPage()),
+                        );
+                      } ,
+                    ),
+                    SizedBox(width: 40),
+                    _buildOption(
+                      icon: Icons.restaurant,
+                      label: 'Menú',
+                      onTap: () => print('Menú seleccionado'),
+                    ),
+                  ],
+                ),
+              ),
+              // PRUEBAS, SE ELIMINARA PARA EL PRODUCTO FINAL
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  width: 400,
+                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
+    );
+  }
+
+  Widget _buildOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap, // Agregamos el callback de tap
+  }) {
+    return GestureDetector(
+      onTap: onTap, // Se ejecuta cuando el usuario toca el botón
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: EdgeInsets.all(40),
+            child: Icon(
+              icon,
+              size: 50,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.blue[800],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

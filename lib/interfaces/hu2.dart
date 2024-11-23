@@ -30,7 +30,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE REGISTRAR ALUMNO
+// //////////////////////////////////////////////////////////////////////////////////////////
 class StudentRegistrationPage extends StatefulWidget {
+  const StudentRegistrationPage({super.key});
+
   @override
   _StudentRegistrationPageState createState() =>
       _StudentRegistrationPageState();
@@ -264,12 +269,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                       width: 200,
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
                           setState(() {});
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                              builder: (context) => hu4.StudentListPage(),
-                            ),
-                          );
+                          Navigator.pop(context);
                           setState(() {});
                         }
                       ),
@@ -285,7 +285,9 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
   }
 }
 
-// Página para la contraseña con pictogramas o imágenes
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE CONTRASEÑA DE IMÁGENES O PICTOGRAMAS
+// //////////////////////////////////////////////////////////////////////////////////////////
 class ImgCodePasswordPage extends StatefulWidget {
   final String userStudent, nameStudent, surnameStudent, typePassword;
   final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
@@ -444,7 +446,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
                           String extension = path.extension(widget.perfilImage!.path);
 
                           // Meter al estudiante en la BD
-                          if (await registerStudent(
+                          if (await insertStudent(
                             widget.userStudent, widget.nameStudent, widget.surnameStudent, password, 'assets/perfiles/${widget.userStudent}$extension', 
                             widget.typePassword, widget.interfaceIMG ? 1:0, widget.interfacePIC ? 1:0, widget.interfaceTXT ? 1:0
                           )) 
@@ -505,6 +507,9 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE SELECCIÓN DE PICTOGRAMAS O IMÁGENES
+// //////////////////////////////////////////////////////////////////////////////////////////
 // Página para seleccionar pictogramas o imágenes que formarán parte de las posibilidades de contraseña del estudiante
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
@@ -595,7 +600,9 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
   }
 }
 
-// Página para la contraseña alfanumérica
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
+// //////////////////////////////////////////////////////////////////////////////////////////
 class AlphanumericPasswordPage extends StatefulWidget {
   final String userStudent, nameStudent, surnameStudent;
   final bool interfacePIC , interfaceIMG, interfaceTXT, interfaceAV;
@@ -718,7 +725,7 @@ class _AlphanumericPasswordPage extends State<AlphanumericPasswordPage>{
 
                               // TOMATE
                               // Meter al estudiante en la BD
-                              if (await registerStudent(
+                              if (await insertStudent(
                                 userStudent, nameStudent, surnameStudent, passwordController.text, 'assets/perfiles/$userStudent$extension', 
                                 'alphanumeric', interfaceIMG ? 1:0, interfacePIC ? 1:0, interfaceTXT ? 1:0
                               )) 

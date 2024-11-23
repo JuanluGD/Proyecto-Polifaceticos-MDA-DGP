@@ -187,3 +187,8 @@ Future<bool> pathExists(String path, String directory) async{
 Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
   return await ColegioDatabase.instance.getImgCodeFromFolder(folder);
 }
+
+// TOMATE
+Future<int?> getImagePasswdCount(String user) async {
+  return await ColegioDatabase.instance.getSpacesPasswordCount(user);
+}

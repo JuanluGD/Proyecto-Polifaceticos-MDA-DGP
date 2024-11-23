@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
-
 import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/image_utils.dart';
 import 'package:proyecto/bd_utils.dart';
@@ -10,7 +9,6 @@ import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
 
 import 'package:proyecto/interfaces/hu2.dart' as hu2;
-import 'adminInterface.dart' as adminInterface;
 
 /// MODIFICAR ESTUDIANTE Y TIPO DE INTERFAZ ///
 /// HU4: Como administrador quiero poder elegir qué tipo de interfaz se le va a mostrar a cada estudiante.
@@ -33,7 +31,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Página de lista de estudiantes
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE LISTA DE ESTUDIANTES
+// //////////////////////////////////////////////////////////////////////////////////////////
 class StudentListPage extends StatefulWidget {
   @override
   _StudentListPageState createState() => _StudentListPageState();
@@ -41,10 +41,9 @@ class StudentListPage extends StatefulWidget {
 
 class _StudentListPageState extends State<StudentListPage> {
   final List<Student> students = [];
-
   // TOMATE
   // Para cargar los estudiantes
-  Future<void> loadStudents() async {
+  Future<void> _loadStudents() async {
     if (students.isEmpty) {
       setState(() {});
       students.addAll(await getAllStudents());
@@ -62,7 +61,7 @@ class _StudentListPageState extends State<StudentListPage> {
   @override
   void initState() {
     super.initState();
-    loadStudents();
+    _loadStudents();
   }
 
   @override
@@ -71,136 +70,74 @@ class _StudentListPageState extends State<StudentListPage> {
       backgroundColor: Colors.lightBlueAccent.shade100,
       body: Center(
         child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 15),
-              Text(
-                'Lista de Estudiantes',
-                style: titleTextStyle,
-              ),
-              SizedBox(height: 15),
-              Expanded( 
-                child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
+          buildCustomList(items: students, title: "Lista de estudiantes", addButton: true, nextPage: hu2.StudentRegistrationPage(), context: context,
+          buildChildren: (context, item, index) { 
+            return [
+              IconButton(
+              icon: Icon(Icons.info_outline),
+              color: Colors.blue,
+              onPressed:
+                // Navegar a la página de información del estudiante
+                () async {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => hu2.StudentRegistrationPage(), // Navegar a la página de registro
+                      builder: (context) => StudentInfoPage(student: item),
                     ),
                   );
+                  setState(() {});
                 },
-                child: Card(
-                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                  child: ListTile(
-                    title: Center(
-                      child: Icon(Icons.add, size: 30, color: Colors.black26), 
-                    ),
-                  ),
-                ),
-                )
               ),
-              // Lista de estudiantes en un Expanded para que sea scrollable
-              Expanded(
-                child: ListView.builder(
-                  itemCount: students.length,
-                  itemBuilder: (context, index) {
-                    Student student = students[index];
-                    return Card(
-                      margin: EdgeInsets.symmetric(vertical: 8.0),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: AssetImage(student.image),
-                          radius: 30,
-                        ),
-                        title: Text('${student.name} ${student.surname}'),
-                        subtitle: Text(student.user),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.info_outline),
-                              color: Colors.blue,
-                              onPressed:
-                                // Navegar a la página de información del estudiante
-                                () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => StudentInfoPage(student: student),
-                                    ),
-                                  );
-                                  setState(() {});
-                                },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.task),
-                              color: Colors.blue,
-                              onPressed:
-                                // Navegar a la página de tareas del estudiante
-                                () async {
-                                  print("no esta implementado jaja"); //TOMATE
-                                  setState(() {});
-                                },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              color: Colors.blue,
-                              onPressed:
-                                // Navegar a la página de modificación del estudiante
-                                () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => StudentModificationPage(student: student),
-                                    ),
-                                  );
-                                  setState(() {});
-                                },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              color: Colors.blue,
-                              onPressed:
-                                () async {
-                                  await deleteStudentInterface(student.user);
-                              
-                                  setState((){
-                                    students.removeAt(index);
-                                  });
-                                },
-                            ),
-                          ],
-                        ),
+              IconButton(
+                icon: Icon(Icons.task),
+                color: Colors.blue,
+                onPressed:
+                  // Navegar a la página de tareas del estudiante
+                  () async {
+                    print("no esta implementado jaja"); //TOMATE
+                    setState(() {});
+                  },
+              ),
+              IconButton(
+                icon: Icon(Icons.edit),
+                color: Colors.blue,
+                onPressed:
+                  // Navegar a la página de modificación del estudiante
+                  () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StudentModificationPage(student: item),
                       ),
                     );
+                    setState(() {});
+                  },
+              ),
+              IconButton(
+                icon: Icon(Icons.delete),
+                color: Colors.blue,
+                onPressed:
+                  () async {
+                    await deleteStudentInterface(item.user);
+                
+                    setState((){
+                      students.removeAt(index);
+                    });
                   },
                 ),
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: SizedBox(
-                  width: 400,
-                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => adminInterface.adminInterface(),
-                        ),
-                      );
-                    }
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+              ];
+            }
+          ), 
+        )  
       ),
     );
   }
 }
 
-// Página de información de estudiante
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE INFORMACIÓN DE ESTUDIANTE
+// //////////////////////////////////////////////////////////////////////////////////////////
 class StudentInfoPage extends StatefulWidget {
   final Student student;
 
@@ -376,7 +313,9 @@ class _StudentInfoPageState extends State<StudentInfoPage> {
 }
 
 
-// Página de modificación de estudiante
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE MODIFICACIÓN DE ESTUDIANTE
+// //////////////////////////////////////////////////////////////////////////////////////////
 class StudentModificationPage extends StatefulWidget {
   final Student student; // Recibir el estudiante seleccionado
 
@@ -644,7 +583,9 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
   }
 }
 
-// Página para la contraseña con pictogramas o imágenes
+// //////////////////////////////////////////////////////////////////////////////////////////
+// PÁGINA DE CONTRASEÑA DE PICTOGRAMAS O IMÁGENES
+// //////////////////////////////////////////////////////////////////////////////////////////
 class ImgCodePasswordPage extends StatefulWidget {
   Student student;
   final String passwordType;
@@ -877,7 +818,9 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
   }
 }
 
-// Página para seleccionar pictogramas o imágenes que formarán parte de las posibilidades de contraseña del estudiante
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE SELECCION PICTOGRAMAS O IMÁGENES
+// //////////////////////////////////////////////////////////////////////////////////////////
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
   final String passwordType, user;
@@ -965,7 +908,9 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
   }
 }
 
-// Página para la contraseña alfanumérica
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
+// //////////////////////////////////////////////////////////////////////////////////////////
 class AlphanumericPasswordPage extends StatelessWidget {
   final Student student;
 

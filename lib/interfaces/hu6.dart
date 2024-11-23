@@ -10,37 +10,29 @@ import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/classes/Student.dart';
 /// TAREA MENU COMEDOR
 /// HU6: Como alumno quiero poder realizar la tarea de comandas
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  Student student = (await getStudent('juancito'))!;
+  runApp(MyApp(student: student));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final Student student;
+  const MyApp({super.key, required this.student});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _MyAppState createState() => _MyAppState(student: student);
 }
 
 class _MyAppState extends State<MyApp> {
-  late Student student;
-
+  final Student student;
+  _MyAppState({required this.student});
   @override
   void initState() {
     super.initState();
-    _loadStudent();
-  }
-
-  Future<void> _loadStudent() async {
-    student = (await getStudent('alissea'))!;
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    if (student == null) {
-      return CircularProgressIndicator();
-    }
-
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
@@ -56,107 +48,147 @@ class _MyAppState extends State<MyApp> {
 }
 
 class MyAppState extends ChangeNotifier {
-  List<String> classroom_names = []; // Lista de clases\
-  List<Classroom> classrooms = [];
+  List<Classroom> classrooms = [];// Clases completadas
 
   MyAppState() {
-    _initializeClassrooms();
+    _initializeAppState();
+  }
+
+  Future<void> _initializeAppState() async {
+    await _initializeClassrooms();
+    await markClassAsCompleted(classrooms);
   }
 
   Future<void> _initializeClassrooms() async {
     classrooms = await getAllClassrooms();
-    for (Classroom c in  classrooms) {
-      classroom_names.add(c.name);
+    notifyListeners();
+  }
+  Future<void> markClassAsCompleted(List<Classroom> classrooms) async{
+    for(Classroom c in classrooms) {
+      await classCompleted(c); // Marca una clase como completada
     }
     notifyListeners();
   }
+
+
 }
 
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE SELECCIÓN DE CLASES 
+// //////////////////////////////////////////////////////////////////////////////////////////
 class ClassSelection extends StatefulWidget {
   final Student student;
   const ClassSelection({super.key, required this.student});
   @override
-  _ClassSelectionState createState() => _ClassSelectionState(student: student);
+  _ClassSelectionState createState() => _ClassSelectionState();
 }
 
 class _ClassSelectionState extends State<ClassSelection> {
-  final Student student;
-  _ClassSelectionState({required this.student});
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent.shade100,
-      body: Center(
-        child: buildMainContainer(
-          740,
-          625,
-          EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 15),
-              Text(
-                'Comandas',
-                style: titleTextStyle,
-              ),
-              SizedBox(height: 15),
-              // Fila de botones para cada clase
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 16.0,
-                  crossAxisSpacing: 16.0,
-                  children: [
-                    ...appState.classroom_names.map((className) {
-                      return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () async{
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CommandListPage(
-                                    className: className,
-                                    student: student,
+      body: Stack(
+        children: [
+          Center(
+            child: buildMainContainer(
+              740,
+              625,
+              EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 15),
+                  Text(
+                    'Comandas',
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 15),
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 16.0,
+                      crossAxisSpacing: 16.0,
+                      children: [
+                        ...appState.classrooms.map((classroom) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CommandListPage(
+                                      classroom: classroom,
+                                      student: widget.student,
+                                    ),
                                   ),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color:
+                                      Colors.white10,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4.0,
+                                      offset: Offset(2, 2),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: const Color.fromRGBO(0, 160, 223, 1),
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // Bordes redondeados si se desea
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 4.0,
-                                    offset: Offset(2, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Clase ${className}',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        if (widget.student.interfacePIC == 1 || widget.student.interfaceIMG == 1) 
+                                        Image(
+                                          image: AssetImage(classroom.image),
+                                        ),
+                                        if(widget.student.interfaceTXT == 1)
+                                        Text(
+                                          'Clase ${classroom.name}',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        if (classroom.task_completed) ...[
+                                          SizedBox(height: 8.0),
+                                          Icon(Icons.check_circle,
+                                              color: Colors.blue, size: 80.0),
+                                        ],
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ));
-                    }).toList(),
-                  ],
-                ),
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          avatarTopCorner(widget.student),
+        ],
       ),
     );
   }
@@ -164,45 +196,41 @@ class _ClassSelectionState extends State<ClassSelection> {
 
 
 class CommandListPage extends StatefulWidget {
-  final String className;
+  final Classroom classroom;
   final Student student;
 
   CommandListPage({
-    required this.className,
+    required this.classroom,
     required this.student
     });
     
   @override
-  _CommandListPageState createState() => _CommandListPageState(className: className, student: student);
+  _CommandListPageState createState() => _CommandListPageState();
 }
 
 class _CommandListPageState extends State<CommandListPage> {
   final List<Menu> menus = [];
   final List<Orders> orders = [];
-  final String className;
-  late final Student student;
   final Map<String, int> orders_aux = {};
-  final path = 'assets/picto_numeros/';
+  final path = 'assets/numeros/';
 
   final List<String> images = [];
 
 
 
-  _CommandListPageState({
-    required this.className,
-    required this.student
-  });
-
   // Para cargar los menús.
   Future<void> loadMenus() async {
+    
+    DateTime now = DateTime.now();
+    String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
     if (menus.isEmpty) {
       setState(() {});
       menus.addAll(await getAllMenus());
       for (var menu in menus) {
-        orders_aux.addAll({menu.name: 0});
+        orders_aux[menu.name] = await getQuantity(date, widget.classroom.name, menu.name);
       }
     }
-    if(student.interfacePIC == 1){
+    if(widget.student.interfacePIC == 1){
       for(Menu m in menus){
         images.add(m.pictogram);
       }
@@ -212,9 +240,6 @@ class _CommandListPageState extends State<CommandListPage> {
         images.add(m.image);
       }
     }
-
-
-    
     setState(() {});
   }
 
@@ -236,17 +261,25 @@ class _CommandListPageState extends State<CommandListPage> {
   }
 
   Future<void> createOrders(Map<String, int> orders_aux) async {
+    orders.clear();
     DateTime now = DateTime.now();
     String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
-    orders.clear();
     for (var menu in orders_aux.keys) {
       if (orders_aux[menu]! > 0) {
-        orders.add(Orders(date: date, quantity: orders_aux[menu]!, menuName: menu, classroomName: className));
+        Orders? order = await getOrder(date, widget.classroom.name, menu);
+        if (order != null){
+          await modifyOrders(menu, widget.classroom.name, orders_aux[menu]!);
+        } else {
+          Orders order = Orders(date: date, quantity: orders_aux[menu]!, menuName: menu, classroomName: widget.classroom.name);
+          await insertObjectOrder(order);
+        }
       }
     }
-
-    await insertListOrders(orders);
   }
+
+  // //////////////////////////////////////////////////////////////////////////////////////////
+  // INTERFAZ DE REALIZCIÓN DE COMANDAS
+  // //////////////////////////////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +297,7 @@ class _CommandListPageState extends State<CommandListPage> {
                 children: [
                   SizedBox(height: 15),
                   Text(
-                    'Comandas Clase: $className',
+                    'Comandas Clase: $widget.classroom.name',
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 15),
@@ -403,13 +436,8 @@ class _CommandListPageState extends State<CommandListPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ElevatedButton(
-                          onPressed: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ClassSelection(student: student),
-                              ),
-                            );
+                          onPressed: () {
+                            Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(255, 255, 168, 37),
@@ -436,7 +464,7 @@ class _CommandListPageState extends State<CommandListPage> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ClassSelection(student: student),
+                                builder: (context) => FinishedOrder(student: widget.student, classroom: widget.classroom),
                               ),
                             );
                           },
@@ -466,8 +494,113 @@ class _CommandListPageState extends State<CommandListPage> {
               ),
             ),
           ),
-          AvatarTopCorner(student)
+          avatarTopCorner(widget.student)
         ],
+      ),
+    );
+  }
+}
+
+
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+  // INTERFAZ DE ORDEN TERMINADA
+// //////////////////////////////////////////////////////////////////////////////////////////
+class FinishedOrder extends StatefulWidget{
+ final Student student;
+ final Classroom classroom;
+  const
+ FinishedOrder({required this.student, required this.classroom}); 
+
+  @override
+  _FinishedOrderState createState() => _FinishedOrderState();
+}
+
+
+class _FinishedOrderState extends State<FinishedOrder> {
+  @override
+  void initState() {
+    super.initState();
+  }
+ @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.lightBlueAccent.shade100, // Fondo azul claro
+        body: Stack(
+          children: [
+            Center(
+              child: buildMainContainer(
+                740, // Ancho del contenedor
+                625, // Alto del contenedor
+                EdgeInsets.all(20), // Margen interno
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(16), // Márgenes alrededor del texto
+                      child: (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
+                          ? Image(
+                              image: AssetImage("assets/tareas/terminada.png"),
+                            )
+                          : Text(
+                              '¡Comanda de la Clase ${widget.classroom.name} terminada!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 60,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                    ),
+                    SizedBox(height: 60), // Espaciado adicional
+                    Center( // Asegura que el botón esté centrado horizontalmente
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          print(widget.classroom.task_completed);
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ClassSelection(student: widget.student),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // Bordes redondeados
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min, // Ajusta el tamaño del botón al contenido
+                          children: [
+                            Text(
+                              'Seguir',
+                              style: TextStyle(
+                                color: Colors.white, // Letras en blanco
+                                fontSize: 24, // Tamaño más grande
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 10), // Espaciado entre texto e ícono
+                            Icon(
+                              Icons.arrow_forward,
+                              color: Colors.white, // Ícono en blanco
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            avatarTopCorner(widget.student), // Muestra el avatar en la esquina superior
+          ],
+        ),
       ),
     );
   }

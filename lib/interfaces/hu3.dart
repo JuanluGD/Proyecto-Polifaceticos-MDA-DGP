@@ -2,24 +2,181 @@ import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
+import 'package:proyecto/image_utils.dart';
 import 'package:proyecto/interfaces/interface_utils.dart';
-import 'package:proyecto/interfaces/login.dart' as loginPage;
+import 'package:proyecto/interfaces/hu1.dart' as hu1;
 ///  LOGINS ESTUDIANTES  ///
 /// HU3: Como estudiante quiero poder acceder a la aplicación de forma personalizada.
 
+void main() {
+  runApp(MyApp());
+}
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Lista de Estudiantes',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      debugShowCheckedModeBanner: false,
+      home: StudentLoginPage(),
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE SELECCION DE ESTUDIANTE LOGIN
+// //////////////////////////////////////////////////////////////////////////////////////////
+class StudentLoginPage extends StatefulWidget {
+  @override
+  _StudentLoginPageState createState() => _StudentLoginPageState();
+}
+
+class _StudentLoginPageState extends State<StudentLoginPage>  {
+  final List<Student> students = [];
+
+  // TOMATE
+  // Para cargar los estudiantes
+  Future<void> loadStudents() async {
+    if (students.isEmpty) {
+      setState(() {});
+      students.addAll(await getAllStudents());
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadStudents();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+        body: Stack(
+          children: [
+            Center(
+              child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
+              Column(
+                children: [
+                Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: Text(
+                  '¿Quién eres?',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                  ),
+                ),
+                  Expanded(
+                    child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 16.0,
+                          crossAxisSpacing: 16.0,
+                        ),
+                        itemCount: students.length,
+                        itemBuilder: (context, index) {
+                          final student = students[index];
+                          return GestureDetector(
+                            onTap: () async {
+                            if (student.typePassword == 'alphanumeric') {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginAlphanumericPage(student : student),
+                                ),
+                              );
+                            } else {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginImgCodePage(student : student),
+                                ),
+                              );
+                            }
+                          },
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image(
+                                        image: AssetImage(student.image),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                SizedBox(height: 8),
+                                Text(
+                                  student.name,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: GestureDetector(
+              onTap: () async{
+                // Acción cuando el texto sea tocado
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => hu1.LoginAdminPage(),
+                  ),
+                );
+                // Aquí puedes agregar la lógica que quieras al hacer clic en el texto
+              },
+              child: Container(
+                margin: EdgeInsets.only(top: 20, right: 20),
+                child: Text(
+                  'Soy administrador',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 0, 63, 102),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ LOGIN ESTUDIANTE ALFANUMÉRICO
+// //////////////////////////////////////////////////////////////////////////////////////////
 class LoginAlphanumericPage extends StatefulWidget {
   final Student student;
 
   LoginAlphanumericPage({required this.student});
   @override
-  _LoginAlphanumericPageState createState() => _LoginAlphanumericPageState(student: student);
+  _LoginAlphanumericPageState createState() => _LoginAlphanumericPageState();
 }
 
 class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
-  final Student student;
-  _LoginAlphanumericPageState({
-    required this.student
-    });
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -29,7 +186,7 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
   @override
   void initState() {
     super.initState();
-    userController.text = student.user;
+    userController.text = widget.student.user;
   }
   @override
   Widget build(BuildContext context) {
@@ -108,12 +265,7 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
                           ),
                         );
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Inicio de sesión correcto.'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
+                        print('Inicio de sesión correcto.');
                         // TOMATE Navegar a la página del alumno
                       }
                     },
@@ -131,14 +283,8 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
                   ),
                   SizedBox(height: 10),
                   ElevatedButton(
-                    
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => loginPage.StudentListPage(),
-                        ),
-                      );
+                    onPressed: () {
+                      Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepOrange[400],
@@ -158,34 +304,41 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
               ),
             ),
           ),
-          AvatarTopCorner(student)
+          avatarTopCorner(widget.student),
         ],
       ),
     );
   }
 }
 
-class LoginImagePage extends StatefulWidget {
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ LOGIN DE ESTUDIANTE CON IMÁGENES
+// //////////////////////////////////////////////////////////////////////////////////////////
+class LoginImgCodePage extends StatefulWidget {
   final Student student;
 
-  LoginImagePage({required this.student});
+  LoginImgCodePage({required this.student});
   @override
-  _LoginImagePageState createState() => _LoginImagePageState(student: student);
+  _LoginImgCodePageState createState() => _LoginImgCodePageState();
 }
 
-class _LoginImagePageState extends State<LoginImagePage> {
-  final Student student;
-  late final List<ImgCode> imagenes;
+class _LoginImgCodePageState extends State<LoginImgCodePage> {
+  List<ImgCode> imagesSelection = [];
+  List<ImgCode> imagesPassword = [];
 
-  _LoginImagePageState({
-    required this.student
-    });
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController passwordController = TextEditingController();// Controla si el texto está oculto o visible
 
   Future<void> loadImages() async {
     setState(() {});
-    imagenes = await getStudentMenuPassword(student.user);
+    imagesSelection = await getStudentMenuPassword(widget.student.user);
+    setState(() {});
+  }
+
+  int? imagesMax;
+
+  Future<void> loadPasswordCount() async {
+    imagesMax = await getImagePasswdCount(widget.student.user);
     setState(() {});
   }
 
@@ -193,6 +346,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
   void initState() {
     super.initState();
     loadImages();
+    loadPasswordCount();
   }
 
   @override
@@ -223,17 +377,20 @@ class _LoginImagePageState extends State<LoginImagePage> {
                     SizedBox(height: 20),
                     //Grid de imagenes
                     Expanded(
+                      child: buildTickGrid(3, 8, imagesSelection, imagesPassword, imagesMax!, context),
+                    ),
+                    /*Expanded(
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           mainAxisSpacing: 16.0,
                           crossAxisSpacing: 16.0,
                         ),
-                        itemCount: imagenes.length,
+                        itemCount: imagesSelection.length,
                         itemBuilder: (context, index){
                           return GestureDetector(
                             onTap: () {
-                              passwordController.text += imagenes[index].code + ' ';
+                              passwordController.text += imagesSelection[index].code + ' ';
                               // habria que hacer q el seleccionado se resalte
                               // que solo se pueda seleccionar una vez y si se le da otra
                               // se deselecciona
@@ -246,7 +403,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.asset(
-                                  imagenes[index].path,
+                                  imagesSelection[index].path,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -254,7 +411,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                           );
                         }
                       ),
-                    ),
+                    ),*/
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async{
@@ -265,7 +422,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                               backgroundColor: Colors.red,
                             ),
                           );
-                        } else if (await loginStudent(student.user, passwordController.text) == false) { // Si del check de la BD se recupera false
+                        } else if (await loginStudent(widget.student.user, passwordController.text) == false) { // Si del check de la BD se recupera false
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Usuario o contraseña incorrectos.'),
@@ -273,12 +430,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                             ),
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Inicio de sesión correcto.'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                          print('Inicio de sesión correcto.');
                           // TOMATE Navegar a la página del alumno
                         }
                       },
@@ -296,13 +448,8 @@ class _LoginImagePageState extends State<LoginImagePage> {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => loginPage.StudentListPage(),
-                          ),
-                        );
+                      onPressed: () {
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepOrange[400],
@@ -323,7 +470,7 @@ class _LoginImagePageState extends State<LoginImagePage> {
                 ),
             ),
             ),
-            AvatarTopCorner(student)
+            avatarTopCorner(widget.student)
           ],
         ),
     );
