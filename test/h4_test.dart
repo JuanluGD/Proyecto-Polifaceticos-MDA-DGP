@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proyecto/interfaces/hu2.dart';
 import 'package:path/path.dart';
-import 'package:proyecto/bd.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -48,7 +47,7 @@ void main() async {
         if (await databaseExists(path)) {
           deleteDatabase(path);
         }
-        await registerStudent('juan123', 'Juan', 'Pérez', 'password123', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+        await insertStudent('juan123', 'Juan', 'Pérez', 'password123', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
       });
 
       //test 1

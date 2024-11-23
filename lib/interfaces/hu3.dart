@@ -1,63 +1,182 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/image_utils.dart';
-import 'package:proyecto/interfaces/hu6.dart';
 import 'package:proyecto/interfaces/interface_utils.dart';
-import 'package:proyecto/interfaces/login.dart' as loginPage;
+import 'package:proyecto/interfaces/hu1.dart' as hu1;
 ///  LOGINS ESTUDIANTES  ///
 /// HU3: Como estudiante quiero poder acceder a la aplicación de forma personalizada.
+
 void main() {
   runApp(MyApp());
 }
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
+class MyApp extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Lista de Estudiantes',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      debugShowCheckedModeBanner: false,
+      home: StudentLoginPage(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
-  late Student student;
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE SELECCION DE ESTUDIANTE LOGIN
+// //////////////////////////////////////////////////////////////////////////////////////////
+class StudentLoginPage extends StatefulWidget {
+  @override
+  _StudentLoginPageState createState() => _StudentLoginPageState();
+}
+
+class _StudentLoginPageState extends State<StudentLoginPage>  {
+  final List<Student> students = [];
+
+  // TOMATE
+  // Para cargar los estudiantes
+  Future<void> loadStudents() async {
+    if (students.isEmpty) {
+      setState(() {});
+      students.addAll(await getAllStudents());
+      setState(() {});
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _loadStudent();
+    loadStudents();
   }
 
-  Future<void> _loadStudent() async {
-    student = (await getStudent('juancito'))!;
-    setState(() {});
-  }
-  
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Login Estudiante',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+        body: Stack(
+          children: [
+            Center(
+              child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
+              Column(
+                children: [
+                Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: Text(
+                  '¿Quién eres?',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                  ),
+                ),
+                  Expanded(
+                    child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 16.0,
+                          crossAxisSpacing: 16.0,
+                        ),
+                        itemCount: students.length,
+                        itemBuilder: (context, index) {
+                          final student = students[index];
+                          return GestureDetector(
+                            onTap: () async {
+                            if (student.typePassword == 'alphanumeric') {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginAlphanumericPage(student : student),
+                                ),
+                              );
+                            } else {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginImgCodePage(student : student),
+                                ),
+                              );
+                            }
+                          },
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image(
+                                        image: AssetImage(student.image),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                SizedBox(height: 8),
+                                Text(
+                                  student.name,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: GestureDetector(
+              onTap: () async{
+                // Acción cuando el texto sea tocado
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => hu1.LoginAdminPage(),
+                  ),
+                );
+                // Aquí puedes agregar la lógica que quieras al hacer clic en el texto
+              },
+              child: Container(
+                margin: EdgeInsets.only(top: 20, right: 20),
+                child: Text(
+                  'Soy administrador',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 0, 63, 102),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
-      home: LoginImgCodePage(student: student)
-      );
+    );
   }
 }
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ LOGIN ESTUDIANTE ALFANUMÉRICO
+// //////////////////////////////////////////////////////////////////////////////////////////
 class LoginAlphanumericPage extends StatefulWidget {
   final Student student;
 
   LoginAlphanumericPage({required this.student});
   @override
-  _LoginAlphanumericPageState createState() => _LoginAlphanumericPageState(student: student);
+  _LoginAlphanumericPageState createState() => _LoginAlphanumericPageState();
 }
 
 class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
-  final Student student;
-  _LoginAlphanumericPageState({
-    required this.student
-    });
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController userController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -67,7 +186,7 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
   @override
   void initState() {
     super.initState();
-    userController.text = student.user;
+    userController.text = widget.student.user;
   }
   @override
   Widget build(BuildContext context) {
@@ -146,12 +265,7 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
                           ),
                         );
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Inicio de sesión correcto.'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
+                        print('Inicio de sesión correcto.');
                         // TOMATE Navegar a la página del alumno
                       }
                     },
@@ -190,43 +304,41 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
               ),
             ),
           ),
-          avatarTopCorner(student)
+          avatarTopCorner(widget.student),
         ],
       ),
     );
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ LOGIN DE ESTUDIANTE CON IMÁGENES
+// //////////////////////////////////////////////////////////////////////////////////////////
 class LoginImgCodePage extends StatefulWidget {
   final Student student;
 
   LoginImgCodePage({required this.student});
   @override
-  _LoginImgCodePageState createState() => _LoginImgCodePageState(student: student);
+  _LoginImgCodePageState createState() => _LoginImgCodePageState();
 }
 
 class _LoginImgCodePageState extends State<LoginImgCodePage> {
-  final Student student;
   List<ImgCode> imagesSelection = [];
   List<ImgCode> imagesPassword = [];
-
-  _LoginImgCodePageState({
-    required this.student
-  });
 
   // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
   final TextEditingController passwordController = TextEditingController();// Controla si el texto está oculto o visible
 
   Future<void> loadImages() async {
     setState(() {});
-    imagesSelection = await getStudentMenuPassword(student.user);
+    imagesSelection = await getStudentMenuPassword(widget.student.user);
     setState(() {});
   }
 
   int? imagesMax;
 
   Future<void> loadPasswordCount() async {
-    imagesMax = await getImagePasswdCount(student.user);
+    imagesMax = await getImagePasswdCount(widget.student.user);
     setState(() {});
   }
 
@@ -310,7 +422,7 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                               backgroundColor: Colors.red,
                             ),
                           );
-                        } else if (await loginStudent(student.user, passwordController.text) == false) { // Si del check de la BD se recupera false
+                        } else if (await loginStudent(widget.student.user, passwordController.text) == false) { // Si del check de la BD se recupera false
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Usuario o contraseña incorrectos.'),
@@ -318,12 +430,7 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                             ),
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Inicio de sesión correcto.'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                          print('Inicio de sesión correcto.');
                           // TOMATE Navegar a la página del alumno
                         }
                       },
@@ -363,7 +470,7 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                 ),
             ),
             ),
-            avatarTopCorner(student)
+            avatarTopCorner(widget.student)
           ],
         ),
     );

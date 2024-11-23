@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'hu4.dart' as hu4;
+import 'hu10.dart' as hu10;
 import 'interface_utils.dart';
 
 /// LOGIN ADMINISTRADOR ///
@@ -19,11 +20,14 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: LoginAdminPage(),
+      home: adminInterface(),
     );
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE LOGIN ADMINISTRADOR
+// //////////////////////////////////////////////////////////////////////////////////////////
 class LoginAdminPage extends StatefulWidget {
   const LoginAdminPage({super.key});
 
@@ -158,12 +162,6 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                                 ),
                               );
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Inicio de sesión correcto.'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -228,47 +226,68 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ PRINCIPAL DEL ADMINISTRADOR
+// //////////////////////////////////////////////////////////////////////////////////////////
 class adminInterface extends StatelessWidget {
   const adminInterface({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.lightBlueAccent.shade100,
-        body: Center(
-          child: buildMainContainer(740,650,EdgeInsets.all(20), 
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildOption(
-                    icon: Icons.group,
-                    label: 'Listado de alumnos',
-                    onTap: ()  async{
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => hu4.StudentListPage()),
-                      );
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740,650,EdgeInsets.all(20), 
+          Stack(
+            children: [
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildOption(
+                      icon: Icons.group,
+                      label: 'Listado de alumnos',
+                      onTap: ()  async{
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => hu4.StudentListPage()),
+                        );
+                      },
+                    ),
+                    SizedBox(width: 40),
+                    _buildOption(
+                      icon: Icons.checklist,
+                      label: 'Tareas',
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => hu10.TaskListPage()),
+                        );
+                      } ,
+                    ),
+                    SizedBox(width: 40),
+                    _buildOption(
+                      icon: Icons.restaurant,
+                      label: 'Menú',
+                      onTap: () => print('Menú seleccionado'),
+                    ),
+                  ],
+                ),
+              ),
+              // PRUEBAS, SE ELIMINARA PARA EL PRODUCTO FINAL
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  width: 400,
+                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                      Navigator.pop(context);
                     },
                   ),
-                  SizedBox(width: 40),
-                  _buildOption(
-                    icon: Icons.checklist,
-                    label: 'Tareas',
-                    onTap: (){
-                      print('Tareas seleccionado');
-                    } ,
-                  ),
-                  SizedBox(width: 40),
-                  _buildOption(
-                    icon: Icons.restaurant,
-                    label: 'Menú',
-                    onTap: () => print('Menú seleccionado'),
-                  ),
-                ],
+                ),
               ),
-            )
+            ],
           ),
+        ),
       )
     );
   }

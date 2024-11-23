@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/classes/Student.dart';
+import 'package:proyecto/classes/Task.dart';
 import 'dart:io';
 
 import '../classes/ImgCode.dart';
@@ -341,8 +342,10 @@ Widget buildCustomList({
                   backgroundImage: AssetImage(item.image),
                   radius: 30,
                 ),
-                title: Text('${item.name} ${item is Student && item.surname!.isNotEmpty == true ? item.surname : ''}'),
-                subtitle: item is Student && item.user.isNotEmpty == true ? Text(item.user) : null,
+                title: Text('${item.name} ${item is Student ? item.surname ?? '' : ''}'),
+                subtitle: item is Student ? Text(item.user) 
+                        : item is Task ? Text(item.description)
+                        : null,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: buildChildren != null

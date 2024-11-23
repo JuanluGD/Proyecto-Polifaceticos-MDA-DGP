@@ -21,18 +21,18 @@ void main() {
       }
 
       await ColegioDatabase.instance.database;
-      await registerStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
-      await registerStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
+      await insertStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      await insertStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
     });
 
     // Test 1
     testWidgets('Comprobar que se puede acceder a la página de la modificación de perfil', (WidgetTester tester) async {
 
       // Registra estudiantes de prueba directamente en la base de datos antes de cargar la página
-      await registerStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
-      await registerStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
-      await registerStudent('marta10', 'Marta', 'Caparrós', 'nube', 'assets/perfiles/discapacidad_motriz_chica.png', 'images', 0, 0, 1);
-      await registerStudent('pepito', 'José', 'Illana', 'almeria', 'assets/perfiles/discapacidad_motriz_chico.png', 'pictograms', 1, 1, 0);
+      await insertStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      await insertStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
+      await insertStudent('marta10', 'Marta', 'Caparrós', 'nube', 'assets/perfiles/discapacidad_motriz_chica.png', 'images', 0, 0, 1);
+      await insertStudent('pepito', 'José', 'Illana', 'almeria', 'assets/perfiles/discapacidad_motriz_chico.png', 'pictograms', 1, 1, 0);
 
       // Monta la página de lista de estudiantes
       await tester.pumpWidget(MaterialApp(home: StudentListPage()));
@@ -63,7 +63,7 @@ void main() {
     testWidgets('Modificar un estudiante en la página de modificación de perfil', (WidgetTester tester) async {
       /*
       //registra a un estudiante para poder modificarlo
-      bool isRegisteredJuan = await registerStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      bool isRegisteredJuan = await insertStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
       expect(isRegisteredJuan, true);
 
         await tester.pumpWidget(MaterialApp(home: StudentModificationPage(student: selectedStudent!)));
@@ -82,8 +82,8 @@ void main() {
       }
 
       await ColegioDatabase.instance.database;
-      await registerStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
-      await registerStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
+      await insertStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      await insertStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
     });
     //test 1
     test('Comprobar que los datos del estudiante se han modificado en la base de datos', () async {

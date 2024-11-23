@@ -1,13 +1,14 @@
 import 'dart:io';
+import 'package:path/path.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 import 'package:proyecto/classes/Classroom.dart';
 import 'package:proyecto/classes/Menu.dart';
 import 'package:proyecto/classes/Orders.dart';
 import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Decrypt.dart';
-import 'package:path/path.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
+import 'package:proyecto/classes/Task.dart';
 class ColegioDatabase{
   /*
     Declaramos la instancia de la base de datos,
@@ -61,7 +62,12 @@ class ColegioDatabase{
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, filePath);
 
-      return await openDatabase(path, version: 1, onCreate: _onCreateDB);
+      return await openDatabase(path, version: 1, 
+        onCreate: _onCreateDB, 
+        onOpen: (db) async{
+              await db.execute('PRAGMA foreign_keys = ON');
+        },
+      );
     } catch (e) {
       print("Error al inicializar la base de datos: $e");
       rethrow;
@@ -121,8 +127,8 @@ class ColegioDatabase{
 		await db.execute('''
 			CREATE TABLE $tablaMenu(
 			name VARCHAR(30),
-			pictogram VARCHAR(30),
-			image VARCHAR(30),
+			pictogram VARCHAR(30) NOT NULL,
+			image VARCHAR(30) NOT NULL,
 			PRIMARY KEY (name)
 			)
 		''');
@@ -131,7 +137,7 @@ class ColegioDatabase{
 		await db.execute('''
 			CREATE TABLE $tablaClassroom(
 			name VARCHAR(30),
-      image VARCHAR(50),
+      image VARCHAR(50) NOT NULL,
 			PRIMARY KEY (name)
 			)
 		''');
@@ -147,6 +153,18 @@ class ColegioDatabase{
 			PRIMARY KEY (menuName, classroomName, date),
       FOREIGN KEY (menuName) REFERENCES $tablaMenu(name),
 			FOREIGN KEY (classroomName) REFERENCES $tablaClassroom(name)
+			)
+		''');
+
+    /// TABLA TASK  ///
+    /// Almacena las tareas
+    /// Tabla de prueba
+		await db.execute('''
+			CREATE TABLE $tablaTask(
+			name VARCHAR(100),
+      description VARCHAR(100),
+      image VARCHAR(50) NOT NULL,
+      PRIMARY KEY (name)
 			)
 		''');
 
@@ -196,17 +214,46 @@ class ColegioDatabase{
 
     /// INSERTAR CLASES ///
     await db.execute('''
-      INSERT INTO $tablaClassroom (name, image) VALUES ('A', 'assets/imgs_aulas/a.png');
-      INSERT INTO $tablaClassroom (name, image) VALUES ('B', 'assets/imgs_aulas/b.png');
-      INSERT INTO $tablaClassroom (name, image) VALUES ('C', 'assets/imgs_aulas/c.png');
+      INSERT INTO $tablaClassroom (name, image) VALUES ('A', 'assets/aulas/a.png');
+      INSERT INTO $tablaClassroom (name, image) VALUES ('B', 'assets/aulas/b.png');
+      INSERT INTO $tablaClassroom (name, image) VALUES ('C', 'assets/aulas/c.png');
 
     ''');
+
+    /// INSERTAR TAREAS ///
+    await db.execute('''
+      INSERT INTO $tablaTask (name, description, image) VALUES ('Fregar los Platos', '','assets/tareas/fregar.png');
+      INSERT INTO $tablaTask (name, description, image) VALUES ('Hacer la cama', '', 'assets/tareas/cama.png');
+      INSERT INTO $tablaTask (name, description, image) VALUES ('Poner el microondas', '', 'assets/tareas/microondas.png');
+
+    '''); 
 
 	}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE ESTUDIANTES  ///
+
+  /*
+    Método
+    @Nombre --> insertStudent
+    @Funcion --> Registra a un alumno en la base de datos
+    @Argumentos
+      - Student: objeto de la clase Student que contiene todos los datos necesarios para añadir un nuevo alumno a la tabla
+                  de estudiantes.
+  */
+
+	Future<bool> insertStudent(Student student) async {
+		final db = await instance.database;
+
+		try {
+			await db.insert(tablaStudents, student.toMap());
+			return true;
+		} catch (e) {
+			print("Error al insertar el estudiante: $e");
+			return false;
+		}
+	}
 
   /*
     Método
@@ -227,26 +274,7 @@ class ColegioDatabase{
 		);
 		return result.isNotEmpty;
 	}
-  /*
-    Método
-    @Nombre --> registerStudent
-    @Funcion --> Registra a un alumno en la base de datos
-    @Argumentos
-      - Student: objeto de la clase Student que contiene todos los datos necesarios para añadir un nuevo alumno a la tabla
-                  de estudiantes.
-  */
 
-	Future<bool> registerStudent(Student student) async {
-		final db = await instance.database;
-
-		try {
-			await db.insert(tablaStudents, student.toMap());
-			return true;
-		} catch (e) {
-			print("Error al insertar el estudiante: $e");
-			return false;
-		}
-	}
   
  /*
     Método
@@ -478,6 +506,25 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////  
 ///  MÉTODOS PARA LA TABLA DE IMÁGENES  ///
+/// 
+  /*
+    Método
+    @Nombre --> insertImgCode
+    @Funcion --> Inserta una imágen con su código en la base de datos
+    @Argumentos
+      - path: ruta de la imagen
+			- code: código asignado a la imagen
+  */
+  Future<bool> insertImgCode(String path, String code) async {
+		final db = await instance.database;
+		try {
+			await db.insert(tablaImgCode, {'path': path, 'code': code});
+			return true;
+		} catch (e) {
+			print("Error al insertar el código de la imagen: $e");
+			return false;
+		}
+	}
 
   /*
     Método
@@ -558,24 +605,7 @@ class ColegioDatabase{
     );
     return result.first['code'].toString();
   }
-  /*
-    Método
-    @Nombre --> insertImgCode
-    @Funcion --> Inserta una imágen con su código en la base de datos
-    @Argumentos
-      - path: ruta de la imagen
-			- code: código asignado a la imagen
-  */
-  Future<bool> insertImgCode(String path, String code) async {
-		final db = await instance.database;
-		try {
-			await db.insert(tablaImgCode, {'path': path, 'code': code});
-			return true;
-		} catch (e) {
-			print("Error al insertar el código de la imagen: $e");
-			return false;
-		}
-	}
+
 
   /*
     Método
@@ -668,6 +698,16 @@ class ColegioDatabase{
     ''', [user]);
 
     return result.map((map) => ImgCode.fromMap(map)).toList();
+  }
+
+  Future<List<Decrypt>>getDecryptEntries(String user) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaDecrypt,
+      where: 'user = ?',
+      whereArgs: [user],
+    );
+    return result.map((map) => Decrypt.fromMap(map)).toList();
   }
   /*
     Método
@@ -1071,6 +1111,72 @@ class ColegioDatabase{
     );
     return result.isNotEmpty;
   }
+
+  
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///  MÉTODOS PARA LA TABLA DE TAREAS PROVISIONAL  ///
+  
+  Future<bool> insertTask(Task task) async {
+    final db = await instance.database;
+    try {
+      await db.insert(tablaTask, task.toMap());
+      return true;
+    } catch (e) {
+      print("Error al insertar la tarea: $e");
+      return false;
+    }
+  }
+
+  Future<bool> modifyTask(String name, String data, String newData) async {
+    final db = await instance.database;
+
+    try {
+      int count = await db.update(
+        tablaTask,
+        {data: newData},
+        where: 'name = ?',
+        whereArgs: [name],
+      );
+
+      return count > 0;
+    } catch (e) {
+      print("Error al modificar la tarea: $e");
+      return false;
+    }
+  }
+
+  Future<bool> deleteTask(String name) async {
+    final db = await instance.database;
+    try {
+      int count = await db.delete(
+        tablaTask, 
+        where: 'name = ?', 
+        whereArgs:[name]
+      );
+      return count > 0;
+    } catch (e) {
+      print("Error al eliminar la tarea: $e");
+      return false;
+    }
+  }
+
+  Future<Task> getTask(String name) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaTask,
+      where: 'name = ?',
+      whereArgs: [name],
+    );
+    return Task.fromMap(result.first);
+  }
+
+  Future<List<Task>> getAllTasks() async {
+    final db = await instance.database;
+    final result = await db.query(tablaTask);
+    return result.map((map) => Task.fromMap(map)).toList();
+  }
+
+
 
 
 }

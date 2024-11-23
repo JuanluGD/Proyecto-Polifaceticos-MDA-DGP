@@ -31,7 +31,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Página de lista de estudiantes
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE LISTA DE ESTUDIANTES
+// //////////////////////////////////////////////////////////////////////////////////////////
 class StudentListPage extends StatefulWidget {
   @override
   _StudentListPageState createState() => _StudentListPageState();
@@ -41,7 +43,7 @@ class _StudentListPageState extends State<StudentListPage> {
   final List<Student> students = [];
   // TOMATE
   // Para cargar los estudiantes
-  Future<void> loadStudents() async {
+  Future<void> _loadStudents() async {
     if (students.isEmpty) {
       setState(() {});
       students.addAll(await getAllStudents());
@@ -59,7 +61,7 @@ class _StudentListPageState extends State<StudentListPage> {
   @override
   void initState() {
     super.initState();
-    loadStudents();
+    _loadStudents();
   }
 
   @override
@@ -133,7 +135,9 @@ class _StudentListPageState extends State<StudentListPage> {
 }
 
 
-// Página de información de estudiante
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE INFORMACIÓN DE ESTUDIANTE
+// //////////////////////////////////////////////////////////////////////////////////////////
 class StudentInfoPage extends StatefulWidget {
   final Student student;
 
@@ -309,7 +313,9 @@ class _StudentInfoPageState extends State<StudentInfoPage> {
 }
 
 
-// Página de modificación de estudiante
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE MODIFICACIÓN DE ESTUDIANTE
+// //////////////////////////////////////////////////////////////////////////////////////////
 class StudentModificationPage extends StatefulWidget {
   final Student student; // Recibir el estudiante seleccionado
 
@@ -577,7 +583,9 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
   }
 }
 
-// Página para la contraseña con pictogramas o imágenes
+// //////////////////////////////////////////////////////////////////////////////////////////
+// PÁGINA DE CONTRASEÑA DE PICTOGRAMAS O IMÁGENES
+// //////////////////////////////////////////////////////////////////////////////////////////
 class ImgCodePasswordPage extends StatefulWidget {
   Student student;
   final String passwordType;
@@ -810,7 +818,9 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
   }
 }
 
-// Página para seleccionar pictogramas o imágenes que formarán parte de las posibilidades de contraseña del estudiante
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE SELECCION PICTOGRAMAS O IMÁGENES
+// //////////////////////////////////////////////////////////////////////////////////////////
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
   final String passwordType, user;
@@ -898,7 +908,9 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
   }
 }
 
-// Página para la contraseña alfanumérica
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
+// //////////////////////////////////////////////////////////////////////////////////////////
 class AlphanumericPasswordPage extends StatelessWidget {
   final Student student;
 

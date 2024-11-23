@@ -16,8 +16,8 @@ void main() {
       }
 
       await ColegioDatabase.instance.database;
-      await registerStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
-      await registerStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
+      await insertStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      await insertStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
     });
     test('Comprobar que se añaden correctamente en la bd los nuevos estudiantes', () async {
 
@@ -29,7 +29,7 @@ void main() {
     test('Comprobar que no se añaden diferentes estudiantes con el mismo usuario', () async {
       String user = 'juan123';
       expect(userIsValid(user), false);
-      expect(await registerStudent(user, 'Juan', 'Gómez', '3254', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1), false);
+      expect(await insertStudent(user, 'Juan', 'Gómez', '3254', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1), false);
       expect(getAllStudents(), 2);
     });
 

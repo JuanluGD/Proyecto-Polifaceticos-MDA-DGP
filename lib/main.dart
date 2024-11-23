@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 
-import 'package:proyecto/interfaces/login.dart' as loginPage;
+import 'package:proyecto/interfaces/hu3.dart' as principal;
 
 void main() {
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: loginPage.StudentListPage(),
+      home: principal.StudentLoginPage(),
     );
   }
 }

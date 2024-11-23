@@ -70,12 +70,13 @@ flutter:
   assets:
     - assets/
     - assets/perfiles/
+    - assets/tareas/
+    - assets/aulas/
+    - assets/numeros/
     - assets/picto_claves/
     - assets/imgs_claves/
     - assets/imgs_menu/
     - assets/picto_menu/
-    - assets/picto_numeros/
-    - assets/imgs_aulas/
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
