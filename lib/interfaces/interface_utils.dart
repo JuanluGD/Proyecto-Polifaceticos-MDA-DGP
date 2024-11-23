@@ -261,6 +261,7 @@ Widget AvatarTopCorner(Student student) {
   return Align(
     alignment: Alignment.topRight,
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
         margin: EdgeInsets.only(top: 20, right: 20),
@@ -269,13 +270,18 @@ Widget AvatarTopCorner(Student student) {
           backgroundImage: AssetImage(student.image),
         ),
       ),
-        SizedBox(height: 8),
-        Text(
-          student.name,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-          ),
+        SizedBox(height: 5),
+        Padding(
+          padding: EdgeInsets.only(right: 15),
+          child:  
+            Text(
+              student.name,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,  // Negrita
+                color: Colors.white,
+              ),
+            ),
         ),
       ],
     ),
