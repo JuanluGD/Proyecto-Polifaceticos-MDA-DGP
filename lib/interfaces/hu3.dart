@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto/bd_utils.dart';
-import 'package:proyecto/classes/ImgCode.dart';
-import 'package:proyecto/classes/Student.dart';
-import 'package:proyecto/image_utils.dart';
-import 'package:proyecto/interfaces/interface_utils.dart';
+import '../bd_utils.dart';
+import '../classes/ImgCode.dart';
+import '../classes/Student.dart';
+import '../image_utils.dart';
+import 'interface_utils.dart';
+import 'dart:math' as math;
+import 'hu1.dart' as hu1;
+import 'hu9.dart' as hu9;
 
-import 'package:proyecto/interfaces/hu1.dart' as hu1;
-import 'package:proyecto/interfaces/hu9.dart' as hu9;
 ///  LOGINS ESTUDIANTES  ///
 /// HU3: Como estudiante quiero poder acceder a la aplicación de forma personalizada.
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE SELECCION DE ESTUDIANTE LOGIN
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class StudentLoginPage extends StatefulWidget {
   @override
   _StudentLoginPageState createState() => _StudentLoginPageState();
@@ -318,8 +320,9 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ LOGIN DE ESTUDIANTE CON IMÁGENES
+// INTERFAZ LOGIN DE ESTUDIANTE CON IMÁGENES O PICTOGRAMAS
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class LoginImgCodePage extends StatefulWidget {
   final Student student;
 
@@ -331,9 +334,6 @@ class LoginImgCodePage extends StatefulWidget {
 class _LoginImgCodePageState extends State<LoginImgCodePage> {
   List<ImgCode> imagesSelection = [];
   List<ImgCode> imagesPassword = [];
-
-  // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
-  final TextEditingController passwordController = TextEditingController();// Controla si el texto está oculto o visible
 
   Future<void> loadImages() async {
     setState(() {});
@@ -365,120 +365,83 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
               child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
                 Column(
                   children: [
+                    SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Usuario',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
-                          ),
+                          '${widget.student.user} \t',
+                          style: titleTextStyle
                         ),
-                        SizedBox(height: 10),
                         Icon(Icons.person, color: Colors.blue, size: 30),
                       ],
                     ),
                     SizedBox(height: 20),
-                    //Grid de imagenes
-                    Expanded(
-                      child: buildTickGrid(3, 8, imagesSelection, imagesPassword, imagesMax!, context),
-                    ),
-                    /*Expanded(
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 16.0,
-                          crossAxisSpacing: 16.0,
+                    // Grid de la selección de imágenes o pictogramas
+                    if (imagesSelection.length > 3)
+                      Expanded(
+                        child: buildBorderedContainer(Colors.grey, 2,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: buildSizedIconTickGrid(3, 8, 200, imagesSelection, imagesPassword, imagesMax!, context),
+                          ),
                         ),
-                        itemCount: imagesSelection.length,
-                        itemBuilder: (context, index){
-                          return GestureDetector(
-                            onTap: () {
-                              passwordController.text += imagesSelection[index].code + ' ';
-                              // habria que hacer q el seleccionado se resalte
-                              // que solo se pueda seleccionar una vez y si se le da otra
-                              // se deselecciona
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(8),
+                      )
+                    else
+                      Container(
+                        constraints: BoxConstraints(maxHeight: 230),
+                        child: buildBorderedContainer(Colors.grey, 2,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: buildSizedIconTickGrid(3, 8, 200, imagesSelection, imagesPassword, imagesMax!, context),
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: imagesSelection.length > 3 ? 10 : 20),
+                    // Grid que muestra las imágenes ya seleccionadas
+                    Container(
+                      constraints: BoxConstraints(maxHeight: 220),
+                      child: buildBorderedContainer(Colors.grey, 2, buildGrid(3, 8, imagesPassword)),
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        buildIconButton('Volver', Colors.deepOrange[400]!, Colors.white, Icons.arrow_back, () {
+                          Navigator.pop(context);
+                        }),
+                        buildIconButton('Borrar', Colors.red, Colors.white, Icons.delete, () {
+                          if (imagesPassword.isNotEmpty) {
+                            imagesPassword.removeLast();
+                            setState(() {});
+                          }
+                        }),
+                        buildIconButton('Iniciar sesión', Colors.blue, Colors.white, Icons.arrow_forward, () async {
+                          // TOMATE
+                          // Crear la contraseña que correspondería a los elementos seleccionados
+                          String password = await imageCodeToPassword(imagesPassword);
+                          // Comprobar si es correcta e informar de que no o acceder si sí
+                          if (await loginStudent(widget.student.user, password) == false) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Contraseña incorrecta.'),
+                                backgroundColor: Colors.red,
                               ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Image.asset(
-                                  imagesSelection[index].path,
-                                  fit: BoxFit.cover,
-                                ),
+                            );
+                          } else {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => hu9.StudentInterfacePage(student: widget.student),
                               ),
-                            )
-                          );
-                        }
-                      ),
-                    ),*/
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async{
-                        if (passwordController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('El campo de usuario y contraseña no pueden ser vacíos.'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else if (await loginStudent(widget.student.user, passwordController.text) == false) { // Si del check de la BD se recupera false
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Usuario o contraseña incorrectos.'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        } else {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => hu9.StudentInterfacePage(student: widget.student),
-                            ),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlue,
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        'Iniciar Sesión',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                            );
+                          }
+                        }),
+                      ],
                     ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange[400],
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        'Atrás',
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                      ),
-                    ),
-
                   ],
                 ),
-            ),
+              ),
             ),
             avatarTopCorner(widget.student)
           ],
