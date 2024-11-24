@@ -30,14 +30,7 @@ void main() async {
       expect(find.text('usuario@'), findsNothing); // No debería mostrar el texto con el carácter especial.
       expect(find.text('usuario'), findsOneWidget); // El campo debería mostrar solo el texto válido.
     });
-    //test 2
-    testWidgets('Comprobar que se puede acceder correctamente a la pantalla de gestión de estudiantes', (WidgetTester tester) async {
-
-    });
-
-    testWidgets('Comprobar que se puede acceder correctamente a la pantalla de configuración de datos de estudiante', (WidgetTester tester) async {
-
-    });
+    
   });
 
   group('Pruebas sobre Base de Datos', () async {
