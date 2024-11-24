@@ -64,8 +64,7 @@ class _TaskListPageState extends State<TaskListPage> {
       backgroundColor: Colors.lightBlueAccent.shade100,
       body: Center(
         child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
-          buildCustomList(items: tasks, title: "Lista de tareas", addButton: true, nextPage: hu2.StudentRegistrationPage(), context: context,
-          buildChildren: (context, item, index) { 
+          buildCustomList(items: tasks, title: "Lista de tareas", addButton: true, nextPage: hu2.StudentRegistrationPage(), context: context, circle: false, fit: BoxFit.contain, buildChildren: (context, item, index) { 
             return [
               IconButton(
               icon: Icon(Icons.info_outline),

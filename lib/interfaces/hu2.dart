@@ -12,6 +12,7 @@ import 'package:proyecto/interfaces/hu4.dart' as hu4;
 
 ///  DAR DE ALTA A UN ESTUDIANTE  ///
 /// HU2> Como administrador quiero poder dar de alta a un estudiante
+
 void main() {
   runApp(MyApp());
 }
@@ -288,6 +289,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE CONTRASEÑA DE IMÁGENES O PICTOGRAMAS
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class ImgCodePasswordPage extends StatefulWidget {
   final String userStudent, nameStudent, surnameStudent, typePassword;
   final bool interfacePIC, interfaceIMG, interfaceTXT, interfaceAV;
@@ -510,6 +512,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE SELECCIÓN DE PICTOGRAMAS O IMÁGENES
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 // Página para seleccionar pictogramas o imágenes que formarán parte de las posibilidades de contraseña del estudiante
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
@@ -603,6 +606,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class AlphanumericPasswordPage extends StatefulWidget {
   final String userStudent, nameStudent, surnameStudent;
   final bool interfacePIC , interfaceIMG, interfaceTXT, interfaceAV;
@@ -640,7 +644,7 @@ class _AlphanumericPasswordPage extends State<AlphanumericPasswordPage>{
   final bool interfacePIC , interfaceIMG, interfaceTXT, interfaceAV;
   final File? perfilImage;
 
-  bool is_obscure = true;
+  bool obscurePass = true, obscureSamePass = true;
 
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController samePasswordController = TextEditingController();
@@ -675,41 +679,17 @@ class _AlphanumericPasswordPage extends State<AlphanumericPasswordPage>{
               ),
               SizedBox(height: 20),
               Spacer(),
-              TextField(
-                controller: passwordController,
-                obscureText: is_obscure,
-                decoration: InputDecoration(
-                  labelText: "Introduce la contraseña*",
-                  border: OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                  icon: Icon(
-                    is_obscure ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      is_obscure = !is_obscure;
-                    }); 
-                  },),  
-                ),
-              ),
+              buildPasswdTextField('Contraseña*', passwordController, obscurePass, () {
+                setState(() {
+                  obscurePass = !obscurePass;
+                }); 
+              }),
               SizedBox(height: 10),
-              TextField(
-                controller: samePasswordController,
-                obscureText: is_obscure,
-                decoration: InputDecoration(
-                  labelText: "Repita la contraseña*",
-                  border: OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                  icon: Icon(
-                    is_obscure ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      is_obscure = !is_obscure;
-                    }); 
-                  },),  
-                ),
-              ),
+              buildPasswdTextField('Repetir contraseña*', samePasswordController, obscureSamePass, () {
+                setState(() {
+                  obscureSamePass = !obscureSamePass;
+                }); 
+              }),
               Spacer(),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,

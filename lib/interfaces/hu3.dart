@@ -4,11 +4,10 @@ import '../classes/ImgCode.dart';
 import '../classes/Student.dart';
 import '../image_utils.dart';
 import 'interface_utils.dart';
-import 'dart:math' as math;
 import 'hu1.dart' as hu1;
 import 'hu9.dart' as hu9;
 
-///  LOGINS ESTUDIANTES  ///
+///  LOGIN ESTUDIANTES  ///
 /// HU3: Como estudiante quiero poder acceder a la aplicación de forma personalizada.
 
 void main() {
@@ -43,11 +42,10 @@ class _StudentLoginPageState extends State<StudentLoginPage>  {
   // TOMATE
   // Para cargar los estudiantes
   Future<void> loadStudents() async {
-    if (students.isEmpty) {
-      setState(() {});
-      students.addAll(await getAllStudents());
-      setState(() {});
-    }
+    students.clear();
+    setState(() {});
+    students.addAll(await getAllStudents());
+    setState(() {});
   }
 
   @override
@@ -66,97 +64,62 @@ class _StudentLoginPageState extends State<StudentLoginPage>  {
               child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
               Column(
                 children: [
-                Container(
-                  margin: EdgeInsets.only(top: 20),
-                  child: Text(
-                  '¿Quién eres?',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                  ),
-                ),
-                  Expanded(
-                    child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 16.0,
-                          crossAxisSpacing: 16.0,
-                        ),
-                        itemCount: students.length,
-                        itemBuilder: (context, index) {
-                          final student = students[index];
-                          return GestureDetector(
-                            onTap: () async {
-                            if (student.typePassword == 'alphanumeric') {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginAlphanumericPage(student : student),
-                                ),
-                              );
-                            } else {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginImgCodePage(student : student),
-                                ),
-                              );
-                            }
-                          },
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image(
-                                        image: AssetImage(student.image),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                SizedBox(height: 8),
-                                Text(
-                                  student.name,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                  Container(
+                    margin: EdgeInsets.only(top: 15),
+                    child: Text(
+                    '¿Quién eres?',
+                    style: titleTextStyle
                     ),
                   ),
+                  SizedBox(height: 15),
+                  navigationGrid(3, 16.0, students, (student) async {
+                    if (student.typePassword == 'alphanumeric') {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginAlphanumericPage(student : student),
+                        ),
+                      ).then((_) {
+                        // Cargar los estudiantes cuando se vuelva
+                        loadStudents();
+                      });
+                    } else {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginImgCodePage(student : student),
+                        ),
+                      ).then((_) {
+                        // Cargar los estudiantes cuando se vuelva
+                        loadStudents();
+                      });
+                    }
+                  }),
                 ],
               ),
             ),
           ),
           Align(
             alignment: Alignment.topRight,
-            child: GestureDetector(
-              onTap: () async{
-                // Acción cuando el texto sea tocado
+            child: buildPickerRegion(
+              () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => hu1.LoginAdminPage(),
                   ),
-                );
-                // Aquí puedes agregar la lógica que quieras al hacer clic en el texto
+                ).then((_) {
+                  // Cargar los estudiantes cuando se vuelva
+                  loadStudents();
+                });
               },
-              child: Container(
-                margin: EdgeInsets.only(top: 20, right: 20),
+              Container(
+                margin: EdgeInsets.only(top: 10, right: 20),
                 child: Text(
                   'Soy administrador',
                   style: TextStyle(
                     fontSize: 16,
-                    color: const Color.fromARGB(255, 0, 63, 102),
+                    color: Colors.blue[900],
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -172,6 +135,7 @@ class _StudentLoginPageState extends State<StudentLoginPage>  {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ LOGIN ESTUDIANTE ALFANUMÉRICO
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class LoginAlphanumericPage extends StatefulWidget {
   final Student student;
 
@@ -186,7 +150,6 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
   final TextEditingController passwordController = TextEditingController();
   bool _isObscure = true; // Controla si el texto está oculto o visible
 
-
   @override
   void initState() {
     super.initState();
@@ -195,118 +158,72 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlueAccent.shade100, // Color de fondo
+      backgroundColor: Colors.lightBlueAccent.shade100,
       body: Stack(
         children: [
           Center(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              width: 300,
-              decoration: BoxDecoration(
-                color: Colors.white, // Fondo blanco del contenedor
-                borderRadius: BorderRadius.circular(10), // Bordes redondeados
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+            child: buildMainContainer(740, 625, EdgeInsets.all(70.0),
+              Column(
+                mainAxisSize: MainAxisSize.max,
                 children: [
+                  SizedBox(height: 60),
                   Text(
                     'Iniciar Sesión',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: titleTextStyle
                   ),
-                  SizedBox(height: 20),
-                  TextField(
-                    controller: userController,
-                    decoration: InputDecoration(
-                      hintText: 'Usuario',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: passwordController,
-                    obscureText: _isObscure,
-                    decoration: InputDecoration(
-                      hintText: 'Contraseña',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isObscure ? Icons.visibility : Icons.visibility_off,
+                  SizedBox(height: 45),
+                  buildFilledTextField('Usuario', userController),
+                  SizedBox(height: 30),
+                  buildPasswdTextField('Contraseña', passwordController, _isObscure, () {
+                    setState(() {
+                      _isObscure = !_isObscure;
+                    }); 
+                  }),
+                  SizedBox(height: 50),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: SizedBox(
+                          width: 400,
+                          child: buildElevatedButton('Iniciar Sesión', buttonTextStyle, nextButtonStyle, () async {
+                              if (userController.text.isEmpty || passwordController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('El campo de usuario y contraseña no pueden ser vacíos.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else if (await loginStudent(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Usuario o contraseña incorrectos.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              } else {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => hu9.StudentInterfacePage(student: widget.student),
+                                  ),
+                                );
+                              }
+                            }
+                          ),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _isObscure = !_isObscure;
-                          }); 
-                        },
-                      ),  
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async{
-                      if (userController.text.isEmpty || passwordController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('El campo de usuario y contraseña no pueden ser vacíos.'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      } else if (await loginStudent(userController.text, passwordController.text) == false) { // Si del check de la BD se recupera false
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Usuario o contraseña incorrectos.'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      } else {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => hu9.StudentInterfacePage(student: widget.student),
-                          ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlue,
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                    child: Text(
-                      'Iniciar Sesión',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrange[400],
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                      SizedBox(height: 15),
+                      Center(
+                        child: SizedBox(
+                          width: 400,
+                          child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                              Navigator.pop(context);
+                            }
+                          ),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Atrás',
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -400,8 +317,13 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                     SizedBox(height: imagesSelection.length > 3 ? 10 : 20),
                     // Grid que muestra las imágenes ya seleccionadas
                     Container(
-                      constraints: BoxConstraints(maxHeight: 220),
-                      child: buildBorderedContainer(Colors.grey, 2, buildGrid(3, 8, imagesPassword)),
+                      constraints: BoxConstraints(maxHeight: 170),
+                      child: buildBorderedContainer(Colors.grey, 2,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                          child: buildGrid(3, 40, imagesPassword),
+                        ),
+                      ),
                     ),
                     SizedBox(height: 5),
                     Row(

@@ -22,7 +22,7 @@ Widget buildMainContainer(double width, double height, EdgeInsets margin, Widget
   );
 }
 
-// Crear campo de texto
+// Crear campo de texto básico
 Widget buildTextField(String labelText, TextEditingController controller) {
   return TextField(
     controller: controller,
@@ -33,18 +33,38 @@ Widget buildTextField(String labelText, TextEditingController controller) {
   );
 }
 
-// Crear campo de contraseña
-Widget buildPasswdTextField(String labelText, TextEditingController controller) {
+// Crear campo de texto relleno
+Widget buildFilledTextField(String labelText, TextEditingController controller) {
   return TextField(
     controller: controller,
-    obscureText: true,
     decoration: InputDecoration(
       labelText: labelText,
       border: OutlineInputBorder(),
+      filled: true,
+      fillColor: Colors.grey[200],
     ),
   );
 }
 
+// Crear campo de contraseña
+Widget buildPasswdTextField(String labelText, TextEditingController controller, bool obscure, VoidCallback onPressed) {
+  return TextField(
+    controller: controller,
+    obscureText: obscure,
+    decoration: InputDecoration(
+      labelText: labelText,
+      border: OutlineInputBorder(),
+      filled: true,
+      fillColor: Colors.grey[200],
+      suffixIcon: IconButton(
+        icon: Icon(
+          obscure ? Icons.visibility : Icons.visibility_off,
+        ),
+        onPressed: onPressed
+      ),
+    ),
+  );
+}
 
 // Crear botón con estilos
 Widget buildElevatedButton(String text, TextStyle textStyle, ButtonStyle buttonStyle, VoidCallback onPressed) {
@@ -89,6 +109,42 @@ Widget buildPickerRegion(VoidCallback onTap, Widget child) {
   );
 }
 
+// Crear opción para pick
+Widget buildOption({
+  required IconData icon,
+  required String label,
+  required VoidCallback onTap,
+}) {
+  return buildPickerRegion(onTap, 
+    Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.all(40),
+          child: Icon(
+            icon,
+            size: 50,
+            color: Colors.white,
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.blue[800],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 // Crear contenedor para pick
 Widget buildPickerContainer(double height, IconData icon, String text, BoxFit fit, File? image) {
   return ClipRRect(
@@ -126,6 +182,32 @@ Widget buildPickerContainer(double height, IconData icon, String text, BoxFit fi
   );
 }
 
+// Crear card para pick
+Widget buildPickerCard(double height, IconData icon, double size) {
+  return Container(
+    height: height,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color:Color.fromARGB(255, 247, 242, 250),
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 2),
+          blurRadius: 1,
+        ),
+      ],
+    ),
+    child: Center(
+      child: Icon(
+        icon,
+        size: size,
+        color: Colors.grey,
+      ),
+    ),
+  );
+}
+
 // Crear un grid de elementos
 Widget buildGrid(int columns, double spacing, List<ImgCode> elements) {
   return GridView.builder(
@@ -151,6 +233,51 @@ Widget buildGrid(int columns, double spacing, List<ImgCode> elements) {
         ),
       );
     },
+  );
+}
+
+// Crear un grid de navegación de estudiantes
+Widget navigationGrid(int columns, double spacing, List<Student> elements, Function(Student) onTap) {
+  return Expanded(
+      child: GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: columns,
+        crossAxisSpacing: spacing,
+        mainAxisSpacing: spacing,
+      ),
+      itemCount: elements.length,
+      itemBuilder: (context, index) {
+        final student = elements[index];
+        return buildPickerRegion(
+          () => onTap(student),
+          Card(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image(
+                        image: AssetImage(student.image),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 8),
+                Text(
+                  student.name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
   );
 }
 
@@ -376,7 +503,7 @@ Widget buildSizedRadio (String text, double size, String element, String group, 
   );
 }
 
-// Muestra el estudiante actual arriba a la derecha
+// Mostrar el estudiante actual arriba a la derecha
 Widget avatarTopCorner(Student student) {
   return Align(
     alignment: Alignment.topRight,
@@ -398,7 +525,7 @@ Widget avatarTopCorner(Student student) {
               student.name,
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,  // Negrita
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
@@ -408,14 +535,16 @@ Widget avatarTopCorner(Student student) {
   );
 }
 
-// crear listas de objetos
+// Crear listas de objetos
 Widget buildCustomList({
   required List<dynamic> items,
   required List<Widget> Function(BuildContext context, dynamic item, int index)? buildChildren,
   required String title,
   required bool addButton,
   Widget? nextPage,
-  required BuildContext context
+  required BuildContext context,
+  bool? circle,
+  BoxFit? fit,
 }) {
   return Column(
     mainAxisSize: MainAxisSize.min,
@@ -427,33 +556,19 @@ Widget buildCustomList({
       ),
       SizedBox(height: 15),
       if (addButton)
-        SizedBox(
-          height: 70, // Ajusta la altura aquí según lo necesites
-          child: MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => nextPage!, // Navegar a la página de registro
-                  ),
-                );
-              },
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ListTile(
-                  title: Center(
-                    child: Icon(Icons.add, size: 30, color: Colors.black26),
-                  ),
-                ),
+        buildPickerRegion(
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => nextPage!,
               ),
-            ),
-          ),
+            );
+          },
+          buildPickerCard(60, Icons.add, 30),
         ),
-      if(addButton)
-        SizedBox(height:0),
-      // Lista de estudiantes en un Expanded para que sea scrollable
+        SizedBox(height: 10),
+      // Lista en un Expanded para que sea scrollable
       Expanded(
         child: ListView.builder(
           itemCount: items.length,
@@ -462,10 +577,24 @@ Widget buildCustomList({
             return Card(
               margin: EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage(item.image),
-                  radius: 30,
-                ),
+                leading: circle == true
+                  ? ClipOval(
+                    child: Image.file(
+                      File(item.image),
+                      fit: fit,
+                      width: 50,
+                      height: 50,
+                    ),
+                  )
+                  : ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Image.file(
+                      File(item.image),
+                      fit: fit,
+                      width: 50,
+                      height: 50,
+                    ),
+                  ),
                 title: Text('${item.name} ${item is Student ? item.surname ?? '' : ''}'),
                 subtitle: item is Student ? Text(item.user) 
                         : item is Task ? Text(item.description)

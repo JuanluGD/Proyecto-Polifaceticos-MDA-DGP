@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE LOGIN ADMINISTRADOR
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class LoginAdminPage extends StatefulWidget {
   const LoginAdminPage({super.key});
 
@@ -199,7 +200,7 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
                         width: 350,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            setState(() {}); Navigator.pop(context); setState(() {});
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepOrange[400],
@@ -230,6 +231,7 @@ class _LoginAdminPageState extends State<LoginAdminPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ PRINCIPAL DEL ADMINISTRADOR
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class adminInterface extends StatelessWidget {
   const adminInterface({super.key});
 
@@ -245,7 +247,7 @@ class adminInterface extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildOption(
+                    buildOption(
                       icon: Icons.group,
                       label: 'Listado de alumnos',
                       onTap: ()  async{
@@ -256,7 +258,7 @@ class adminInterface extends StatelessWidget {
                       },
                     ),
                     SizedBox(width: 40),
-                    _buildOption(
+                    buildOption(
                       icon: Icons.checklist,
                       label: 'Tareas',
                       onTap: () async {
@@ -264,10 +266,10 @@ class adminInterface extends StatelessWidget {
                           context,
                           MaterialPageRoute(builder: (context) => hu10.TaskListPage()),
                         );
-                      } ,
+                      },
                     ),
                     SizedBox(width: 40),
-                    _buildOption(
+                    buildOption(
                       icon: Icons.restaurant,
                       label: 'Menú',
                       onTap: () async{
@@ -295,42 +297,6 @@ class adminInterface extends StatelessWidget {
           ),
         ),
       )
-    );
-  }
-
-  Widget _buildOption({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap, // Agregamos el callback de tap
-  }) {
-    return GestureDetector(
-      onTap: onTap, // Se ejecuta cuando el usuario toca el botón
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: EdgeInsets.all(40),
-            child: Icon(
-              icon,
-              size: 50,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.blue[800],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
