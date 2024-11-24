@@ -96,7 +96,7 @@ class _StudentListPageState extends State<StudentListPage> {
                 onPressed:
                   // Navegar a la página de tareas del estudiante
                   () async {
-                    print("no esta implementado jaja"); //TOMATE
+                    print("no esta implementado jaja"); // TOMATE
                     setState(() {});
                   },
               ),

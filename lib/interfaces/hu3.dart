@@ -42,11 +42,10 @@ class _StudentLoginPageState extends State<StudentLoginPage>  {
   // TOMATE
   // Para cargar los estudiantes
   Future<void> loadStudents() async {
-    if (students.isEmpty) {
-      setState(() {});
-      students.addAll(await getAllStudents());
-      setState(() {});
-    }
+    students.clear();
+    setState(() {});
+    students.addAll(await getAllStudents());
+    setState(() {});
   }
 
   @override
@@ -80,14 +79,20 @@ class _StudentLoginPageState extends State<StudentLoginPage>  {
                         MaterialPageRoute(
                           builder: (context) => LoginAlphanumericPage(student : student),
                         ),
-                      );
+                      ).then((_) {
+                        // Cargar los estudiantes cuando se vuelva
+                        loadStudents();
+                      });
                     } else {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => LoginImgCodePage(student : student),
                         ),
-                      );
+                      ).then((_) {
+                        // Cargar los estudiantes cuando se vuelva
+                        loadStudents();
+                      });
                     }
                   }),
                 ],
@@ -103,7 +108,10 @@ class _StudentLoginPageState extends State<StudentLoginPage>  {
                   MaterialPageRoute(
                     builder: (context) => hu1.LoginAdminPage(),
                   ),
-                );
+                ).then((_) {
+                  // Cargar los estudiantes cuando se vuelva
+                  loadStudents();
+                });
               },
               Container(
                 margin: EdgeInsets.only(top: 10, right: 20),
