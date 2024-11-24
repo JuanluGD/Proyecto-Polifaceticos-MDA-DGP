@@ -22,7 +22,7 @@ Widget buildMainContainer(double width, double height, EdgeInsets margin, Widget
   );
 }
 
-// Crear campo de texto
+// Crear campo de texto básico
 Widget buildTextField(String labelText, TextEditingController controller) {
   return TextField(
     controller: controller,
@@ -33,14 +33,35 @@ Widget buildTextField(String labelText, TextEditingController controller) {
   );
 }
 
-// Crear campo de contraseña
-Widget buildPasswdTextField(String labelText, TextEditingController controller) {
+// Crear campo de texto relleno
+Widget buildFilledTextField(String labelText, TextEditingController controller) {
   return TextField(
     controller: controller,
-    obscureText: true,
     decoration: InputDecoration(
       labelText: labelText,
       border: OutlineInputBorder(),
+      filled: true,
+      fillColor: Colors.grey[200],
+    ),
+  );
+}
+
+// Crear campo de contraseña
+Widget buildPasswdTextField(String labelText, TextEditingController controller, bool obscure, VoidCallback onPressed) {
+  return TextField(
+    controller: controller,
+    obscureText: obscure,
+    decoration: InputDecoration(
+      labelText: labelText,
+      border: OutlineInputBorder(),
+      filled: true,
+      fillColor: Colors.grey[200],
+      suffixIcon: IconButton(
+        icon: Icon(
+          obscure ? Icons.visibility : Icons.visibility_off,
+        ),
+        onPressed: onPressed
+      ),
     ),
   );
 }
@@ -151,6 +172,51 @@ Widget buildGrid(int columns, double spacing, List<ImgCode> elements) {
         ),
       );
     },
+  );
+}
+
+// Crear un grid de navegación de estudiantes
+Widget navigationGrid(int columns, double spacing, List<Student> elements, Function(Student) onTap) {
+  return Expanded(
+      child: GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: columns,
+        crossAxisSpacing: spacing,
+        mainAxisSpacing: spacing,
+      ),
+      itemCount: elements.length,
+      itemBuilder: (context, index) {
+        final student = elements[index];
+        return buildPickerRegion(
+          () => onTap(student),
+          Card(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image(
+                        image: AssetImage(student.image),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 8),
+                Text(
+                  student.name,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
   );
 }
 
@@ -376,7 +442,7 @@ Widget buildSizedRadio (String text, double size, String element, String group, 
   );
 }
 
-// Muestra el estudiante actual arriba a la derecha
+// Mostrar el estudiante actual arriba a la derecha
 Widget avatarTopCorner(Student student) {
   return Align(
     alignment: Alignment.topRight,
@@ -398,7 +464,7 @@ Widget avatarTopCorner(Student student) {
               student.name,
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,  // Negrita
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
@@ -408,7 +474,7 @@ Widget avatarTopCorner(Student student) {
   );
 }
 
-// crear listas de objetos
+// Crear listas de objetos
 Widget buildCustomList({
   required List<dynamic> items,
   required List<Widget> Function(BuildContext context, dynamic item, int index)? buildChildren,
@@ -428,7 +494,7 @@ Widget buildCustomList({
       SizedBox(height: 15),
       if (addButton)
         SizedBox(
-          height: 70, // Ajusta la altura aquí según lo necesites
+          height: 70,
           child: MouseRegion(
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
@@ -436,7 +502,7 @@ Widget buildCustomList({
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => nextPage!, // Navegar a la página de registro
+                    builder: (context) => nextPage!,
                   ),
                 );
               },
@@ -453,7 +519,7 @@ Widget buildCustomList({
         ),
       if(addButton)
         SizedBox(height:0),
-      // Lista de estudiantes en un Expanded para que sea scrollable
+      // Lista en un Expanded para que sea scrollable
       Expanded(
         child: ListView.builder(
           itemCount: items.length,
