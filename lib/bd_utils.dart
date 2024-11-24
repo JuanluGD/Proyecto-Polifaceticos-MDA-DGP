@@ -520,8 +520,7 @@ Future<Orders?> getOrder(String date, String classroomName, String menuName) asy
 */
 Future<List<Orders>> getOrdersByDate() async {
   DateTime now = DateTime.now();
-  // String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
-  String date = "23/11/2024";
+  String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
   return await ColegioDatabase.instance.getOrdersByDate(date);
 }
 

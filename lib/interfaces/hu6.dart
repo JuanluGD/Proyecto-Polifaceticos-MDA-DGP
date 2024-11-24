@@ -117,73 +117,52 @@ class _ClassSelectionState extends State<ClassSelection> {
                   ),
                   SizedBox(height: 15),
                   Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 16.0,
-                      crossAxisSpacing: 16.0,
-                      children: [
-                        ...appState.classrooms.map((classroom) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CommandListPage(
-                                      classroom: classroom,
-                                      student: widget.student,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(16.0),
-                                decoration: BoxDecoration(
-                                  color:
-                                      Colors.white10,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 4.0,
-                                      offset: Offset(2, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        if (widget.student.interfacePIC == 1 || widget.student.interfaceIMG == 1) 
-                                        Image(
-                                          image: AssetImage(classroom.image),
-                                        ),
-                                        if(widget.student.interfaceTXT == 1)
-                                        Text(
-                                          'Clase ${classroom.name}',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        if (classroom.task_completed) ...[
-                                          SizedBox(height: 8.0),
-                                          Icon(Icons.check_circle,
-                                              color: Colors.blue, size: 80.0),
-                                        ],
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: appState.classrooms.length,
+                      itemBuilder: (context, index) {
+                        Classroom classroom = appState.classrooms[index];
+                        return GestureDetector(
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CommandListPage(classroom: classroom, student: widget.student),
                               ),
+                            );
+                          },
+                          child:Card(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    if (widget.student.interfacePIC == 1 || widget.student.interfaceIMG == 1) 
+                                    Image(
+                                      image: AssetImage(classroom.image),
+                                    ),
+                                    if(widget.student.interfaceTXT == 1)
+                                    Text(
+                                      'Clase ${classroom.name}',
+                                      style: titleTextStyle
+                                    ),
+                                    if (classroom.task_completed) ...[
+                                      SizedBox(height: 8.0),
+                                      Icon(Icons.check_circle,
+                                          color: Colors.blue, size: 80.0),
+                                    ],
+                                  ],
+                                ),
+                              ],
                             ),
-                          );
-                        }).toList(),
-                      ],
+                          ),
+                        );
+                      }
                     ),
                   ),
                   if( appState.classrooms.every((c) => c.task_completed == true))
@@ -311,7 +290,7 @@ class _CommandListPageState extends State<CommandListPage> {
                 children: [
                   SizedBox(height: 15),
                   Text(
-                    'Comandas Clase: $widget.classroom.name',
+                    'Comandas Clase: ${widget.classroom.name}',
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 15),
@@ -478,7 +457,7 @@ class _CommandListPageState extends State<CommandListPage> {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => FinishedTask(student: widget.student),
+                                builder: (context) => FinishedOrder(student: widget.student, classroom: widget.classroom),
                               ),
                             );
                           },
