@@ -514,6 +514,23 @@ Future<Orders?> getOrder(String date, String classroomName, String menuName) asy
   return await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
 }
 
+/*
+  @Nombre --> getOrders
+  @Funcion --> Obtiene todas las ordenes de la base de datos del dia actual.
+*/
+Future<List<Orders>> getOrdersByDate() async {
+  DateTime now = DateTime.now();
+  // String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+  String date = "23/11/2024";
+  return await ColegioDatabase.instance.getOrdersByDate(date);
+}
+
+/*
+  @Nombre --> classCompleted
+  @Funcion --> Marca una clase como completada.
+  @Argumentos
+    - classroom: aula que se marcará como completada.
+*/
 Future<void> classCompleted(Classroom classroom) async{
   DateTime now = DateTime.now();
   String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();

@@ -1021,6 +1021,31 @@ class ColegioDatabase{
     }
   }
 
+/*
+  Método
+  @Nombre --> getOrdersByDate
+  @Funcion --> Devuelve todas las comandas de una fecha concreta
+  @Argumentos
+    - date: fecha de las comandas
+*/
+  Future<List<Orders>> getOrdersByDate(String date) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaOrders,
+      where: 'date = ?',
+      whereArgs: [date],
+    );
+    return result.map((map) => Orders.fromMap(map)).toList();
+  }
+
+/*
+  Método
+  @Nombre --> classCompleted
+  @Funcion --> Comprueba si una clase tiene comandas en una fecha concreta
+  @Argumentos
+    - classroom: aula de la que se comprobará si tiene comandas
+    - date: fecha de las comandas
+*/
   Future<bool> classCompleted(Classroom classroom, String date) async {
     final db = await instance.database;
     final result = await db.query(

@@ -620,6 +620,9 @@ class _FinishedOrderState extends State<FinishedOrder> {
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE TAREA COMEDOR TERMINADA
+// //////////////////////////////////////////////////////////////////////////////////////////
 class FinishedTask extends StatefulWidget{
  final Student student;
   const
@@ -716,5 +719,216 @@ class _FinishedTaskState extends State<FinishedTask> {
         ),
       ),
     );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+  // INTERFAZ QUE MUESTRA LAS COMANDAS DEL DÍA
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class CommandList extends StatefulWidget {
+
+  @override
+  _CommandListState createState() => _CommandListState();
+}
+
+class _CommandListState extends State<CommandList> {
+  
+  late List<Orders> orders;
+  final groupeOrders = <String, List<Orders>>{};
+
+  
+
+  @override
+  void initState() {
+    super.initState();
+    loadOrders();
+  }
+
+  Future<void> loadOrders() async {
+    orders = await getOrdersByDate();
+    setState(() {});
+
+    for (var order in orders) {
+      if (!groupeOrders.containsKey(order.classroomName)) {
+        groupeOrders[order.classroomName] = [];
+      }
+      groupeOrders[order.classroomName]!.add(order);
+    }
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740,650,EdgeInsets.all(20), 
+          Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 15),
+                  Text(
+                    "Comandas del día",
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 15),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: groupeOrders.length,
+                      itemBuilder: (context, index) {
+                        final classroomName = groupeOrders.keys.toList()[index];
+                        final classroomOrders = groupeOrders[classroomName]!;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Clase: ${classroomName}',
+                              style: titleTextStyle.copyWith(fontSize: 24)
+                            ),
+                            SizedBox(height: 10),
+                            ListView.builder(
+                              shrinkWrap: true, // Permite que el ListView tome solo el espacio necesario
+                              physics: NeverScrollableScrollPhysics(), // Desactiva el desplazamiento interno
+                              itemCount: classroomOrders.length,
+                              itemBuilder: (context, index) {
+                                final order = classroomOrders[index];
+                                return Card(
+                                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                                  child: ListTile(
+                                    title: Text(order.menuName),
+                                    trailing: Text(
+                                      'Cantidad: ${order.quantity}',
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 15), // Espaciado entre grupos
+                          ],
+                        );
+                      }
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children:[
+                      Center(
+                        child: SizedBox(
+                        width: 200,
+                        child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                            Navigator.pop(context);
+                            }
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: SizedBox(
+                        width: 200,
+                        child: buildElevatedButton('Info Menus', buttonTextStyle, nextButtonStyle, 
+                            () async{
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MenuList(),
+                                ),
+                              );
+                            }
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        )
+      )
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+  // INTERFAZ QUE MUESTRA LOS MENUS DISPONIBLES
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class MenuList extends StatefulWidget {
+
+  @override
+  _MenuListState createState() => _MenuListState();
+}
+
+class _MenuListState extends State<MenuList>{
+  final List<Menu> menus = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadMenus();
+  }
+
+  Future<void> loadMenus() async {
+    menus.clear();
+    menus.addAll(await getAllMenus());
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
+          buildCustomList(items: menus, title: "Lista de menus", addButton: true, nextPage: MenuList(), context: context,
+          buildChildren: (context, item, index) { 
+            return [
+              IconButton(
+                icon: Icon(Icons.task),
+                color: Colors.blue,
+                onPressed:
+                  // Navegar a la página de tareas del estudiante
+                  () async {
+                    print("no esta implementado jaja"); //TOMATE
+                    setState(() {});
+                  },
+              ),
+              IconButton(
+                icon: Icon(Icons.edit),
+                color: Colors.blue,
+                onPressed:
+                  // Navegar a la página de modificación del estudiante
+                  () async {
+                    print("no esta implementado jaja"); //TOMATE
+                    setState(() {});
+                  },
+              ),
+              IconButton(
+                icon: Icon(Icons.delete),
+                color: Colors.blue,
+                onPressed:
+                  () async {
+                    await deleteMenuInterface(item.name);
+                
+                    setState((){
+                      menus.removeAt(index);
+                    });
+                  },
+                ),
+              ];
+            }
+          ), 
+        )  
+      ),
+    );
+  }
+  
+  deleteMenuInterface(name) async{
+    await deleteMenu(name);
   }
 }

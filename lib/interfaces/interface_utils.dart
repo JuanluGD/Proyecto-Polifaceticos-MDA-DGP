@@ -498,7 +498,7 @@ Widget buildCustomList({
 // ESTILOS
 
 // Estilo de texto de títulos
-TextStyle titleTextStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue);
+TextStyle titleTextStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue);
 
 // Estilo de texto de subtítulos
 TextStyle subtitleTextStyle = TextStyle(fontSize: 16, color: Colors.blueAccent);

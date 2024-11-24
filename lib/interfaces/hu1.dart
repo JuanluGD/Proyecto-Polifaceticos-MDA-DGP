@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'hu4.dart' as hu4;
+import 'hu6.dart' as hu6;
 import 'hu10.dart' as hu10;
 import 'interface_utils.dart';
 
@@ -269,7 +270,12 @@ class adminInterface extends StatelessWidget {
                     _buildOption(
                       icon: Icons.restaurant,
                       label: 'Menú',
-                      onTap: () => print('Menú seleccionado'),
+                      onTap: () async{
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => hu6.CommandList()),
+                        );
+                      },
                     ),
                   ],
                 ),
