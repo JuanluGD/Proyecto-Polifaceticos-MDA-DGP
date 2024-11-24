@@ -166,20 +166,20 @@ class _LoginAlphanumericPageState extends State<LoginAlphanumericPage> {
               Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  SizedBox(height: 80),
+                  SizedBox(height: 60),
                   Text(
                     'Iniciar Sesión',
                     style: titleTextStyle
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 45),
                   buildFilledTextField('Usuario', userController),
-                  SizedBox(height: 15),
+                  SizedBox(height: 30),
                   buildPasswdTextField('Contraseña', passwordController, _isObscure, () {
                     setState(() {
                       _isObscure = !_isObscure;
                     }); 
                   }),
-                  SizedBox(height: 30),
+                  SizedBox(height: 50),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -317,8 +317,13 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                     SizedBox(height: imagesSelection.length > 3 ? 10 : 20),
                     // Grid que muestra las imágenes ya seleccionadas
                     Container(
-                      constraints: BoxConstraints(maxHeight: 220),
-                      child: buildBorderedContainer(Colors.grey, 2, buildGrid(3, 8, imagesPassword)),
+                      constraints: BoxConstraints(maxHeight: 170),
+                      child: buildBorderedContainer(Colors.grey, 2,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                          child: buildGrid(3, 40, imagesPassword),
+                        ),
+                      ),
                     ),
                     SizedBox(height: 5),
                     Row(
