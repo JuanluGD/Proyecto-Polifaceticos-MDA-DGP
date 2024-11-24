@@ -66,7 +66,6 @@ Widget buildPasswdTextField(String labelText, TextEditingController controller, 
   );
 }
 
-
 // Crear botón con estilos
 Widget buildElevatedButton(String text, TextStyle textStyle, ButtonStyle buttonStyle, VoidCallback onPressed) {
   return ElevatedButton(
@@ -106,6 +105,42 @@ Widget buildPickerRegion(VoidCallback onTap, Widget child) {
     child: MouseRegion(
       cursor: SystemMouseCursors.click,
       child: child, 
+    ),
+  );
+}
+
+// Crear opción para pick
+Widget buildOption({
+  required IconData icon,
+  required String label,
+  required VoidCallback onTap,
+}) {
+  return buildPickerRegion(onTap, 
+    Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.all(40),
+          child: Icon(
+            icon,
+            size: 50,
+            color: Colors.white,
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.blue[800],
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     ),
   );
 }
