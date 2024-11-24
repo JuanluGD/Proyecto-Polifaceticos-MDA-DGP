@@ -542,7 +542,9 @@ Widget buildCustomList({
   required String title,
   required bool addButton,
   Widget? nextPage,
-  required BuildContext context
+  required BuildContext context,
+  bool? circle,
+  BoxFit? fit,
 }) {
   return Column(
     mainAxisSize: MainAxisSize.min,
@@ -575,14 +577,24 @@ Widget buildCustomList({
             return Card(
               margin: EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                leading: ClipOval(
-                  child: Image.file(
-                    File(item.image),
-                    fit: BoxFit.cover,
-                    width: 50,
-                    height: 50,
+                leading: circle == true
+                  ? ClipOval(
+                    child: Image.file(
+                      File(item.image),
+                      fit: fit,
+                      width: 50,
+                      height: 50,
+                    ),
+                  )
+                  : ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Image.file(
+                      File(item.image),
+                      fit: fit,
+                      width: 50,
+                      height: 50,
+                    ),
                   ),
-                ),
                 title: Text('${item.name} ${item is Student ? item.surname ?? '' : ''}'),
                 subtitle: item is Student ? Text(item.user) 
                         : item is Task ? Text(item.description)

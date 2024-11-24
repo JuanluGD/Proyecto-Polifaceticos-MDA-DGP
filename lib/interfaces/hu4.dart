@@ -72,8 +72,7 @@ class _StudentListPageState extends State<StudentListPage> {
       backgroundColor: Colors.lightBlueAccent.shade100,
       body: Center(
         child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
-          buildCustomList(items: students, title: "Lista de estudiantes", addButton: true, nextPage: hu2.StudentRegistrationPage(), context: context,
-          buildChildren: (context, item, index) { 
+          buildCustomList(items: students, title: "Lista de estudiantes", addButton: true, nextPage: hu2.StudentRegistrationPage(), context: context, circle: true, fit: BoxFit.cover, buildChildren: (context, item, index) { 
             return [
               IconButton(
               icon: Icon(Icons.info_outline),
