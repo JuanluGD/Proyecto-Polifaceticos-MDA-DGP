@@ -13,6 +13,7 @@ import 'package:proyecto/interfaces/hu2.dart' as hu2;
 /// MODIFICAR ESTUDIANTE Y TIPO DE INTERFAZ ///
 /// HU4: Como administrador quiero poder elegir qué tipo de interfaz se le va a mostrar a cada estudiante.
 /// HU5: Como administrador quiero poder modificar el perfil del estudiante.
+
 void main() {
   runApp(MyApp());
 }
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE LISTA DE ESTUDIANTES
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class StudentListPage extends StatefulWidget {
   @override
   _StudentListPageState createState() => _StudentListPageState();
@@ -138,6 +140,7 @@ class _StudentListPageState extends State<StudentListPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE INFORMACIÓN DE ESTUDIANTE
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class StudentInfoPage extends StatefulWidget {
   final Student student;
 
@@ -316,6 +319,7 @@ class _StudentInfoPageState extends State<StudentInfoPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE MODIFICACIÓN DE ESTUDIANTE
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class StudentModificationPage extends StatefulWidget {
   final Student student; // Recibir el estudiante seleccionado
 
@@ -586,6 +590,7 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // PÁGINA DE CONTRASEÑA DE PICTOGRAMAS O IMÁGENES
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class ImgCodePasswordPage extends StatefulWidget {
   Student student;
   final String passwordType;
@@ -821,6 +826,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE SELECCION PICTOGRAMAS O IMÁGENES
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
   final String passwordType, user;
@@ -911,6 +917,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class AlphanumericPasswordPage extends StatefulWidget {
   final Student student;
 

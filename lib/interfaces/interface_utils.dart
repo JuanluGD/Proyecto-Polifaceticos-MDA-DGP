@@ -147,6 +147,32 @@ Widget buildPickerContainer(double height, IconData icon, String text, BoxFit fi
   );
 }
 
+// Crear card para pick
+Widget buildPickerCard(double height, IconData icon, double size) {
+  return Container(
+    height: height,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color:Color.fromARGB(255, 247, 242, 250),
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 2),
+          blurRadius: 1,
+        ),
+      ],
+    ),
+    child: Center(
+      child: Icon(
+        icon,
+        size: size,
+        color: Colors.grey,
+      ),
+    ),
+  );
+}
+
 // Crear un grid de elementos
 Widget buildGrid(int columns, double spacing, List<ImgCode> elements) {
   return GridView.builder(
@@ -493,32 +519,18 @@ Widget buildCustomList({
       ),
       SizedBox(height: 15),
       if (addButton)
-        SizedBox(
-          height: 70,
-          child: MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => nextPage!,
-                  ),
-                );
-              },
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ListTile(
-                  title: Center(
-                    child: Icon(Icons.add, size: 30, color: Colors.black26),
-                  ),
-                ),
+        buildPickerRegion(
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => nextPage!,
               ),
-            ),
-          ),
+            );
+          },
+          buildPickerCard(60, Icons.add, 30),
         ),
-      if(addButton)
-        SizedBox(height:0),
+        SizedBox(height: 10),
       // Lista en un Expanded para que sea scrollable
       Expanded(
         child: ListView.builder(
@@ -528,9 +540,13 @@ Widget buildCustomList({
             return Card(
               margin: EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage(item.image),
-                  radius: 30,
+                leading: ClipOval(
+                  child: Image.file(
+                    File(item.image),
+                    fit: BoxFit.cover,
+                    width: 50,
+                    height: 50,
+                  ),
                 ),
                 title: Text('${item.name} ${item is Student ? item.surname ?? '' : ''}'),
                 subtitle: item is Student ? Text(item.user) 
