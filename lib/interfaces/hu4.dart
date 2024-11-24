@@ -911,15 +911,21 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
 // //////////////////////////////////////////////////////////////////////////////////////////
-class AlphanumericPasswordPage extends StatelessWidget {
+class AlphanumericPasswordPage extends StatefulWidget {
   final Student student;
-
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController samePasswordController = TextEditingController();
 
   AlphanumericPasswordPage({
     required this.student,
   });
+
+  @override
+  _AlphanumericPasswordPageState createState() => _AlphanumericPasswordPageState();
+}
+
+class _AlphanumericPasswordPageState extends State<AlphanumericPasswordPage> {
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController samePasswordController = TextEditingController();
+  bool obscurePass = true, obscureSamePass = true;
 
   @override
   Widget build(BuildContext context) {
@@ -931,7 +937,7 @@ class AlphanumericPasswordPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             children: [
               Text(
-                'Modificación de ${student.name}',
+                'Modificación de ${widget.student.name}',
                 style: titleTextStyle,
               ),
               Text(
@@ -940,9 +946,17 @@ class AlphanumericPasswordPage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Spacer(),
-              buildPasswdTextField('Contraseña*', passwordController),
+              buildPasswdTextField('Contraseña*', passwordController, obscurePass, () {
+                setState(() {
+                  obscurePass = !obscurePass;
+                }); 
+              }),
               SizedBox(height: 10),
-              buildPasswdTextField('Repetir contraseña*', samePasswordController),
+              buildPasswdTextField('Repetir contraseña*', samePasswordController, obscureSamePass, () {
+                setState(() {
+                  obscureSamePass = !obscureSamePass;
+                }); 
+              }),
               Spacer(),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -955,15 +969,15 @@ class AlphanumericPasswordPage extends StatelessWidget {
                             if (passwordController.text == samePasswordController.text) {
                               // TOMATE
                               // Cambiar la contraseña del estudiante
-                              if (await modifyPasswordStudent(student.user, passwordController.text)) {
+                              if (await modifyPasswordStudent(widget.student.user, passwordController.text)) {
                                 // Eliminar los elementos anteriores asociados al estudiante
-                                deleteStudentImgCodePassword(student.user);
+                                deleteStudentImgCodePassword(widget.student.user);
 
                                 // Actualizar el tipo de contraseña del estudiante
-                                modifyTypePasswordStudent(student.user, 'alphanumeric');
+                                modifyTypePasswordStudent(widget.student.user, 'alphanumeric');
 
                                 // Actualizar el tipo de contraseña en la interfaz
-                                student.typePassword = 'alphanumeric';
+                                widget.student.typePassword = 'alphanumeric';
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
