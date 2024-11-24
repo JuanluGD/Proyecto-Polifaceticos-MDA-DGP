@@ -58,14 +58,33 @@ Widget buildElevatedButton(String text, TextStyle textStyle, ButtonStyle buttonS
   );
 }
 
+// Crear botón de iconos
+Widget buildIconButton(String tip, Color background, Color iconColor, IconData icon, VoidCallback onPressed) {
+  return Tooltip(
+    message: tip,
+    child: Container(
+      decoration: BoxDecoration(
+        color: background,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Icon(
+          icon,
+          color: iconColor,
+        ),
+        onPressed: onPressed,
+      ),
+    ),
+  );
+}
+
 // Crear región para pick
 Widget buildPickerRegion(VoidCallback onTap, Widget child) {
   return GestureDetector(
     onTap: onTap,
     child: MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: child,
-       
+      child: child, 
     ),
   );
 }
@@ -104,6 +123,34 @@ Widget buildPickerContainer(double height, IconData icon, String text, BoxFit fi
               ),
       ),
     ),
+  );
+}
+
+// Crear un grid de elementos
+Widget buildGrid(int columns, double spacing, List<ImgCode> elements) {
+  return GridView.builder(
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: columns,
+      crossAxisSpacing: spacing,
+      mainAxisSpacing: spacing,
+    ),
+    itemCount: elements.length,
+    itemBuilder: (context, index) {
+      final element = elements[index];
+      return Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Image.file(
+                File(element.path),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+        ),
+      );
+    },
   );
 }
 
@@ -147,6 +194,24 @@ Widget buildTickGrid(int columns, double spacing, List<ImgCode> allElements, Lis
     }).toList(),
   );
 }
+Widget buildSizedIconTickGrid(int columns, double spacing, double size, List<ImgCode> allElements, List<ImgCode> selectionElements, int max, BuildContext context) {
+  return GridView.count(
+    crossAxisCount: columns,
+    crossAxisSpacing: spacing,
+    mainAxisSpacing: spacing,
+    children: allElements.map((element) {
+      final isSelected = selectionElements.contains(element);
+      return buildPickerRegion(
+        () {
+          toggleSelection(selectionElements, element, max, context);
+          // Actualizar el estado
+          (context as Element).markNeedsBuild();
+        },
+        buildSizedIconToggleContainer(size, isSelected, element, selectionElements, false),
+      );
+    }).toList(),
+  );
+}
 
 // Crear contenedor para seleccionar elementos de la clave
 Widget buildToggleContainer(bool selected, ImgCode element, List<ImgCode> selectedElements, bool indexView) {
@@ -170,13 +235,51 @@ Widget buildToggleContainer(bool selected, ImgCode element, List<ImgCode> select
           ),
           if (selected)
             Positioned(
-              top: 4,
               right: 4,
+              top: 4,
               child: indexView
                   ? buildIndexViewContainer(selectedElements, element)
                   : Icon(
                       Icons.check_circle,
-                      color: Colors.blue
+                      color: Colors.blue,
+                    ),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+Widget buildSizedIconToggleContainer(double size, bool selected, ImgCode element, List<ImgCode> selectedElements, bool indexView) {
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(8), // Bordes redondeados
+    child: Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: selected ? Colors.blue : Colors.grey,
+          width: selected ? 3 : 1,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.file(
+              File(element.path),
+              fit: BoxFit.cover,
+            ),
+          ),
+          if (selected)
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: indexView
+                  ? buildIndexViewContainer(selectedElements, element)
+                  : Icon(
+                      Icons.check_circle,
+                      color: Colors.blue,
+                      size: size,
                     ),
             ),
         ],
@@ -198,6 +301,20 @@ Widget buildIndexViewContainer(List<ImgCode> selectedElements, ImgCode element) 
         fontSize: 14,
       ),
     ),
+  );
+}
+
+// Crear contenedor con bordes
+Widget buildBorderedContainer (Color color, double width, Widget child) {
+  return Container(
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: color,
+        width: width
+      ),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    child: child,
   );
 }
 
