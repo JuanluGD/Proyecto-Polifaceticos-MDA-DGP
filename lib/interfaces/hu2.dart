@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE REGISTRAR ALUMNO
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class StudentRegistrationPage extends StatefulWidget {
   const StudentRegistrationPage({super.key});
 
@@ -69,7 +70,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
             children: [
               Text('Alta de estudiante', style: titleTextStyle),
               Text('Ingresa los datos del estudiante', style:subtitleTextStyle),
-              SizedBox(height: 30),
+              SizedBox(height: 20),
               // Formulario
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +169,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                   ),
                 ],
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 20),
               // Botones de navegación
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
