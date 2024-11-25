@@ -256,8 +256,8 @@ Widget navigationGrid(int columns, double spacing, List<Student> elements, Funct
                 Expanded(
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image(
-                        image: AssetImage(student.image),
+                      child: Image.file(
+                        File(student.image),
                         fit: BoxFit.cover,
                       ),
                     ),
