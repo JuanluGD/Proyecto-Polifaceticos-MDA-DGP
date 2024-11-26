@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:proyecto/classes/Classroom.dart';
 import 'package:proyecto/classes/Menu.dart';
 import 'package:proyecto/classes/Orders.dart';
+import 'dart:io';
 
 import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/bd_utils.dart';
@@ -10,22 +11,35 @@ import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/classes/Student.dart';
 
 import 'package:proyecto/interfaces/hu9.dart' as hu9;
+
 /// TAREA MENU COMEDOR
 /// HU6: Como alumno quiero poder realizar la tarea de comandas
+/// 
 Future<void> main() async {
   Student student = (await getStudent('alex123'))!;
   runApp(MyApp(student: student));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   final Student student;
   const MyApp({super.key, required this.student});
-
   @override
-  _MyAppState createState() => _MyAppState(student: student);
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Comandas',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      debugShowCheckedModeBanner: false,
+      home: ClassSelection(student: student),
+    );
+  }
+  /*
+  @override
+  _MyAppState createState() => _MyAppState(student: student);*/
 }
 
-class _MyAppState extends State<MyApp> {
+/*class _MyAppState extends State<MyApp> {
   final Student student;
   _MyAppState({required this.student});
   @override
@@ -47,10 +61,10 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-}
+}*/
 
-class MyAppState extends ChangeNotifier {
-  List<Classroom> classrooms = [];// Clases completadas
+/*class MyAppState extends ChangeNotifier {
+  List<Classroom> classrooms = []; // Clases
 
   MyAppState() {
     _initializeAppState();
@@ -65,20 +79,22 @@ class MyAppState extends ChangeNotifier {
     classrooms = await getAllClassrooms();
     notifyListeners();
   }
-  Future<void> markClassAsCompleted(List<Classroom> classrooms) async{
+
+  Future<void> markClassAsCompleted(List<Classroom> classrooms) async {
     for(Classroom c in classrooms) {
-      await classCompleted(c); // Marca una clase como completada
+      await classCompleted(c); // Marcar una clase como completada
     }
     notifyListeners();
   }
 
 
-}
+}*/
 
 
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE SELECCIÓN DE CLASES 
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class ClassSelection extends StatefulWidget {
   final Student student;
   const ClassSelection({super.key, required this.student});
@@ -88,25 +104,41 @@ class ClassSelection extends StatefulWidget {
 }
 
 class _ClassSelectionState extends State<ClassSelection> {
+  final List<Classroom> classrooms = []; // Clases
+  // TOMATE
+  // Para cargar las clases
+  Future<void> _loadClassrooms() async {
+    classrooms.clear();
+    setState(() {});
+    classrooms.addAll(await getAllClassrooms());
+    setState(() {});
+  }
+
+  Future<void> markClassAsCompleted(List<Classroom> classrooms) async {
+    for(Classroom c in classrooms) {
+      await classCompleted(c); // Marcar una clase como completada
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await _loadClassrooms();
+    await markClassAsCompleted(classrooms);
   }
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent.shade100,
       body: Stack(
         children: [
           Center(
-            child: buildMainContainer(
-              740,
-              625,
-              EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+            child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -123,19 +155,22 @@ class _ClassSelectionState extends State<ClassSelection> {
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
                       ),
-                      itemCount: appState.classrooms.length,
+                      itemCount: classrooms.length,
                       itemBuilder: (context, index) {
-                        Classroom classroom = appState.classrooms[index];
-                        return GestureDetector(
-                          onTap: () async {
+                        Classroom classroom = classrooms[index];
+                        return buildPickerRegion(
+                          () async {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => CommandListPage(classroom: classroom, student: widget.student),
                               ),
-                            );
-                          },
-                          child:Card(
+                            ).then((_) {
+                              // Cargar las clases cuando se vuelva
+                              _loadData();
+                            });
+                          }, 
+                          Card(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -143,8 +178,9 @@ class _ClassSelectionState extends State<ClassSelection> {
                                   alignment: Alignment.center,
                                   children: [
                                     if (widget.student.interfacePIC == 1 || widget.student.interfaceIMG == 1) 
-                                    Image(
-                                      image: AssetImage(classroom.image),
+                                    Image.file(
+                                      File(classroom.image),
+                                      fit: BoxFit.cover,
                                     ),
                                     if(widget.student.interfaceTXT == 1)
                                     Text(
@@ -153,19 +189,21 @@ class _ClassSelectionState extends State<ClassSelection> {
                                     ),
                                     if (classroom.task_completed) ...[
                                       SizedBox(height: 8.0),
-                                      Icon(Icons.check_circle,
-                                          color: Colors.blue, size: 80.0),
+                                      Icon(
+                                        Icons.check_circle_outline,
+                                        color: Colors.lightBlueAccent.shade100, size: 200.0
+                                      ),   
                                     ],
                                   ],
                                 ),
-                              ],
+                              ]
                             ),
                           ),
                         );
                       }
                     ),
                   ),
-                  if( appState.classrooms.every((c) => c.task_completed == true))
+                  if(classrooms.every((c) => c.task_completed == true))
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: SizedBox(
@@ -195,7 +233,7 @@ class CommandListPage extends StatefulWidget {
   CommandListPage({
     required this.classroom,
     required this.student
-    });
+  });
     
   @override
   _CommandListPageState createState() => _CommandListPageState();
@@ -211,11 +249,11 @@ class _CommandListPageState extends State<CommandListPage> {
 
 
 
-  // Para cargar los menús.
+  // Para cargar los menús
   Future<void> loadMenus() async {
-    
     DateTime now = DateTime.now();
     String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+
     if (menus.isEmpty) {
       setState(() {});
       menus.addAll(await getAllMenus());
@@ -245,10 +283,9 @@ class _CommandListPageState extends State<CommandListPage> {
   void addMenuQuantity(String menuName) {
     if ((orders_aux[menuName] ?? 0) < 8) 
       orders_aux[menuName] = (orders_aux[menuName] ?? 0) + 1;
-    
   }
 
-  void removeMenuCuantity(String menuName) {
+  void removeMenuQuantity(String menuName) {
     if ((orders_aux[menuName] ?? 0) > 0)
       orders_aux[menuName] = (orders_aux[menuName] ?? 0) - 1;
   }
@@ -268,10 +305,11 @@ class _CommandListPageState extends State<CommandListPage> {
         }
       }
     }
+    widget.classroom.task_completed = true;
   }
 
   // //////////////////////////////////////////////////////////////////////////////////////////
-  // INTERFAZ DE REALIZCIÓN DE COMANDAS
+  // INTERFAZ DE REALIZACIÓN DE COMANDAS
   // //////////////////////////////////////////////////////////////////////////////////////////
 
   @override
@@ -281,10 +319,7 @@ class _CommandListPageState extends State<CommandListPage> {
       body: Stack(
         children: [
           Center(
-            child: buildMainContainer(
-              740,
-              625,
-              EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+            child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -301,7 +336,7 @@ class _CommandListPageState extends State<CommandListPage> {
                       itemBuilder: (context, index) {
                         Menu menu = menus[index];
                         return Card(
-                          margin: EdgeInsets.symmetric(vertical: 4.0), // Reduce el espacio vertical entre las tarjetas
+                          margin: EdgeInsets.symmetric(vertical: 4.0),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: 8.0,
@@ -312,13 +347,13 @@ class _CommandListPageState extends State<CommandListPage> {
                               children: [
                                 // Imagen con recuadro
                                 Container(
-                                  width: 80, // Tamaño de la imagen aumentado
+                                  width: 80,
                                   height: 80,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8), // Esquinas redondeadas
+                                    borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                      color: Colors.grey.shade300, // Color del borde
-                                      width: 2, // Grosor del borde
+                                      color: Colors.grey.shade300,
+                                      width: 2,
                                     ),
                                     image: DecorationImage(
                                       image: AssetImage(images[index]),
@@ -326,15 +361,15 @@ class _CommandListPageState extends State<CommandListPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 10), // Espaciado entre la imagen y el texto
-                                // Información del menú con tamaño de texto aumentado
+                                SizedBox(width: 10),
+                                // Información del menú
                                 Expanded(
                                   child: Text(
                                     '${menu.name}',
                                     style: TextStyle(
-                                      fontSize: 36, // Tamaño mucho mayor del texto
+                                      fontSize: 36,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black, // Puedes ajustar el color si lo deseas
+                                      color: Colors.black,
                                     ),
                                   ),
                                 ),
@@ -342,7 +377,7 @@ class _CommandListPageState extends State<CommandListPage> {
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    // Botón de remover 
+                                    // Botón de quitar 
                                     Container(
                                       width: 50, 
                                       height: 50,
@@ -355,7 +390,7 @@ class _CommandListPageState extends State<CommandListPage> {
                                         iconSize: 30, 
                                         onPressed: () {
                                           setState(() {
-                                            removeMenuCuantity(menu.name);
+                                            removeMenuQuantity(menu.name);
                                           });
                                         },
                                       ),
@@ -368,25 +403,25 @@ class _CommandListPageState extends State<CommandListPage> {
                                       decoration: BoxDecoration(
                                         border: Border.all(
                                           color: Colors.grey,
-                                          width: 2, // Grosor del borde
+                                          width: 2,
                                         ),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
                                         '${orders_aux[menu.name]}',
-                                        style: TextStyle(fontSize: 24), // Aumenta el tamaño de la fuente del contador
+                                        style: TextStyle(fontSize: 24),
                                       ),
                                     ),
                                     SizedBox(width: 8),
                                     // Pictograma de números
                                     Container(
-                                      width: 80, // Tamaño de la imagen adicional
+                                      width: 80,
                                       height: 80,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8), // Esquinas redondeadas
+                                        borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                          color: Colors.grey, // Color del borde
-                                          width: 2, // Grosor del borde
+                                          color: Colors.grey,
+                                          width: 2,
                                         ),
                                         image: DecorationImage(
                                           image: AssetImage(path + (orders_aux[menu.name]?.toString() ?? '0') + '.png'), 
@@ -401,11 +436,11 @@ class _CommandListPageState extends State<CommandListPage> {
                                       height: 50,
                                       decoration: BoxDecoration(
                                         color: Colors.blue,
-                                        shape: BoxShape.circle, // Forma redonda
+                                        shape: BoxShape.circle,
                                       ),
                                       child: IconButton(
                                         icon: Icon(Icons.add, color: Colors.white),
-                                        iconSize: 30, // Aumenta el tamaño del icono
+                                        iconSize: 30,
                                         onPressed: () {
                                           setState(() {
                                             addMenuQuantity(menu.name);
@@ -422,7 +457,7 @@ class _CommandListPageState extends State<CommandListPage> {
                       },
                     ),
                   ),
-                  // Botones de Atrás y Terminar con flechas y texto blanco
+                  // Botones
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Row(
@@ -498,8 +533,9 @@ class _CommandListPageState extends State<CommandListPage> {
 
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-  // INTERFAZ DE ORDEN TERMINADA
+// INTERFAZ DE ORDEN TERMINADA
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class FinishedOrder extends StatefulWidget{
  final Student student;
  final Classroom classroom;
@@ -512,27 +548,26 @@ class FinishedOrder extends StatefulWidget{
 
 
 class _FinishedOrderState extends State<FinishedOrder> {
+
   @override
   void initState() {
     super.initState();
   }
- @override
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.lightBlueAccent.shade100, // Fondo azul claro
+        backgroundColor: Colors.lightBlueAccent.shade100,
         body: Stack(
           children: [
             Center(
-              child: buildMainContainer(
-                740, // Ancho del contenedor
-                625, // Alto del contenedor
-                EdgeInsets.all(20), // Margen interno
+              child: buildMainContainer(740, 625, EdgeInsets.all(20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(16), // Márgenes alrededor del texto
+                      padding: EdgeInsets.all(16),
                       child: (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
                           ? Image(
                               image: AssetImage("assets/tareas/terminada.png"),
@@ -548,8 +583,8 @@ class _FinishedOrderState extends State<FinishedOrder> {
                             ),
 
                     ),
-                    SizedBox(height: 60), // Espaciado adicional
-                    Center( // Asegura que el botón esté centrado horizontalmente
+                    SizedBox(height: 60),
+                    Center(
                       child: ElevatedButton(
                         onPressed: () async {
                           print(widget.classroom.task_completed);
@@ -564,24 +599,24 @@ class _FinishedOrderState extends State<FinishedOrder> {
                           backgroundColor: Colors.blue,
                           padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // Bordes redondeados
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: Row(
-                          mainAxisSize: MainAxisSize.min, // Ajusta el tamaño del botón al contenido
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               'Seguir',
                               style: TextStyle(
-                                color: Colors.white, // Letras en blanco
-                                fontSize: 24, // Tamaño más grande
+                                color: Colors.white,
+                                fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 10), // Espaciado entre texto e ícono
+                            SizedBox(width: 10),
                             Icon(
                               Icons.arrow_forward,
-                              color: Colors.white, // Ícono en blanco
+                              color: Colors.white,
                             ),
                           ],
                         ),
@@ -602,6 +637,7 @@ class _FinishedOrderState extends State<FinishedOrder> {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE TAREA COMEDOR TERMINADA
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class FinishedTask extends StatefulWidget{
  final Student student;
   const

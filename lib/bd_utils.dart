@@ -530,7 +530,7 @@ Future<List<Orders>> getOrdersByDate() async {
   @Argumentos
     - classroom: aula que se marcará como completada.
 */
-Future<void> classCompleted(Classroom classroom) async{
+Future<void> classCompleted(Classroom classroom) async {
   DateTime now = DateTime.now();
   String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
   classroom.task_completed = await ColegioDatabase.instance.classCompleted(classroom, date);

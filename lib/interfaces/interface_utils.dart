@@ -254,7 +254,9 @@ Widget navigationGrid(int columns, double spacing, List<Student> elements, Funct
             child: Column(
               children: [
                 Expanded(
-                  child: ClipRRect(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.file(
                         File(student.image),
@@ -262,6 +264,7 @@ Widget navigationGrid(int columns, double spacing, List<Student> elements, Funct
                       ),
                     ),
                   ),
+                ),
                 SizedBox(height: 8),
                 Text(
                   student.name,
