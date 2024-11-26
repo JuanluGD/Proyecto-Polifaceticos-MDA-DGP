@@ -1,6 +1,6 @@
 import 'package:proyecto/classes/Classroom.dart';
 import 'package:proyecto/classes/Menu.dart';
-import 'package:proyecto/classes/Orders.dart';
+import 'package:proyecto/classes/Order.dart';
 import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/bd.dart';
 import 'package:proyecto/classes/Task.dart';
@@ -434,7 +434,7 @@ Future<Classroom?> getClassroom(String name) async {
 Future<bool> insertOrders(int quantity, String menuName, String classroomName) async {
   DateTime now = DateTime.now();
   String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
-  Orders order = Orders(date: date, quantity: quantity, menuName: menuName, classroomName: classroomName);
+  Order order = Order(date: date, quantity: quantity, menuName: menuName, classroomName: classroomName);
   return await ColegioDatabase.instance.insertOrders(order);
 }
 
@@ -445,7 +445,7 @@ Future<bool> insertOrders(int quantity, String menuName, String classroomName) a
   @Argumentos
     - order: pedido a insertar
 */
-Future<bool> insertObjectOrder(Orders order) async {
+Future<bool> insertObjectOrder(Order order) async {
   return await ColegioDatabase.instance.insertOrders(order);
 }
 
@@ -456,8 +456,8 @@ Future<bool> insertObjectOrder(Orders order) async {
   @Argumentos
     - orSders: lista de pedidos
 */
-Future<bool> insertListOrders(List<Orders> orders) async{
-  for (Orders order in orders) {
+Future<bool> insertListOrders(List<Order> orders) async{
+  for (Order order in orders) {
     if (!await ColegioDatabase.instance.insertOrders(order)) {
       return false;
     }
@@ -477,7 +477,7 @@ Future<bool> insertListOrders(List<Orders> orders) async{
 Future<bool> modifyOrders(String menuName, String classroomName, int newQuantity) async {
   DateTime now = DateTime.now();
   String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
-  Orders? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
+  Order? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
   if (order == null) {
     return false;
   }
@@ -494,7 +494,7 @@ Future<bool> modifyOrders(String menuName, String classroomName, int newQuantity
 */
 Future<int> getQuantity(String date, String classroomName, String menuName) async {
   try {
-    Orders? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
+    Order? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
     return order?.quantity ?? 0; // Si no hay orden, retorna 0.
   } catch (e) {
     return 0; // Retorna 0 si ocurre algún error.
@@ -511,7 +511,7 @@ Future<int> getQuantity(String date, String classroomName, String menuName) asyn
   - classroomName: nombre del aula de la orden.
   - menuName: nombre del menú de la orden.
 */
-Future<Orders?> getOrder(String date, String classroomName, String menuName) async {
+Future<Order?> getOrder(String date, String classroomName, String menuName) async {
   return await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
 }
 
@@ -519,7 +519,7 @@ Future<Orders?> getOrder(String date, String classroomName, String menuName) asy
   @Nombre --> getOrders
   @Funcion --> Obtiene todas las ordenes de la base de datos del dia actual.
 */
-Future<List<Orders>> getOrdersByDate() async {
+Future<List<Order>> getOrdersByDate() async {
   DateTime now = DateTime.now();
   String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
   return await ColegioDatabase.instance.getOrdersByDate(date);
@@ -536,8 +536,6 @@ Future<void> classCompleted(Classroom classroom) async {
   String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
   classroom.task_completed = await ColegioDatabase.instance.classCompleted(classroom, date);
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREA MENU ///
@@ -597,6 +595,17 @@ Future<bool> asignMenuTask(String user) async {
 */
 Future<bool> hasMenuTask(String user) async {
   return await ColegioDatabase.instance.hasMenuTask(user);
+}
+
+/*
+  Método
+  @Nombre --> menuIsValid
+  @Funcion --> Comprueba que un menú en concreto exista en la aplicación
+  @Argumentos
+      - name: el nombre del menú
+*/
+Future<bool> menuIsValid(String name) async {
+  return await ColegioDatabase.instance.menuIsValid(name);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

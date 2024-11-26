@@ -4,7 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:proyecto/classes/Classroom.dart';
 import 'package:proyecto/classes/Menu.dart';
-import 'package:proyecto/classes/Orders.dart';
+import 'package:proyecto/classes/Order.dart';
 import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Decrypt.dart';
@@ -425,7 +425,7 @@ class ColegioDatabase{
     }
   }
 
-    /*
+  /*
     Método
     @Nombre --> userIsValid
     @Funcion --> Comprueba que un usuario en concreto exista en la base de datos
@@ -851,6 +851,24 @@ class ColegioDatabase{
     final result = await db.query(tablaMenu);
     return result.map((map) => Menu.fromMap(map)).toList();
   }
+
+  /*
+    Método
+    @Nombre --> menuIsValid
+    @Funcion --> Comprueba que un menú en concreto exista en la base de datos
+    @Argumentos
+      - name: el nombre del menú
+  */
+  Future<bool> menuIsValid(String name) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaMenu,
+      where: 'name = ?',
+      whereArgs: [name],
+    );
+    return result.isEmpty;
+  }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE AULAS  ///
 
@@ -958,10 +976,10 @@ class ColegioDatabase{
     @Nombre --> insertOrders
     @Funcion --> Inserta una comanda en la base de datos
     @Argumentos
-      - order: objeto de la clase Orders que contiene todos los datos necesarios 
+      - order: objeto de la clase Order que contiene todos los datos necesarios 
               para añadir una nueva comanda a la tabla de comandas.
   */
-  Future<bool> insertOrders(Orders order) async {
+  Future<bool> insertOrders(Order order) async {
     final db = await instance.database;
     try {
       await db.insert(tablaOrders,order.toMap());
@@ -977,11 +995,11 @@ class ColegioDatabase{
     @Nombre --> modifyOrders
     @Funcion --> Modifica los datos de una comanda en la base de datos
     @Argumentos
-      - order: objeto de la clase Orders que contiene todos los datos necesarios 
+      - order: objeto de la clase Order que contiene todos los datos necesarios 
               para modificar una comanda en la tabla de comandas.
       - newQuantity
   */
-  Future<bool> modifyOrders(Orders order, int newQuantity) async {
+  Future<bool> modifyOrders(Order order, int newQuantity) async {
     final db = await instance.database;
     try {
       await db.update(
@@ -1006,7 +1024,7 @@ class ColegioDatabase{
       - menuName: nombre del menú de la comanda
       - classroomName: nombre del aula de la comanda 
   */
-  Future<Orders?> getOrder(String date, String menuName, String classroomName) async {
+  Future<Order?> getOrder(String date, String menuName, String classroomName) async {
     final db = await instance.database;
     try{
       final result = await db.query(
@@ -1014,7 +1032,7 @@ class ColegioDatabase{
         where: 'date = ? AND menuName = ? AND classroomName = ?', 
         whereArgs : [date, menuName, classroomName]
       );
-      return Orders.fromMap(result.first);
+      return Order.fromMap(result.first);
     } catch (e) {
       print("Error al obtener la orden: $e");
       return null;
@@ -1028,14 +1046,14 @@ class ColegioDatabase{
   @Argumentos
     - date: fecha de las comandas
 */
-  Future<List<Orders>> getOrdersByDate(String date) async {
+  Future<List<Order>> getOrdersByDate(String date) async {
     final db = await instance.database;
     final result = await db.query(
       tablaOrders,
       where: 'date = ?',
       whereArgs: [date],
     );
-    return result.map((map) => Orders.fromMap(map)).toList();
+    return result.map((map) => Order.fromMap(map)).toList();
   }
 
 /*
