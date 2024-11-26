@@ -52,6 +52,7 @@ class _StudentListPageState extends State<StudentListPage> {
       setState(() {});
     }
   }
+  
   Future<void> deleteStudentInterface(String user) async {
     Student? student = await getStudent(user);
     if (student != null) {
