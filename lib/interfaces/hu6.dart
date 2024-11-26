@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:path/path.dart' as path;
 import 'package:proyecto/classes/Classroom.dart';
 import 'package:proyecto/classes/Menu.dart';
 import 'package:proyecto/classes/Order.dart';
@@ -7,6 +8,7 @@ import 'dart:io';
 
 import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/bd_utils.dart';
+import 'package:proyecto/image_utils.dart';
 
 import 'package:proyecto/classes/Student.dart';
 
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: ClassSelection(student: student),
+      home: MenuList(), //ClassSelection(student: student),
     );
   }
 }
@@ -62,7 +64,6 @@ class _ClassSelectionState extends State<ClassSelection> {
   Future<void> markClassAsCompleted(List<Classroom> classrooms) async {
     for(Classroom c in classrooms) {
       await classCompleted(c); // Marcar una clase como completada
-      print(c.task_completed);
     }
   }
 
@@ -134,10 +135,6 @@ class _ClassSelectionState extends State<ClassSelection> {
                                       'Clase ${classroom.name}',
                                       style: titleTextStyle
                                     ),
-                                    (() {
-        print('en el elemento: ${classroom.task_completed}');
-        return Text('', style: TextStyle(color: Colors.red));
-      })(),
                                     if (classroom.task_completed) ...[
                                       SizedBox(height: 8.0),
                                       Icon(
@@ -604,19 +601,16 @@ class _FinishedTaskState extends State<FinishedTask> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.lightBlueAccent.shade100, // Fondo azul claro
+        backgroundColor: Colors.lightBlueAccent.shade100,
         body: Stack(
           children: [
             Center(
-              child: buildMainContainer(
-                740, // Ancho del contenedor
-                625, // Alto del contenedor
-                EdgeInsets.all(20), // Margen interno
+              child: buildMainContainer(740, 625, EdgeInsets.all(20),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(16), // Márgenes alrededor del texto
+                      padding: EdgeInsets.all(16),
                       child: (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
                           ? Image(
                               image: AssetImage("assets/tareas/terminada.png"),
@@ -632,8 +626,8 @@ class _FinishedTaskState extends State<FinishedTask> {
                             ),
 
                     ),
-                    SizedBox(height: 60), // Espaciado adicional
-                    Center( // Asegura que el botón esté centrado horizontalmente
+                    SizedBox(height: 60), 
+                    Center(
                       child: ElevatedButton(
                         onPressed: () async {
                           // TOMATE marcar como completada la tarea del comedor del alumno
@@ -653,20 +647,20 @@ class _FinishedTaskState extends State<FinishedTask> {
                           ),
                         ),
                         child: Row(
-                          mainAxisSize: MainAxisSize.min, // Ajusta el tamaño del botón al contenido
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               'Seguir',
                               style: TextStyle(
-                                color: Colors.white, // Letras en blanco
-                                fontSize: 24, // Tamaño más grande
+                                color: Colors.white,
+                                fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 10), // Espaciado entre texto e ícono
+                            SizedBox(width: 10),
                             Icon(
                               Icons.arrow_forward,
-                              color: Colors.white, // Ícono en blanco
+                              color: Colors.white,
                             ),
                           ],
                         ),
@@ -699,8 +693,6 @@ class _CommandListState extends State<CommandList> {
   late List<Order> orders;
   final groupeOrders = <String, List<Order>>{};
 
-  
-
   @override
   void initState() {
     super.initState();
@@ -718,8 +710,6 @@ class _CommandListState extends State<CommandList> {
       groupeOrders[order.classroomName]!.add(order);
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -817,7 +807,7 @@ class _CommandListState extends State<CommandList> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-  // INTERFAZ QUE MUESTRA LOS MENUS DISPONIBLES
+// INTERFAZ QUE MUESTRA LOS MENUS DISPONIBLES
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class MenuList extends StatefulWidget {
@@ -847,7 +837,7 @@ class _MenuListState extends State<MenuList>{
       backgroundColor: Colors.lightBlueAccent.shade100,
       body: Center(
         child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
-          buildCustomList(items: menus, title: "Lista de menus", addButton: true, nextPage: MenuList(), context: context,
+          buildCustomList(items: menus, title: "Lista de menus", addButton: true, nextPage: MenuRegistration(), context: context,
           buildChildren: (context, item, index) { 
             return [
               IconButton(
@@ -876,7 +866,6 @@ class _MenuListState extends State<MenuList>{
                 onPressed:
                   () async {
                     await deleteMenuInterface(item.name);
-                
                     setState((){
                       menus.removeAt(index);
                     });
@@ -894,3 +883,169 @@ class _MenuListState extends State<MenuList>{
     await deleteMenu(name);
   }
 }
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE REGISTRAR MENÚ
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class MenuRegistration extends StatefulWidget {
+  const MenuRegistration({super.key});
+
+  @override
+  _MenuRegistration createState() =>
+      _MenuRegistration();
+}
+
+class _MenuRegistration extends State<MenuRegistration> {
+  // Para almacenar las imágenes que se suban
+  File? imagePIC, imageIMG;
+
+  // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
+  final TextEditingController nameController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 650, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Título
+              Text('Crear un Menú', style: titleTextStyle),
+              Text('Ingresa los datos del menú', style: subtitleTextStyle),
+              SizedBox(height: 40),
+              // Campo de nombre
+              buildTextField('Nombre*', nameController),
+              SizedBox(height: 20),
+              // Campos de imagen y pictograma
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Imagen del menú
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Imagen del menú*', style: hintTextStyle),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage();
+                            if (pickedImage != null) {
+                              setState(() {
+                                imageIMG = pickedImage;
+                              });
+                            }
+                          },
+                          buildPickerContainer(300, Icons.cloud_upload, 'Sube una imagen', BoxFit.contain, imageIMG),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  // Pictograma del menú
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Pictograma del menú*', style: hintTextStyle),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage();
+                            if (pickedImage != null) {
+                              setState(() {
+                                imagePIC = pickedImage;
+                              });
+                            }
+                          },
+                          buildPickerContainer(300, Icons.cloud_upload, 'Sube un pictograma', BoxFit.contain, imagePIC),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 40),
+              // Botones de navegación
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
+                        String nameMenu = nameController.text;
+                        if (!(await menuIsValid(nameMenu))) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Ya hay un menú registrado con ese nombre.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        } else {
+                          if (imagePIC != null && imageIMG != null) {
+                            // Obtener la extensión del archivo original
+                            String extensionIMG = path.extension(imageIMG!.path);
+                            String extensionPIC = path.extension(imagePIC!.path);
+
+                            // Sustituir los espacios
+                            String name = removeSpacing(nameMenu);
+
+                            // TOMATE
+                            // Meter el menú en la BD
+                            if (await insertMenu(
+                              nameMenu, 'assets/picto_menu/$name$extensionPIC', 'assets/imgs_menu/$name$extensionIMG'
+                            )) 
+                            {
+                              // Guardar las imágenes en las carpetas
+                              await saveImage(imageIMG!, '$name$extensionIMG', 'assets/imgs_menu');
+                              await saveImage(imagePIC!, '$name$extensionPIC', 'assets/picto_menu');
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Menú creado con éxito.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                      
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                builder: (context) => MenuList(),
+                              ),
+                            );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Para crear un menú hay que introducir tanto una imagen como un pictograma.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      }),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                        setState(() {}); Navigator.pop(context); setState(() {});
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

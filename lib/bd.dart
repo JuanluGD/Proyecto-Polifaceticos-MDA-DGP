@@ -425,7 +425,7 @@ class ColegioDatabase{
     }
   }
 
-    /*
+  /*
     Método
     @Nombre --> userIsValid
     @Funcion --> Comprueba que un usuario en concreto exista en la base de datos
@@ -851,6 +851,24 @@ class ColegioDatabase{
     final result = await db.query(tablaMenu);
     return result.map((map) => Menu.fromMap(map)).toList();
   }
+
+  /*
+    Método
+    @Nombre --> menuIsValid
+    @Funcion --> Comprueba que un menú en concreto exista en la base de datos
+    @Argumentos
+      - name: el nombre del menú
+  */
+  Future<bool> menuIsValid(String name) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaMenu,
+      where: 'name = ?',
+      whereArgs: [name],
+    );
+    return result.isEmpty;
+  }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE AULAS  ///
 

@@ -537,8 +537,6 @@ Future<void> classCompleted(Classroom classroom) async {
   classroom.task_completed = await ColegioDatabase.instance.classCompleted(classroom, date);
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREA MENU ///
 /*
@@ -597,6 +595,17 @@ Future<bool> asignMenuTask(String user) async {
 */
 Future<bool> hasMenuTask(String user) async {
   return await ColegioDatabase.instance.hasMenuTask(user);
+}
+
+/*
+  Método
+  @Nombre --> menuIsValid
+  @Funcion --> Comprueba que un menú en concreto exista en la aplicación
+  @Argumentos
+      - name: el nombre del menú
+*/
+Future<bool> menuIsValid(String name) async {
+  return await ColegioDatabase.instance.menuIsValid(name);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
