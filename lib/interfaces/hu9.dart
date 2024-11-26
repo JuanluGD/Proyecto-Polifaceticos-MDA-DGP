@@ -6,6 +6,7 @@ import 'package:proyecto/classes/Task.dart';
 import 'package:proyecto/classes/Student.dart';
 
 import 'package:proyecto/interfaces/hu6.dart' as hu6;
+import 'package:proyecto/interfaces/hu3.dart' as hu3;
 
 /// PAGINA PRINCIPAL DEL ESTUDIANTE ///
 /// HU9: Como estudiante quiero ver las tareas que tengo pendientes de hacer.
@@ -232,7 +233,12 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                     child: SizedBox(
                       width: 400,
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
-                          Navigator.pop(context);
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => hu3.StudentLoginPage(),
+                            ),
+                          );
                         }
                       ),
                     ),
