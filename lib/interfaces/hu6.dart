@@ -208,8 +208,13 @@ class _ClassSelectionState extends State<ClassSelection> {
                     alignment: Alignment.bottomCenter,
                     child: SizedBox(
                       width: 400,
-                      child: buildElevatedButton('Terminar', buttonTextStyle, nextButtonStyle, () {
-                          Navigator.pop(context);
+                      child: buildElevatedButton('Terminar', buttonTextStyle, nextButtonStyle, () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FinishedTask(student: widget.student),
+                            ),
+                          );
                         },
                       ),
                     ),
