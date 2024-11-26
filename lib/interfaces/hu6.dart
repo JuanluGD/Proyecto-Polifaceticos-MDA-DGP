@@ -226,6 +226,10 @@ class _ClassSelectionState extends State<ClassSelection> {
 }
 
 
+
+  // //////////////////////////////////////////////////////////////////////////////////////////
+  // INTERFAZ DE REALIZACIÓN DE COMANDAS
+  // //////////////////////////////////////////////////////////////////////////////////////////
 class CommandListPage extends StatefulWidget {
   final Classroom classroom;
   final Student student;
@@ -293,22 +297,16 @@ class _CommandListPageState extends State<CommandListPage> {
     DateTime now = DateTime.now();
     String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
     for (var menu in orders_aux.keys) {
-      if (orders_aux[menu]! > 0) {
-        Orders? order = await getOrder(date, widget.classroom.name, menu);
-        if (order != null){
-          await modifyOrders(menu, widget.classroom.name, orders_aux[menu]!);
-        } else {
-          Orders order = Orders(date: date, quantity: orders_aux[menu]!, menuName: menu, classroomName: widget.classroom.name);
-          await insertObjectOrder(order);
-        }
+      Orders? order = await getOrder(date, widget.classroom.name, menu);
+      if (order != null){
+        await modifyOrders(menu, widget.classroom.name, orders_aux[menu]!);
+      } else {
+        Orders order = Orders(date: date, quantity: orders_aux[menu]!, menuName: menu, classroomName: widget.classroom.name);
+        await insertObjectOrder(order);
       }
     }
     widget.classroom.task_completed = true;
   }
-
-  // //////////////////////////////////////////////////////////////////////////////////////////
-  // INTERFAZ DE REALIZACIÓN DE COMANDAS
-  // //////////////////////////////////////////////////////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
@@ -582,7 +580,6 @@ class _FinishedOrderState extends State<FinishedOrder> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
-                          print(widget.classroom.task_completed);
                           await Navigator.push(
                             context,
                             MaterialPageRoute(

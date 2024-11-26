@@ -493,13 +493,14 @@ Future<bool> modifyOrders(String menuName, String classroomName, int newQuantity
   - menuName: nombre del menú
 */
 Future<int> getQuantity(String date, String classroomName, String menuName) async {
-  Orders? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
-  if(order == null){
-    return 0;
-  } else {
-    return order.quantity;
+  try {
+    Orders? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
+    return order?.quantity ?? 0; // Si no hay orden, retorna 0.
+  } catch (e) {
+    return 0; // Retorna 0 si ocurre algún error.
   }
 }
+
 
 
 /*
