@@ -6,6 +6,8 @@ import 'dart:io';
 import '../classes/ImgCode.dart';
 import '../image_utils.dart';
 
+import"hu1.dart" as hu1;
+
 // FUNCIONES PARA CREAR
 
 // Crear el contenedor principal
@@ -617,8 +619,13 @@ Widget buildCustomList({
       Center(
         child: SizedBox(
           width: 400,
-          child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
-              Navigator.pop(context);
+          child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => hu1.adminInterface(),
+                ),
+              );
             }
           ),
         ),

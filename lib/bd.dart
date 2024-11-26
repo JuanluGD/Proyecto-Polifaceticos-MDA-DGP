@@ -171,8 +171,8 @@ class ColegioDatabase{
     /// INSERTAR DATOS DE PRUEBA ///
     await db.execute('''
       INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('alissea', 'Alicia', '', 'assets/perfiles/alissea.png', 'rosa.png_picto azul.png_picto ', 'pictograms', 0, 1, 0, 0);
-      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('alex123', 'Alex', '', 'assets/perfiles/alex123.png', '1234', 'alphanumeric', 0, 0, 1, 1);
-      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('juancito', 'Juan', '', 'assets/perfiles/juancito.png', 'azul.png_img', 'images', 1, 0, 0, 1);
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('alex123', 'Alex', '', 'assets/perfiles/alex123.png', '1234', 'alphanumeric', 0, 1, 1, 1);
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('juancito', 'Juan', '', 'assets/perfiles/juancito.png', 'azul.png_img ', 'images', 1, 0, 0, 1);
    ''');
 
     await db.execute('''

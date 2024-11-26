@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
+import 'hu3.dart' as hu3;
 import 'hu4.dart' as hu4;
 import 'hu6.dart' as hu6;
 import 'hu10.dart' as hu10;
@@ -287,8 +288,11 @@ class adminInterface extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
                   width: 400,
-                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
-                      Navigator.pop(context);
+                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async{
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => hu3.StudentLoginPage()),
+                      );
                     },
                   ),
                 ),

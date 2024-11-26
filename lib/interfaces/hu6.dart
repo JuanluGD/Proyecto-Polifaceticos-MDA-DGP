@@ -125,18 +125,15 @@ class _ClassSelectionState extends State<ClassSelection> {
                                 Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    if(widget.student.interfaceTXT == 1)
+                                    (widget.student.interfaceTXT == 1) ?
                                     Text(
                                       'Clase ${classroom.name}',
                                       style: titleTextStyle
-                                    ),
-                                    (widget.student.interfacePIC == 1 || widget.student.interfaceIMG == 1) 
-                                    ? Image.file(
+                                    )
+                                    : Image.file(
                                         File(classroom.image),
                                         fit: BoxFit.cover,
-                                      )
-                                    : SizedBox.shrink(),
-                                    
+                                    ),
                                     if (classroom.task_completed) ...[
                                       SizedBox(height: 8.0),
                                       Icon(
@@ -520,20 +517,19 @@ class _FinishedOrderState extends State<FinishedOrder> {
                   children: [
                     Padding(
                       padding: EdgeInsets.all(16),
-                      child: (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
-                          ? Image(
-                              image: AssetImage("assets/tareas/terminada.png"),
-                            )
-                          : Text(
-                              '¡Comanda de la Clase ${widget.classroom.name} terminada!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 60,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
+                      child: (widget.student.interfaceTXT == 1)
+                      ? Text(
+                          '¡Comanda de la Clase ${widget.classroom.name} terminada!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 60,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : Image(
+                        image: AssetImage("assets/tareas/terminar.png"),
+                      ),
                     ),
                     SizedBox(height: 60),
                     Center(
@@ -618,20 +614,19 @@ class _FinishedTaskState extends State<FinishedTask> {
                   children: [
                     Padding(
                       padding: EdgeInsets.all(16),
-                      child: (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
-                          ? Image(
-                              image: AssetImage("assets/tareas/terminada.png"),
-                            )
-                          : Text(
-                              '¡Tarea terminada!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 60,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-
+                      child: (widget.student.interfaceTXT == 1)
+                      ? Text(
+                        '¡Tarea terminada!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 60,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                      : Image(
+                          image: AssetImage("assets/tareas/terminar.png"),
+                      ),
                     ),
                     SizedBox(height: 60), 
                     Center(

@@ -9,6 +9,8 @@ import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
 
 import 'package:proyecto/interfaces/hu2.dart' as hu2;
+import 'package:proyecto/interfaces/hu1.dart' as hu1;
+
 
 /// MODIFICAR ESTUDIANTE Y TIPO DE INTERFAZ ///
 /// HU4: Como administrador quiero poder elegir qué tipo de interfaz se le va a mostrar a cada estudiante.
@@ -302,8 +304,14 @@ class _StudentInfoPageState extends State<StudentInfoPage> {
               Center(
                 child: SizedBox(
                   width: 200,
-                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
-                    setState(() {}); Navigator.pop(context); setState(() {});
+                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async{
+                    setState(() {}); 
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StudentListPage(),
+                      ),
+                    );
                   }),
                 ),
               ),

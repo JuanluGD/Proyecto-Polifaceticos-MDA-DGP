@@ -109,12 +109,6 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
-                                      Image.asset(
-                                        'assets/imgs_menu/comedor.png',
-                                        width: 60,
-                                        height: 60,
-                                      ),
                                       if(widget.student.interfaceTXT == 1)
                                       Text(
                                         'Comandas comedor',
@@ -122,6 +116,12 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                                           fontSize: 28,
                                           fontWeight: FontWeight.bold,
                                         ),
+                                      ),
+                                      if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
+                                      Image.asset(
+                                        'assets/imgs_menu/comedor.png',
+                                        width: 60,
+                                        height: 60,
                                       ),
                                     ],
                                   ),
