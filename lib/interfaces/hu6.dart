@@ -863,8 +863,12 @@ class _MenuListState extends State<MenuList>{
                 onPressed:
                   // Navegar a la página de modificación del estudiante
                   () async {
-                    print("no esta implementado jaja"); //TOMATE
-                    setState(() {});
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                      builder: (context) => MenuModification(menu: item),
+                    ),
+                  );
                   },
               ),
               IconButton(
@@ -1056,3 +1060,203 @@ class _MenuRegistration extends State<MenuRegistration> {
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE MODIFICAR MENÚ
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class MenuModification extends StatefulWidget {
+  final Menu menu; // Recibir el menú seleccionado
+  
+  MenuModification({required this.menu});
+
+  @override
+  _MenuModification createState() =>
+      _MenuModification();
+}
+
+class _MenuModification extends State<MenuModification> {
+  // Para comprobar si se ha cambiado el nombre
+  late String nameMenu;
+
+  // Para almacenar las imágenes que se suban
+  File? imagePIC, imageIMG;
+
+  // Controladores para los campos de texto
+  final TextEditingController nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializar los campos con los datos del menú
+    nameMenu = widget.menu.name;
+    nameController.text = widget.menu.name;
+    imagePIC = File(widget.menu.pictogram);
+    imageIMG = File(widget.menu.image);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 650, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Título
+              Text('Modificar un Menú', style: titleTextStyle),
+              Text('Modifica los datos del menú', style: subtitleTextStyle),
+              SizedBox(height: 40),
+               // Campo de nombre
+              buildTextField('Nombre*', nameController),
+              SizedBox(height: 20),
+              // Campos de imagen y pictograma
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Imagen del menú
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Imagen del menú*', style: hintTextStyle),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage();
+                            if (pickedImage != null) {
+                              setState(() {
+                                imageIMG = pickedImage;
+                              });
+                            }
+                          },
+                          buildPickerContainer(300, Icons.cloud_upload, 'Sube una imagen', BoxFit.contain, imageIMG),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  // Pictograma del menú
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Pictograma del menú*', style: hintTextStyle),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage();
+                            if (pickedImage != null) {
+                              setState(() {
+                                imagePIC = pickedImage;
+                              });
+                            }
+                          },
+                          buildPickerContainer(300, Icons.cloud_upload, 'Sube un pictograma', BoxFit.contain, imagePIC),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 40),
+              // Botones de navegación
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
+                        String newNameMenu = nameController.text;
+                        if (newNameMenu != nameMenu) {
+                          if (!(await menuIsValid(newNameMenu))) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Ya hay un menú registrado con ese nombre.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                          else {
+                            // Obtener la extensión del archivo original
+                            String extensionIMG = path.extension(imageIMG!.path);
+                            String extensionPIC = path.extension(imagePIC!.path);
+
+                            // Sustituir los espacios
+                            String name = removeSpacing(newNameMenu);
+
+                            // TOMATE
+                            await modifyCompleteMenu(nameMenu, newNameMenu, 'assets/picto_menu/$name$extensionPIC', 'assets/imgs_menu/$name$extensionIMG');
+
+                            // Guardar las imágenes en las carpetas
+                            await saveImage(imageIMG!, '$name$extensionIMG', 'assets/imgs_menu');
+                            await saveImage(imagePIC!, '$name$extensionPIC', 'assets/picto_menu');
+
+                            // TODO: estaria bien que las imágenes anteriores se borrasen de la carpeta (se llaman como el menú anterior, con la extensión anterior)
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Menú modificado con éxito.'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                    
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                              builder: (context) => MenuList(),
+                            ),
+                          );
+                          }
+                        } else {
+                          // Obtener la extensión del archivo original
+                          String extensionIMG = path.extension(imageIMG!.path);
+                          String extensionPIC = path.extension(imagePIC!.path);
+
+                          // Sustituir los espacios
+                          String name = removeSpacing(newNameMenu);
+
+                          // TOMATE
+                          modifyMenuPictogram(name, 'assets/picto_menu/$name$extensionPIC');
+                          modifyMenuImage(name, 'assets/imgs_menu/$name$extensionIMG');
+
+                          // Guardar las imágenes en las carpetas
+                          await saveImage(imageIMG!, '$name$extensionIMG', 'assets/imgs_menu');
+                          await saveImage(imagePIC!, '$name$extensionPIC', 'assets/picto_menu');
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Menú modificado con éxito.'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                  
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                            builder: (context) => MenuList(),
+                          ),
+                        );
+                        }
+                      }),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                        setState(() {}); Navigator.pop(context); setState(() {});
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
