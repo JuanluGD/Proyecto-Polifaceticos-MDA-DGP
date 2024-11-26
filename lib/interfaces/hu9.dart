@@ -10,7 +10,7 @@ import 'package:proyecto/interfaces/hu6.dart' as hu6;
 /// PAGINA PRINCIPAL DEL ESTUDIANTE ///
 /// HU9: Como estudiante quiero ver las tareas que tengo pendientes de hacer.
 Future<void> main() async {
-  Student student = (await getStudent('juancito'))!;
+  Student student = (await getStudent('alissea'))!;
   runApp(MyApp(student: student));
 }
 
@@ -76,6 +76,12 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                       if(widget.student.diningRoomTask == 1)
                       Row(
                         children: [
+                          if(widget.student.interfaceTXT == 1)
+                          Text(
+                            '1',
+                            style: titleTextStyle,
+                          )
+                          else if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
                           Image.asset(
                             'assets/numeros/1.png',
                             width: 80,
@@ -88,7 +94,7 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => hu6.MyApp(student: widget.student), // Asegúrate de que esta es la clase correcta
+                                    builder: (context) => hu6.ClassSelection(student: widget.student), // Asegúrate de que esta es la clase correcta
                                   ),
                                 );
                               },
@@ -102,17 +108,19 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
+                                      if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
+                                      Image.asset(
+                                        'assets/imgs_menu/comedor.png',
+                                        width: 60,
+                                        height: 60,
+                                      ),
+                                      if(widget.student.interfaceTXT == 1)
                                       Text(
                                         'Comandas comedor',
                                         style: TextStyle(
                                           fontSize: 28,
                                           fontWeight: FontWeight.bold,
                                         ),
-                                      ),
-                                      Image.asset(
-                                        'assets/imgs_menu/comedor.png',
-                                        width: 60,
-                                        height: 60,
                                       ),
                                     ],
                                   ),
@@ -164,8 +172,18 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                                 Task tarea = entry.value; // Tarea actual
                                 return Row(
                                   children: [
+                                    if(widget.student.interfaceTXT == 1)
+                                    Text(
+                                      (widget.student.diningRoomTask == 1)
+                                      ? '${index + 2}'
+                                      : '${index + 1}',
+                                      style: titleTextStyle
+                                    )
+                                    else if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
                                     Image.asset(
-                                      'assets/numeros/${index + 2}.png', // Comienza desde el número 3
+                                      (widget.student.diningRoomTask == 1)
+                                      ?'assets/numeros/${index + 2}.png'
+                                      :'assets/numeros/${index + 1}.png',// Comienza desde el número 3
                                       width: 80,
                                       height: 80,
                                     ),
@@ -180,6 +198,7 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
+                                              if(widget.student.interfaceTXT == 1)
                                               Text(
                                                 tarea.name,
                                                 style: TextStyle(
@@ -187,6 +206,7 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
+                                              if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
                                               Image.asset(
                                                 tarea.image,
                                                 width: 60,

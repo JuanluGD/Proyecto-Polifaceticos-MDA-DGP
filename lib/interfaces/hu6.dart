@@ -125,16 +125,18 @@ class _ClassSelectionState extends State<ClassSelection> {
                                 Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    if (widget.student.interfacePIC == 1 || widget.student.interfaceIMG == 1) 
-                                    Image.file(
-                                      File(classroom.image),
-                                      fit: BoxFit.cover,
-                                    ),
                                     if(widget.student.interfaceTXT == 1)
                                     Text(
                                       'Clase ${classroom.name}',
                                       style: titleTextStyle
                                     ),
+                                    (widget.student.interfacePIC == 1 || widget.student.interfaceIMG == 1) 
+                                    ? Image.file(
+                                        File(classroom.image),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : SizedBox.shrink(),
+                                    
                                     if (classroom.task_completed) ...[
                                       SizedBox(height: 8.0),
                                       Icon(
@@ -294,6 +296,7 @@ class _CommandListPageState extends State<CommandListPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // Imagen con recuadro
+                                if (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
                                 Container(
                                   width: 80,
                                   height: 80,
@@ -306,11 +309,13 @@ class _CommandListPageState extends State<CommandListPage> {
                                     image: DecorationImage(
                                       image: AssetImage(images[index]),
                                       fit: BoxFit.cover,
-                                    ),
+                                    )
+                                      
                                   ),
                                 ),
                                 SizedBox(width: 10),
                                 // Información del menú
+                                if(widget.student.interfaceTXT == 1)  
                                 Expanded(
                                   child: Text(
                                     '${menu.name}',
@@ -319,7 +324,7 @@ class _CommandListPageState extends State<CommandListPage> {
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
                                     ),
-                                  ),
+                                  ), 
                                 ),
                                 // Controles de cantidad
                                 Row(
@@ -345,6 +350,7 @@ class _CommandListPageState extends State<CommandListPage> {
                                     ),
                                     SizedBox(width: 8),
                                     // Contador
+                                    if(widget.student.interfaceTXT == 1)
                                     Container(
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 31, vertical: 20.5), 
@@ -362,6 +368,7 @@ class _CommandListPageState extends State<CommandListPage> {
                                     ),
                                     SizedBox(width: 8),
                                     // Pictograma de números
+                                    if(widget.student.interfacePIC == 1 || widget.student.interfaceIMG == 1)
                                     Container(
                                       width: 80,
                                       height: 80,
