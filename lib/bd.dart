@@ -1053,6 +1053,7 @@ class ColegioDatabase{
       where: 'classroomName = ? AND date = ?',
       whereArgs: [classroom.name, date],
     );
+    print('respuesta bd: ${result.isNotEmpty}');
     return result.isNotEmpty;
   }
 

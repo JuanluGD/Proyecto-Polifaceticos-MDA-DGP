@@ -247,8 +247,6 @@ class _CommandListPageState extends State<CommandListPage> {
 
   final List<String> images = [];
 
-
-
   // Para cargar los menús
   Future<void> loadMenus() async {
     DateTime now = DateTime.now();
