@@ -228,26 +228,26 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                     ],
                   ),
                 ),
-                  SizedBox(height: 20),
-                  Center(
-                    child: SizedBox(
-                      width: 400,
-                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => hu3.StudentLoginPage(),
-                            ),
-                          );
-                        }
-                      ),
+                // ESTO ES SOLO PARA PRUEBAS
+                SizedBox(height: 20),
+                Center(
+                  child: SizedBox(
+                    width: 400,
+                    child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => hu3.StudentLoginPage(),
+                          ),
+                        );
+                      }),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        avatarTopCorner(widget.student),
+          avatarTopCorner(widget.student),
         ],
       ),
     );
