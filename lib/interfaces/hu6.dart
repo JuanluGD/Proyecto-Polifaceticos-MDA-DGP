@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto/classes/Classroom.dart';
 import 'package:proyecto/classes/Menu.dart';
-import 'package:proyecto/classes/Orders.dart';
+import 'package:proyecto/classes/Order.dart';
 import 'dart:io';
 
 import 'package:proyecto/interfaces/interface_utils.dart';
@@ -34,62 +34,7 @@ class MyApp extends StatelessWidget {
       home: ClassSelection(student: student),
     );
   }
-  /*
-  @override
-  _MyAppState createState() => _MyAppState(student: student);*/
 }
-
-/*class _MyAppState extends State<MyApp> {
-  final Student student;
-  _MyAppState({required this.student});
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'Comandas',
-        // theme: ThemeData(
-        //   // useMaterial3: true,
-        //   // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        // ),
-        home: ClassSelection(student: student),
-      ),
-    );
-  }
-}*/
-
-/*class MyAppState extends ChangeNotifier {
-  List<Classroom> classrooms = []; // Clases
-
-  MyAppState() {
-    _initializeAppState();
-  }
-
-  Future<void> _initializeAppState() async {
-    await _initializeClassrooms();
-    await markClassAsCompleted(classrooms);
-  }
-
-  Future<void> _initializeClassrooms() async {
-    classrooms = await getAllClassrooms();
-    notifyListeners();
-  }
-
-  Future<void> markClassAsCompleted(List<Classroom> classrooms) async {
-    for(Classroom c in classrooms) {
-      await classCompleted(c); // Marcar una clase como completada
-    }
-    notifyListeners();
-  }
-
-
-}*/
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE SELECCIÓN DE CLASES 
@@ -117,6 +62,7 @@ class _ClassSelectionState extends State<ClassSelection> {
   Future<void> markClassAsCompleted(List<Classroom> classrooms) async {
     for(Classroom c in classrooms) {
       await classCompleted(c); // Marcar una clase como completada
+      print(c.task_completed);
     }
   }
 
@@ -129,6 +75,7 @@ class _ClassSelectionState extends State<ClassSelection> {
   Future<void> _loadData() async {
     await _loadClassrooms();
     await markClassAsCompleted(classrooms);
+    setState(() {});
   }
 
   @override
@@ -187,6 +134,10 @@ class _ClassSelectionState extends State<ClassSelection> {
                                       'Clase ${classroom.name}',
                                       style: titleTextStyle
                                     ),
+                                    (() {
+        print('en el elemento: ${classroom.task_completed}');
+        return Text('', style: TextStyle(color: Colors.red));
+      })(),
                                     if (classroom.task_completed) ...[
                                       SizedBox(height: 8.0),
                                       Icon(
@@ -230,11 +181,10 @@ class _ClassSelectionState extends State<ClassSelection> {
   }
 }
 
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE REALIZACIÓN DE COMANDAS
+// //////////////////////////////////////////////////////////////////////////////////////////
 
-
-  // //////////////////////////////////////////////////////////////////////////////////////////
-  // INTERFAZ DE REALIZACIÓN DE COMANDAS
-  // //////////////////////////////////////////////////////////////////////////////////////////
 class CommandListPage extends StatefulWidget {
   final Classroom classroom;
   final Student student;
@@ -250,7 +200,7 @@ class CommandListPage extends StatefulWidget {
 
 class _CommandListPageState extends State<CommandListPage> {
   final List<Menu> menus = [];
-  final List<Orders> orders = [];
+  final List<Order> orders = [];
   final Map<String, int> orders_aux = {};
   final path = 'assets/numeros/';
 
@@ -302,11 +252,11 @@ class _CommandListPageState extends State<CommandListPage> {
     DateTime now = DateTime.now();
     String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
     for (var menu in orders_aux.keys) {
-      Orders? order = await getOrder(date, widget.classroom.name, menu);
+      Order? order = await getOrder(date, widget.classroom.name, menu);
       if (order != null){
         await modifyOrders(menu, widget.classroom.name, orders_aux[menu]!);
       } else {
-        Orders order = Orders(date: date, quantity: orders_aux[menu]!, menuName: menu, classroomName: widget.classroom.name);
+        Order order = Order(date: date, quantity: orders_aux[menu]!, menuName: menu, classroomName: widget.classroom.name);
         await insertObjectOrder(order);
       }
     }
@@ -735,7 +685,7 @@ class _FinishedTaskState extends State<FinishedTask> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-  // INTERFAZ QUE MUESTRA LAS COMANDAS DEL DÍA
+// INTERFAZ QUE MUESTRA LAS COMANDAS DEL DÍA
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class CommandList extends StatefulWidget {
@@ -746,8 +696,8 @@ class CommandList extends StatefulWidget {
 
 class _CommandListState extends State<CommandList> {
   
-  late List<Orders> orders;
-  final groupeOrders = <String, List<Orders>>{};
+  late List<Order> orders;
+  final groupeOrders = <String, List<Order>>{};
 
   
 
