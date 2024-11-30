@@ -31,6 +31,8 @@ class ColegioDatabase{
 	final String tablaOrders = 'orders';
 	final String tablaMenu = 'menu';
   final String tablaTask = 'task';
+  final String tablaStep = 'step';
+  final String tablaExecute = 'execute';
   /*
     Metodo inherente a las bases de datos sqlite que devuelve
     la base de datos en caso de estar creada y la crea
@@ -129,6 +131,7 @@ class ColegioDatabase{
 			name VARCHAR(30),
 			pictogram VARCHAR(30) NOT NULL,
 			image VARCHAR(30) NOT NULL,
+      descriptive_text VARCHAR(100),
 			PRIMARY KEY (name)
 			)
 		''');
@@ -158,15 +161,47 @@ class ColegioDatabase{
 
     /// TABLA TASK  ///
     /// Almacena las tareas
-    /// Tabla de prueba
 		await db.execute('''
 			CREATE TABLE $tablaTask(
-			name VARCHAR(100),
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name VARCHAR(100) NOT NULL,
       description VARCHAR(100),
-      image VARCHAR(50) NOT NULL,
-      PRIMARY KEY (name)
+      pictogram VARCHAR(30) NOT NULL,
+			image VARCHAR(30) NOT NULL,
+      descriptive_text VARCHAR(100),
+      PRIMARY KEY (id)
 			)
 		''');
+
+    /// TABLA STEPS  ///
+    /// Almacena los pasos de las tareas
+    await db.execute('''
+      CREATE TABLE $tablaStep(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      task_id INTEGER,
+      name VARCHAR(100),
+      description VARCHAR(100) NOT NULL,
+      pictogram VARCHAR(30) NOT NULL,
+      image VARCHAR(30) NOT NULL,
+      descriptive_text VARCHAR(100),
+      FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE
+      )
+    ''');
+
+    /// TABLA EXECUTE  ///
+    /// Almacena las tareas que tiene asignadas cada alumno
+    await db.execute('''
+      CREATE TABLE $tablaExecute(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user VARCHAR(30),
+      task_id INTEGER,
+      status TIYINT(1) NOT NULL,
+      FOREIGN KEY (user) REFERENCES $tablaStudents(user) ON DELETE CASCADE,
+      FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE
+      )
+    ''');
+
+
 
     /// INSERTAR DATOS DE PRUEBA ///
     await db.execute('''
@@ -222,9 +257,9 @@ class ColegioDatabase{
 
     /// INSERTAR TAREAS ///
     await db.execute('''
-      INSERT INTO $tablaTask (name, description, image) VALUES ('Fregar los Platos', '','assets/tareas/fregar.png');
-      INSERT INTO $tablaTask (name, description, image) VALUES ('Hacer la cama', '', 'assets/tareas/cama.png');
-      INSERT INTO $tablaTask (name, description, image) VALUES ('Poner el microondas', '', 'assets/tareas/microondas.png');
+      INSERT INTO $tablaTask (name, description, image) VALUES ('Fregar los Platos', '','assets/tareas/fregar.png','assets/tareas/fregar.png');
+      INSERT INTO $tablaTask (name, description, image) VALUES ('Hacer la cama', '', 'assets/tareas/cama.png','assets/tareas/cama.png');
+      INSERT INTO $tablaTask (name, description, image) VALUES ('Poner el microondas', '', 'assets/tareas/microondas.png','assets/tareas/microondas.png');
 
     '''); 
 
