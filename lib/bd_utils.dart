@@ -501,8 +501,6 @@ Future<int> getQuantity(String date, String classroomName, String menuName) asyn
   }
 }
 
-
-
 /*
 @Nombre --> getOrder
 @Funcion --> Obtiene una orden.
@@ -611,8 +609,8 @@ Future<bool> menuIsValid(String name) async {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREAS PROVISIONALES ///
 /// 
-Future<bool> insertTask(String name, String description, String image) async {
-  Task task = Task(name: name, description: description, image: image);
+Future<bool> insertTask(int id, String name, String description, String pictogram, String image) async {
+  Task task = Task(id: id, name: name, description: description, pictogram: pictogram, image: image);
   return await ColegioDatabase.instance.insertTask(task);
 }
 
