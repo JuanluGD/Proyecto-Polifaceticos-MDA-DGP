@@ -168,8 +168,7 @@ class ColegioDatabase{
       description VARCHAR(100),
       pictogram VARCHAR(30) NOT NULL,
 			image VARCHAR(30) NOT NULL,
-      descriptive_text VARCHAR(100),
-      PRIMARY KEY (id)
+      descriptive_text VARCHAR(100)
 			)
 		''');
 
@@ -257,9 +256,9 @@ class ColegioDatabase{
 
     /// INSERTAR TAREAS ///
     await db.execute('''
-      INSERT INTO $tablaTask (name, description, image) VALUES ('Fregar los Platos', '','assets/tareas/fregar.png','assets/tareas/fregar.png');
-      INSERT INTO $tablaTask (name, description, image) VALUES ('Hacer la cama', '', 'assets/tareas/cama.png','assets/tareas/cama.png');
-      INSERT INTO $tablaTask (name, description, image) VALUES ('Poner el microondas', '', 'assets/tareas/microondas.png','assets/tareas/microondas.png');
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Fregar los Platos', '','assets/tareas/fregar.png','assets/tareas/fregar.png');
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Hacer la cama', '', 'assets/tareas/cama.png','assets/tareas/cama.png');
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Poner el microondas', '', 'assets/tareas/microondas.png','assets/tareas/microondas.png');
 
     '''); 
 
