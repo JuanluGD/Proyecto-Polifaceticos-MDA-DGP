@@ -4,7 +4,9 @@ import 'package:proyecto/classes/Order.dart';
 import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/bd.dart';
 import 'package:proyecto/classes/Task.dart';
+import 'classes/Execute.dart';
 import 'classes/ImgCode.dart';
+import 'classes/Step.dart';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  LOGIN Y REGISTRO DE USUARIOS ///
@@ -607,29 +609,116 @@ Future<bool> menuIsValid(String name) async {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-///  GESTIÓN DE TAREAS PROVISIONALES ///
+///  GESTIÓN DE TAREAS ///
 /// 
-Future<bool> insertTask(int id, String name, String description, String pictogram, String image) async {
-  Task task = Task(id: id, name: name, description: description, pictogram: pictogram, image: image);
+Future<bool> insertTask(int id, String name, String description, String pictogram, String image, String? descriptive_text) async {
+  Task task = Task(id: id, name: name, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);
   return await ColegioDatabase.instance.insertTask(task);
 }
 
-Future<bool> modifyTaskName(String name, String newName) async {
-  return await ColegioDatabase.instance.modifyTask(name, "name", newName);
+Future<bool> modifyTaskName(int id, String newName) async {
+  return await ColegioDatabase.instance.modifyTask(id, "name", newName);
 }
 
-Future<bool> modifyTaskDescription(String name, String newDescription) async {
-  return await ColegioDatabase.instance.modifyTask(name, "description", newDescription);
+Future<bool> modifyTaskDescription(int id, String newDescription) async {
+  return await ColegioDatabase.instance.modifyTask(id, "description", newDescription);
 }
 
-Future<bool> deleteTask(String name) async {
-  return await ColegioDatabase.instance.deleteTask(name);
+Future<bool> modifyTaskPictogram(int id, String newPictogram) async {
+  return await ColegioDatabase.instance.modifyTask(id, "pictogram", newPictogram);
+}
+
+Future<bool> modifyTaskImage(int id, String newImage) async {
+  return await ColegioDatabase.instance.modifyTask(id, "image", newImage);
+}
+
+Future<bool> modifyTaskDescriptiveText(int id, String newDescriptiveText) async {
+  return await ColegioDatabase.instance.modifyTask(id, "descriptive_text", newDescriptiveText);
+}
+
+Future<bool> deleteTask(int id) async {
+  return await ColegioDatabase.instance.deleteTask(id);
+}
+
+Future<Task?> getTask(int id) async {
+  return await ColegioDatabase.instance.getTask(id);
+}
+
+Future<Task?> getTaskByName(String name) async {
+  return await ColegioDatabase.instance.getTaskByName(name);
 }
 
 Future<List<Task>> getAllTasks() async {
   return await ColegioDatabase.instance.getAllTasks();
 }
 
-Future<Task?> getTask(String name) async {
-  return await ColegioDatabase.instance.getTask(name);
+////////////////////////////////////////////////////////////////////////////////////////////////
+///  GESTIÓN DE PASOS ///
+/// 
+Future<bool> insertStep(int id, int id_task, String name, String description, String pictogram, String image, String? descriptive_text) async {
+  Step step = Step(id: id, id_task: id_task, name: name, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);
+  return await ColegioDatabase.instance.insertStep(step);
+}
+
+Future<bool> modifyStepName(int id, String newName) async {
+  return await ColegioDatabase.instance.modifyStep(id, "name", newName);
+}
+
+Future<bool> modifyStepDescription(int id, String newDescription) async {
+  return await ColegioDatabase.instance.modifyStep(id, "description", newDescription);
+}
+
+Future<bool> modifyStepPictogram(int id, String newPictogram) async {
+  return await ColegioDatabase.instance.modifyStep(id, "pictogram", newPictogram);
+}
+
+Future<bool> modifyStepImage(int id, String newImage) async {
+  return await ColegioDatabase.instance.modifyStep(id, "image", newImage);
+}
+
+Future<bool> modifyStepDescriptiveText(int id, String newDescriptiveText) async {
+  return await ColegioDatabase.instance.modifyStep(id, "descriptive_text", newDescriptiveText);
+}
+
+Future<bool> deleteStep(int id) async {
+  return await ColegioDatabase.instance.deleteStep(id);
+}
+
+Future<Step?> getStep(int id) async {
+  return await ColegioDatabase.instance.getStep(id);
+}
+
+Future<List<Step>> getAllStepsFromTask(int idTask) async {
+  return await ColegioDatabase.instance.getAllStepsFromTask(idTask);
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+///  GESTIÓN DE EXECUTE ///
+/// 
+
+Future<bool> insertExecute(int id, int id_task, String user, int status, String date) async {
+  Execute execute = Execute(id: id, id_task: id_task, user: user, status: status, date: date);
+  return await ColegioDatabase.instance.insertExecute(execute);
+}
+
+Future<bool> modifyExecuteDate(int id, String date) async {
+  return await ColegioDatabase.instance.modifyExecuteDate(id, date);
+}
+
+Future<bool> modifyExecuteStatus(int id, int status) async {
+  return await ColegioDatabase.instance.modifyExecuteStatus(id, status);
+}
+
+Future<bool> deleteExecute(int id) async {
+  return await ColegioDatabase.instance.deleteExecute(id);
+}
+
+Future<Execute?> getExecute(int id) async {
+  return await ColegioDatabase.instance.getExecute(id);
+}
+
+Future<List<Execute>> getAllExecutesFromStudent(String user) async {
+  return await ColegioDatabase.instance.getAllExecutesFromStudent(user);
 }

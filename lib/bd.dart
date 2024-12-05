@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
+import 'package:proyecto/classes/Step.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:proyecto/classes/Classroom.dart';
@@ -9,6 +10,8 @@ import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Decrypt.dart';
 import 'package:proyecto/classes/Task.dart';
+
+import 'classes/Execute.dart';
 class ColegioDatabase{
   /*
     Declaramos la instancia de la base de datos,
@@ -194,6 +197,7 @@ class ColegioDatabase{
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user VARCHAR(30),
       task_id INTEGER,
+      date VARCHAR(30),
       status TIYINT(1) NOT NULL,
       FOREIGN KEY (user) REFERENCES $tablaStudents(user) ON DELETE CASCADE,
       FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE
@@ -1192,7 +1196,7 @@ class ColegioDatabase{
 
   
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-///  MÉTODOS PARA LA TABLA DE TAREAS PROVISIONAL  ///
+///  MÉTODOS PARA LA TABLA DE TAREAS  ///
   
   Future<bool> insertTask(Task task) async {
     final db = await instance.database;
@@ -1205,15 +1209,15 @@ class ColegioDatabase{
     }
   }
 
-  Future<bool> modifyTask(String name, String data, String newData) async {
+  Future<bool> modifyTask(int id, String data, String newData) async {
     final db = await instance.database;
 
     try {
       int count = await db.update(
         tablaTask,
         {data: newData},
-        where: 'name = ?',
-        whereArgs: [name],
+        where: 'id = ?',
+        whereArgs: [id],
       );
 
       return count > 0;
@@ -1223,13 +1227,13 @@ class ColegioDatabase{
     }
   }
 
-  Future<bool> deleteTask(String name) async {
+  Future<bool> deleteTask(int id) async {
     final db = await instance.database;
     try {
       int count = await db.delete(
         tablaTask, 
-        where: 'name = ?', 
-        whereArgs:[name]
+        where: 'id = ?', 
+        whereArgs:[id]
       );
       return count > 0;
     } catch (e) {
@@ -1238,7 +1242,17 @@ class ColegioDatabase{
     }
   }
 
-  Future<Task> getTask(String name) async {
+  Future<Task> getTask(int id) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaTask,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return Task.fromMap(result.first);
+  }
+
+  Future<Task> getTaskByName(String name) async {
     final db = await instance.database;
     final result = await db.query(
       tablaTask,
@@ -1247,14 +1261,165 @@ class ColegioDatabase{
     );
     return Task.fromMap(result.first);
   }
-
+  
   Future<List<Task>> getAllTasks() async {
     final db = await instance.database;
     final result = await db.query(tablaTask);
     return result.map((map) => Task.fromMap(map)).toList();
   }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///  MÉTODOS PARA LA TABLA DE STEPS  ///
+
+  Future<bool> insertStep(Step step) async {
+    final db = await instance.database;
+    try {
+      await db.insert(tablaStep, step.toMap());
+      return true;
+    } catch (e) {
+      print("Error al insertar el paso: $e");
+      return false;
+    }
+  }
+
+  Future<bool> modifyStep(int id, String data, String newData) async {
+    final db = await instance.database;
+
+    try {
+      int count = await db.update(
+        tablaStep,
+        {data: newData},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      return count > 0;
+    } catch (e) {
+      print("Error al modificar el paso: $e");
+      return false;
+    }
+  }
+
+  Future<bool> deleteStep(int id) async {
+    final db = await instance.database;
+    try {
+      int count = await db.delete(
+        tablaStep, 
+        where: 'id = ?', 
+        whereArgs:[id]
+      );
+      return count > 0;
+    } catch (e) {
+      print("Error al eliminar el paso: $e");
+      return false;
+    }
+  }
+
+  Future<Step> getStep(int id) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaStep,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return Step.fromMap(result.first);
+  }
+
+  Future<List<Step>> getAllStepsFromTask(int idTask) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaStep,
+      where: 'id_task = ?',
+      whereArgs: [idTask],
+    );
+    return result.map((map) => Step.fromMap(map)).toList();
+  }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///  MÉTODOS PARA LA TABLA DE EXECUTE  ///
+
+  Future<bool> insertExecute(Execute execute) async {
+    final db = await instance.database;
+    try {
+      await db.insert(tablaExecute, execute.toMap());
+      return true;
+    } catch (e) {
+      print("Error al insertar el execute: $e");
+      return false;
+    }
+  }
+
+  Future<bool> modifyExecuteDate(int id, String date) async {
+    final db = await instance.database;
+
+    try {
+      int count = await db.update(
+        tablaExecute,
+        {'date': date},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      return count > 0;
+    } catch (e) {
+      print("Error al modificar el execute: $e");
+      return false;
+    }
+  }
+
+    Future<bool> modifyExecuteStatus(int id, int status) async{
+      final db = await instance.database;
+
+      try {
+      int count = await db.update(
+        tablaExecute,
+        {'status': status},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      return count > 0;
+    } catch (e) {
+      print("Error al modificar el execute: $e");
+      return false;
+    }
+
+  }
+
+  Future<bool> deleteExecute(int id) async {
+    final db = await instance.database;
+    try {
+      int count = await db.delete(
+        tablaExecute, 
+        where: 'id = ?', 
+        whereArgs:[id]
+      );
+      return count > 0;
+    } catch (e) {
+      print("Error al eliminar el execute: $e");
+      return false;
+    }
+  }
+
+  Future<Execute> getExecute(int id) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaExecute,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return Execute.fromMap(result.first);
+  }
+
+  Future<List<Execute>> getAllExecutesFromStudent(String user) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaExecute,
+      where: 'user = ?',
+      whereArgs: [user],
+    );
+    return result.map((map) => Execute.fromMap(map)).toList();
+  }
 
 }

@@ -1,8 +1,9 @@
 class Execute {
   int id;
   int id_task;
-  String user;
   int status;
+  String user;
+  String date;
 
   // Constructor de la clase Execute.
   Execute({
@@ -10,6 +11,7 @@ class Execute {
     required this.id_task,
     required this.user,
     required this.status,
+    required this.date,
   });
 
   // Método que convierte un objeto de tipo Execute a un Map.
@@ -19,6 +21,7 @@ class Execute {
       'id_task': this.id_task,
       'user': this.user,
       'status': this.status,
+      'date': this.date,
     };
   }
 
@@ -27,6 +30,7 @@ class Execute {
       : id = map['id'], 
         id_task = map['id_task'], 
         user = map['user'], 
-        status = map['status'];
+        status = map['status'],
+        date = map['date'];
         
 }
