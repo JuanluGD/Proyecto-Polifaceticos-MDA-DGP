@@ -205,7 +205,7 @@ class _CommandListPageState extends State<CommandListPage> {
   // Para cargar los menús
   Future<void> loadMenus() async {
     DateTime now = DateTime.now();
-    String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
 
     if (menus.isEmpty) {
       setState(() {});
@@ -246,7 +246,7 @@ class _CommandListPageState extends State<CommandListPage> {
   Future<void> createOrders(Map<String, int> orders_aux) async {
     orders.clear();
     DateTime now = DateTime.now();
-    String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
     for (var menu in orders_aux.keys) {
       Order? order = await getOrder(date, widget.classroom.name, menu);
       if (order != null){
@@ -633,6 +633,7 @@ class _FinishedTaskState extends State<FinishedTask> {
                       child: ElevatedButton(
                         onPressed: () async {
                           // TOMATE marcar como completada la tarea del comedor del alumno
+                          await menuTaskCompleted();
                           // PORQUE NO FUNCIONA?
                           await Navigator.push(
                             context,

@@ -1,14 +1,12 @@
 class Execute {
-  int id;
-  int id_task;
+  int task_id;
   int status;
   String user;
   String date;
 
   // Constructor de la clase Execute.
   Execute({
-    required this.id,
-    required this.id_task,
+    required this.task_id,
     required this.user,
     required this.status,
     required this.date,
@@ -17,8 +15,7 @@ class Execute {
   // Método que convierte un objeto de tipo Execute a un Map.
   Map<String, dynamic> toMap() {
     return {
-      'id': this.id,
-      'id_task': this.id_task,
+      'task_id': this.task_id,
       'user': this.user,
       'status': this.status,
       'date': this.date,
@@ -27,8 +24,7 @@ class Execute {
 
   // Método que convierte un Map a un objeto de tipo Execute.
   Execute.fromMap(Map<String, dynamic> map)
-      : id = map['id'], 
-        id_task = map['id_task'], 
+      : task_id = map['task_id'], 
         user = map['user'], 
         status = map['status'],
         date = map['date'];

@@ -435,7 +435,7 @@ Future<Classroom?> getClassroom(String name) async {
 */
 Future<bool> insertOrders(int quantity, String menuName, String classroomName) async {
   DateTime now = DateTime.now();
-  String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+  String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
   Order order = Order(date: date, quantity: quantity, menuName: menuName, classroomName: classroomName);
   return await ColegioDatabase.instance.insertOrders(order);
 }
@@ -478,7 +478,7 @@ Future<bool> insertListOrders(List<Order> orders) async{
 */
 Future<bool> modifyOrders(String menuName, String classroomName, int newQuantity) async {
   DateTime now = DateTime.now();
-  String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+  String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
   Order? order = await ColegioDatabase.instance.getOrder(date, menuName, classroomName);
   if (order == null) {
     return false;
@@ -521,7 +521,7 @@ Future<Order?> getOrder(String date, String classroomName, String menuName) asyn
 */
 Future<List<Order>> getOrdersByDate() async {
   DateTime now = DateTime.now();
-  String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+  String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
   return await ColegioDatabase.instance.getOrdersByDate(date);
 }
 
@@ -533,7 +533,7 @@ Future<List<Order>> getOrdersByDate() async {
 */
 Future<void> classCompleted(Classroom classroom) async {
   DateTime now = DateTime.now();
-  String date = now.day.toString() + "/" + now.month.toString() + "/" + now.year.toString();
+  String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
   classroom.task_completed = await ColegioDatabase.instance.classCompleted(classroom, date);
 }
 
@@ -552,49 +552,13 @@ Future<bool> setMenuTask(String user) async {
 
 /*
   Método
-  @Nombre --> removetMenuTask
-  @Funcion --> Permite eliminar la tarea del menu de un alumno
-  @Argumentos
-    - user: usuario del alumno al que se le eliminará la tarea
-*/
-Future<bool> removeMenuTask(String user) async {
-  return await ColegioDatabase.instance.removeMenuTask(user);
-}
-
-/*
-  Método
-  @Nombre --> getStudentWithMenuTask
-  @Funcion --> Devuelve el alumno al que se le ha asignado la tarea del menú
-*/
-Future<List<String>?> getStudentsWithMenuTask() async {
-  return await ColegioDatabase.instance.getStudentsWithMenuTask();
-}
-
-/*
-  Método
-  @Nombre --> asignMenuTask
-  @Funcion --> Permite asignar la tarea del menú a un alumno y elimina la tarea de
-                cualquier otro alumno que la tuviera asignada
-  @Argumentos
-    - user: usuario del alumno al que se le asignará la tarea
-*/
-Future<bool> asignMenuTask(String user) async {
-  List<String>? students = await getStudentsWithMenuTask();
-  for (String student in students!) {
-    removeMenuTask(student);
-  }
-  return await setMenuTask(user);
-}
-
-/*
-  Método
   @Nombre --> hasMenuTask
   @Función --> Comprueba si un alumno tiene la tarea del menú asignada
   @Argumentos
     - user: usuario del alumno
 */
-Future<bool> hasMenuTask(String user) async {
-  return await ColegioDatabase.instance.hasMenuTask(user);
+Future<bool> hasMenuTaskToday() async {
+  return await ColegioDatabase.instance.hasMenuTaskToday();
 }
 
 /*
@@ -608,6 +572,9 @@ Future<bool> menuIsValid(String name) async {
   return await ColegioDatabase.instance.menuIsValid(name);
 }
 
+Future<bool> menuTaskCompleted() async{
+  return await ColegioDatabase.instance.menuTaskCompleted();
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREAS ///
 /// 
@@ -655,8 +622,8 @@ Future<List<Task>> getAllTasks() async {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE PASOS ///
 /// 
-Future<bool> insertStep(int id, int id_task, String name, String description, String pictogram, String image, String? descriptive_text) async {
-  Step step = Step(id: id, id_task: id_task, name: name, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);
+Future<bool> insertStep(int id, int task_id, String name, String description, String pictogram, String image, String? descriptive_text) async {
+  Step step = Step(id: id, task_id: task_id, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);
   return await ColegioDatabase.instance.insertStep(step);
 }
 
@@ -698,31 +665,31 @@ Future<List<Step>> getAllStepsFromTask(int idTask) async {
 ///  GESTIÓN DE EXECUTE ///
 /// 
 
-Future<bool> insertExecute(int id, int id_task, String user, int status, String date) async {
-  Execute execute = Execute(id: id, id_task: id_task, user: user, status: status, date: date);
+Future<bool> insertExecute(int task_id, String user, int status, String date) async {
+  Execute execute = Execute(task_id: task_id, user: user, status: status, date: date);
   return await ColegioDatabase.instance.insertExecute(execute);
 }
 
-Future<bool> modifyExecuteDate(int id, String date) async {
-  return await ColegioDatabase.instance.modifyExecuteDate(id, date);
+Future<bool> modifyExecuteDate(Execute execute, String date) async {
+  return await ColegioDatabase.instance.modifyExecuteDate(execute, date);
 }
 
-Future<bool> modifyExecuteStatus(int id, int status) async {
-  return await ColegioDatabase.instance.modifyExecuteStatus(id, status);
+Future<bool> modifyExecuteStatus(Execute execute, int status) async {
+  return await ColegioDatabase.instance.modifyExecuteStatus(execute, status);
 }
 
-Future<bool> deleteExecute(int id) async {
-  return await ColegioDatabase.instance.deleteExecute(id);
+Future<bool> deleteExecute(Execute execute) async {
+  return await ColegioDatabase.instance.deleteExecute(execute);
 }
 
-Future<Execute?> getExecute(int id) async {
-  return await ColegioDatabase.instance.getExecute(id);
+Future<Execute?> getExecute(int id_task, String user, String date) async {
+  return await ColegioDatabase.instance.getExecute(id_task, user, date);
 }
 
 Future<List<Execute>> getStudentExecutes(String user) async {
   return await ColegioDatabase.instance.getStudentExecutes(user);
 }
 
-Future<List<Task>> getStudentTasks(String user) async {
-  return await ColegioDatabase.instance.getStudentTasks(user);
+Future<List<Execute>> getStudentToDo(String user) async {
+  return await ColegioDatabase.instance.getStudentToDo(user);
 }

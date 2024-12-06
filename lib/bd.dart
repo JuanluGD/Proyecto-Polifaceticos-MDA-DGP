@@ -100,8 +100,7 @@ class ColegioDatabase{
 			typePassword VARCHAR(25) NOT NULL,
 			interfaceIMG TINYINT(1) NOT NULL,
 			interfacePIC TINYINT(1) NOT NULL,
-			interfaceTXT TINYINT(1) NOT NULL,
-      diningRoomTask TINYINT(1) NOT NULL
+			interfaceTXT TINYINT(1) NOT NULL
 			)
 			
 		''');
@@ -181,10 +180,9 @@ class ColegioDatabase{
       CREATE TABLE $tablaStep(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       task_id INTEGER,
-      name VARCHAR(100),
-      description VARCHAR(100) NOT NULL,
-      pictogram VARCHAR(30) NOT NULL,
-      image VARCHAR(30) NOT NULL,
+      description VARCHAR(200) NOT NULL,
+      pictogram VARCHAR(150) NOT NULL,
+      image VARCHAR(150) NOT NULL,
       descriptive_text VARCHAR(100),
       FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE
       )
@@ -194,13 +192,13 @@ class ColegioDatabase{
     /// Almacena las tareas que tiene asignadas cada alumno
     await db.execute('''
       CREATE TABLE $tablaExecute(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
       user VARCHAR(30),
       task_id INTEGER,
       date VARCHAR(30),
-      status TIYINT(1) NOT NULL,
+      status TINYINT(1) NOT NULL,
       FOREIGN KEY (user) REFERENCES $tablaStudents(user) ON DELETE CASCADE,
-      FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE
+      FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE,
+      PRIMARY KEY (user, task_id, date)
       )
     ''');
 
@@ -208,9 +206,9 @@ class ColegioDatabase{
 
     /// INSERTAR DATOS DE PRUEBA ///
     await db.execute('''
-      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('alissea', 'Alicia', '', 'assets/perfiles/alissea.png', 'rosa.png_picto azul.png_picto ', 'pictograms', 0, 1, 0, 0);
-      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('alex123', 'Alex', '', 'assets/perfiles/alex123.png', '1234', 'alphanumeric', 0, 1, 1, 1);
-      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT, diningRoomTask) VALUES ('juancito', 'Juan', '', 'assets/perfiles/juancito.png', 'azul.png_img ', 'images', 1, 0, 0, 1);
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('alissea', 'Alicia', '', 'assets/perfiles/alissea.png', 'rosa.png_picto azul.png_picto ', 'pictograms', 0, 1, 0);
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('alex123', 'Alex', '', 'assets/perfiles/alex123.png', '1234', 'alphanumeric', 0, 1, 1);
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('juancito', 'Juan', '', 'assets/perfiles/juancito.png', 'azul.png_img ', 'images', 1, 0, 0);
    ''');
 
     await db.execute('''
@@ -260,6 +258,7 @@ class ColegioDatabase{
 
     /// INSERTAR TAREAS ///
     await db.execute('''
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Comedor', 'Tomar las comandas del día','assets/tareas/comedor.png','assets/tareas/comedor.png');
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Fregar los Platos', '','assets/tareas/fregar.png','assets/tareas/fregar.png');
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Hacer la cama', '', 'assets/tareas/cama.png','assets/tareas/cama.png');
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Poner el microondas', '', 'assets/tareas/microondas.png','assets/tareas/microondas.png');
@@ -268,16 +267,21 @@ class ColegioDatabase{
 
     /// INSERTAR PASOS DE TAREAS ///
     await db.execute('''
-      INSERT INTO $tablaStep (task_id, name, description, pictogram, image) VALUES (1, 'Paso 1', 'Coger los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
-      INSERT INTO $tablaStep (task_id, name, description, pictogram, image) VALUES (1, 'Paso 2', 'Fregar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
-      INSERT INTO $tablaStep (task_id, name, description, pictogram, image) VALUES (1, 'Paso 3', 'Secar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (task_id, description, pictogram, image) VALUES (2, 'Coger los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (task_id, description, pictogram, image) VALUES (2, 'Fregar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (task_id, description, pictogram, image) VALUES (2, 'Secar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
     ''');
-
+    
+    DateTime now = DateTime.now();
+    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    print(date);
     /// INSERTAR EJECUCIONES DE TAREAS ///
-    await db.execute('''
-      INSERT INTO $tablaExecute (user, task_id, date, status) VALUES ('alissea', 1, '01/01/2025', 0);
-      INSERT INTO $tablaExecute (user, task_id, date, status) VALUES ('alissea', 2, '01/01/2025', 0);
-    ''');
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2024-12-01', 1]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2025-01-01', 0]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 3, '2025-01-01', 0]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alex123', 1, date, 0]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alex123', 2, '2025-01-02', 0]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alex123', 3, '2025-01-01', 0]);
 
 	}
 
@@ -1122,14 +1126,16 @@ class ColegioDatabase{
       where: 'classroomName = ? AND date = ?',
       whereArgs: [classroom.name, date],
     );
-    print('respuesta bd: ${result.isNotEmpty}');
     return result.isNotEmpty;
   }
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-///  MÉTODOS SOBRE LA TAREA DEL MENU  ///
+///  MÉTODOS QUE GESTIONAN LA TAREA MENU Y SU ASIGNACIÓN A LOS ALUMNOS  ///
+/// 
 
+  
+  
   /*
     Método
     @Nombre --> setMenuTask
@@ -1138,75 +1144,71 @@ class ColegioDatabase{
       - user: usuario del alumno al que se le asignará la tarea
   */
   Future<bool> setMenuTask(String user) async {
+    DateTime now = DateTime.now();
+    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
     final db = await instance.database;
-    try {
-      await db.update(
-        tablaStudents,
-        {'diningRoomTask': 1},
-        where: 'user = ?',
-        whereArgs: [user],
-      );
-      return true;
+    try{
+      bool result = await hasMenuTaskToday();
+      if(result){
+        print("La tarea del comedor ya ha sido asignada");
+        return false;
+      }else{
+        await db.insert(
+          tablaExecute,
+          Execute(
+            user: user,
+            task_id: 1,
+            date: date,
+            status: 0
+          ).toMap() 
+        );
+        return true;
+      }
     } catch (e) {
-      print("Error al asignar la tarea del menú: $e");
+      print("Error al insertar la tarea del comedor: $e");
       return false;
     }
   }
 
   /*
     Método
-    @Nombre --> removeMenuTask
-    @Funcion --> Permite eliminar la tarea del menu a un alumno
-    @Argumentos
-      - user: usuario del alumno al que se le eliminará la tarea
+    @Nombre --> hasMenuTaskToday
+    @Funcion --> Comprueba si la tarea del menú ya ha sido asignada a un alumno en el día actual
   */
-  Future<bool> removeMenuTask(String user) async {
-    final db = await instance.database;
-    try {
-      await db.update(
-        tablaStudents,
-        {'diningRoomTask': 0},
-        where: 'user = ?',
-        whereArgs: [user],
-      );
-      return true;
-    } catch (e) {
-      print("Error al eliminar la tarea del menú: $e");
-      return false;
-    }
-  }
-
-  /*
-    Método
-    @Nombre --> getStudentsWithMenuTask
-    @Funcion --> Devuelve todos los usuarios de los alumnos que tienen la tarea del menú asignada
-  */
-  Future<List<String>> getStudentsWithMenuTask() async {
+  Future<bool> hasMenuTaskToday() async {
+    DateTime now = DateTime.now();
+    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    print(date);
     final db = await instance.database;
     final result = await db.query(
-      tablaStudents,
-      where: 'diningRoomTask = 1',
-    );
-    return result.map((map) => map['user'].toString()).toList();
-  }
-
-  /*
-    Método
-    @Nombre --> hasMenuTask
-    @Funcion --> Comprueba si un alumno tiene la tarea del menú asignada
-    @Argumentos
-      - user: usuario del alumno
-  */
-  Future<bool> hasMenuTask(String user) async {
-    final db = await instance.database;
-    final result = await db.query(
-      tablaStudents,
-      where: 'user = ? AND diningRoomTask = 1',
-      whereArgs: [user],
+      tablaExecute,
+      where: 'date = ? AND task_id = 1',
+      whereArgs: [date],
     );
     return result.isNotEmpty;
   }
 
+  Future<bool> menuTaskCompleted() async {
+    DateTime now = DateTime.now();
+    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    print(date);
+    final db = await instance.database;
+
+    try {
+      int count = await db.update(
+        tablaExecute,
+        {'status': 1},
+        where: 'task_id = ? AND date = ?',
+        whereArgs: [1, date],
+      );
+
+      return count > 0;
+    } catch (e) {
+      print("Error al modificar el execute: $e");
+      return false;
+    }
+
+  }
   
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE TAREAS  ///
@@ -1342,7 +1344,7 @@ class ColegioDatabase{
     final db = await instance.database;
     final result = await db.query(
       tablaStep,
-      where: 'id_task = ?',
+      where: 'task_id = ?',
       whereArgs: [idTask],
     );
     return result.map((map) => Step.fromMap(map)).toList();
@@ -1363,15 +1365,15 @@ class ColegioDatabase{
     }
   }
 
-  Future<bool> modifyExecuteDate(int id, String date) async {
+  Future<bool> modifyExecuteDate(Execute execute, String date) async {
     final db = await instance.database;
 
     try {
       int count = await db.update(
         tablaExecute,
         {'date': date},
-        where: 'id = ?',
-        whereArgs: [id],
+        where: 'id_task = ? AND user = ? AND date = ?',
+        whereArgs: [execute.task_id, execute.user, execute.date],
       );
 
       return count > 0;
@@ -1381,15 +1383,15 @@ class ColegioDatabase{
     }
   }
 
-    Future<bool> modifyExecuteStatus(int id, int status) async{
+    Future<bool> modifyExecuteStatus(Execute execute, int status) async{
       final db = await instance.database;
 
       try {
       int count = await db.update(
         tablaExecute,
         {'status': status},
-        where: 'id = ?',
-        whereArgs: [id],
+        where: 'id_task = ? AND user = ? AND date = ?',
+        whereArgs: [execute.task_id, execute.user, execute.date],
       );
 
       return count > 0;
@@ -1400,13 +1402,13 @@ class ColegioDatabase{
 
   }
 
-  Future<bool> deleteExecute(int id) async {
+  Future<bool> deleteExecute(Execute execute) async {
     final db = await instance.database;
     try {
       int count = await db.delete(
-        tablaExecute, 
-        where: 'id = ?', 
-        whereArgs:[id]
+        tablaExecute,
+        where: 'user = ? AND task_id = ? AND date = ?',
+        whereArgs: [execute.user, execute.task_id, execute.date],
       );
       return count > 0;
     } catch (e) {
@@ -1415,12 +1417,12 @@ class ColegioDatabase{
     }
   }
 
-  Future<Execute> getExecute(int id) async {
+  Future<Execute> getExecute(int id_task, String user, String date) async {
     final db = await instance.database;
     final result = await db.query(
       tablaExecute,
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'id_task = ? AND user = ? AND date = ?',
+      whereArgs: [id_task, user, date],
     );
     return Execute.fromMap(result.first);
   }
@@ -1431,25 +1433,21 @@ class ColegioDatabase{
       tablaExecute,
       where: 'user = ?',
       whereArgs: [user],
+      orderBy: 'status ASC, date ASC',
     );
     return result.map((map) => Execute.fromMap(map)).toList();
   }
 
-  Future<List<Task>> getStudentTasks(String user) async{
+  Future<List<Execute>> getStudentToDo(String user) async {
     final db = await instance.database;
     final result = await db.query(
       tablaExecute,
-      where: 'user = ?',
+      where: 'user = ? AND status = 0',
       whereArgs: [user],
+      orderBy: 'date ASC',
     );
-
-    List<Task> tasks = [];
-    for (var execute in result) {
-      final task = await getTask(execute['task_id'] as int);
-      tasks.add(task);
-    }
-
-    return tasks;
+    return result.map((map) => Execute.fromMap(map)).toList();
   }
+
 
 }

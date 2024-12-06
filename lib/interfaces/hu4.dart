@@ -10,6 +10,7 @@ import 'package:proyecto/classes/Student.dart';
 
 import 'package:proyecto/interfaces/hu2.dart' as hu2;
 import 'package:proyecto/interfaces/hu1.dart' as hu1;
+import 'package:proyecto/interfaces/hu10.dart' as hu10;
 
 
 /// MODIFICAR ESTUDIANTE Y TIPO DE INTERFAZ ///
@@ -96,10 +97,14 @@ class _StudentListPageState extends State<StudentListPage> {
                 icon: Icon(Icons.task),
                 color: Colors.blue,
                 onPressed:
-                  // Navegar a la página de tareas del estudiante
+                  // Navegar a la página de historial de tareas del estudiante
                   () async {
-                    print("no esta implementado jaja"); // TOMATE
-                    setState(() {});
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => hu10.StudentHistoryTasksPage(student: item),
+                      ),
+                    );
                   },
               ),
               IconButton(

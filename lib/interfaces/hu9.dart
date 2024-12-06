@@ -44,7 +44,9 @@ class StudentInterfacePage extends StatefulWidget {
 
 class _StudentInterfacePageState extends State<StudentInterfacePage> {
 
+  List<Execute> executes = [];
   List<Task> tasks = [];
+  
 
   @override
   void initState() {
@@ -54,10 +56,12 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
 
   Future<void> loadStudentsTasks() async {
     setState(() {});
-    tasks = await getStudentTasks(widget.student.user);
-
-    for (Task t in tasks) {
-      print(t.name);
+    executes = await getStudentToDo(widget.student.user);
+    for (var execute in executes) {
+      Task? task = await getTask(execute.task_id);
+      if (task != null) {
+        tasks.add(task);
+      }
     }
     setState(() {});
   }
@@ -92,160 +96,86 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                 SizedBox(height: 15),
                 // Lista de tarjetas con solo imágenes y texto
                 Expanded(
-                  child: ListView(
-                    children: [
-                      if(widget.student.diningRoomTask == 1)
-                      Row(
+                  child: ListView.builder(
+                    itemCount: executes.length,
+                    itemBuilder: (context, index) {
+                      final item = executes[index];
+                      final task = tasks[index];
+                      return Column(
                         children: [
-                          if(widget.student.interfaceTXT == 1)
-                          Text(
-                            '1',
-                            style: titleTextStyle,
-                          )
-                          else if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
-                          Image.asset(
-                            'assets/numeros/1.png',
-                            width: 80,
-                            height: 80,
-                          ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () async {
-                                // Navegar a la interfaz de "Comandas comedor"
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => hu6.ClassSelection(student: widget.student), // Asegúrate de que esta es la clase correcta
-                                  ),
-                                );
-                              },
-                              child: Card(
-                                margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      if(widget.student.interfaceTXT == 1)
-                                      Text(
-                                        'Comandas comedor',
-                                        style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                          Row(
+                            children: [
+                              if(widget.student.interfaceTXT == 1)
+                              Text( '${index + 1}',
+                                style: titleTextStyle
+                              )
+                              else if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
+                              Image.asset(
+                                'assets/numeros/${index + 1}.png',// Comienza desde el número 3
+                                width: 80,
+                                height: 80,
+                              ),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          if (task.id == 1) {
+                                            return hu6.ClassSelection(student: widget.student);
+                                          } else {
+                                            print("por implementar jaja");
+                                            return Container(); // Return an empty container or another widget
+                                          }
+                                        },
                                       ),
-                                      if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
-                                      Image.asset(
-                                        'assets/imgs_menu/comedor.png',
-                                        width: 60,
-                                        height: 60,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Cargar tareas dinámicas desde el Future
-                      FutureBuilder<List<Task>>(
-                        future: getAllTasks(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Text(
-                                  'No se pudieron cargar las tareas adicionales.',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.red,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            );
-                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Text(
-                                  'No hay tareas adicionales disponibles.',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.grey,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            );
-                          } else {
-                            List<Task> tareas = snapshot.data!;
-                            return Column(
-                              children: tareas.asMap().entries.map((entry) {
-                                int index = entry.key; // Índice de la tarea
-                                Task tarea = entry.value; // Tarea actual
-                                return Row(
-                                  children: [
-                                    if(widget.student.interfaceTXT == 1)
-                                    Text(
-                                      (widget.student.diningRoomTask == 1)
-                                      ? '${index + 2}'
-                                      : '${index + 1}',
-                                      style: titleTextStyle
-                                    )
-                                    else if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
-                                    Image.asset(
-                                      (widget.student.diningRoomTask == 1)
-                                      ?'assets/numeros/${index + 2}.png'
-                                      :'assets/numeros/${index + 1}.png',// Comienza desde el número 3
-                                      width: 80,
-                                      height: 80,
-                                    ),
-                                    Expanded(
-                                      child: Card(
-                                        margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(16.0),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20.0),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    );
+                                  },
+                                  child: Card(
+                                    margin: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
                                             children: [
                                               if(widget.student.interfaceTXT == 1)
                                               Text(
-                                                tarea.name,
+                                                task.name,
                                                 style: TextStyle(
-                                                  fontSize: 28,
+                                                  fontSize: 20,
                                                   fontWeight: FontWeight.bold,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                              Text(
+                                                item.date,
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.blue,
                                                 ),
                                               ),
                                               if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
                                               Image.asset(
-                                                tarea.image,
+                                                task.image,
                                                 width: 60,
                                                 height: 60,
                                               ),
                                             ],
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ),
-                                  ],
-                                );
-                              }).toList(),
-                            );
-                          }
-                        },
-                      ),
-                    ],
+                                  ),
+                                )
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
                 // ESTO ES SOLO PARA PRUEBAS

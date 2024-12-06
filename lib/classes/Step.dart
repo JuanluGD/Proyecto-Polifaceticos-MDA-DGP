@@ -1,7 +1,6 @@
 class Step {
   int id;
-  int id_task;
-  String name;
+  int task_id;
   String description;
   String pictogram;
   String image;
@@ -10,8 +9,7 @@ class Step {
   // Constructor de la clase Paso.
   Step({
     required this.id,
-    required this.id_task,
-    required this.name,
+    required this.task_id,
     required this.description,
     required this.pictogram,
     required this.image,
@@ -22,8 +20,7 @@ class Step {
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
-      'id_task': this.id_task,
-      'name': this.name,
+      'task_id': this.task_id,
       'description': this.description,
       'pictogram': this.pictogram,
       'image': this.image,
@@ -34,8 +31,7 @@ class Step {
   // Método que convierte un Map a un objeto de tipo Paso.
   Step.fromMap(Map<String, dynamic> map)
       : id = map['id'], 
-        id_task = map['id_task'], 
-        name = map['name'], 
+        task_id = map['task_id'], 
         description = map['description'], 
         image = map['image'], 
         pictogram = map['pictogram'], 
