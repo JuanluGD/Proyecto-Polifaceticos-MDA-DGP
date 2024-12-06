@@ -11,7 +11,7 @@ import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/interfaces/hu4.dart' as hu4;
 
 ///  DAR DE ALTA A UN ESTUDIANTE  ///
-/// HU2> Como administrador quiero poder dar de alta a un estudiante
+/// HU2 Como administrador quiero poder dar de alta a un estudiante
 
 void main() {
   runApp(MyApp());

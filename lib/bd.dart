@@ -266,6 +266,19 @@ class ColegioDatabase{
 
     '''); 
 
+    /// INSERTAR PASOS DE TAREAS ///
+    await db.execute('''
+      INSERT INTO $tablaStep (task_id, name, description, pictogram, image) VALUES (1, 'Paso 1', 'Coger los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (task_id, name, description, pictogram, image) VALUES (1, 'Paso 2', 'Fregar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (task_id, name, description, pictogram, image) VALUES (1, 'Paso 3', 'Secar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+    ''');
+
+    /// INSERTAR EJECUCIONES DE TAREAS ///
+    await db.execute('''
+      INSERT INTO $tablaExecute (user, task_id, date, status) VALUES ('alissea', 1, '01/01/2025', 0);
+      INSERT INTO $tablaExecute (user, task_id, date, status) VALUES ('alissea', 2, '01/01/2025', 0);
+    ''');
+
 	}
 
 
@@ -1412,7 +1425,7 @@ class ColegioDatabase{
     return Execute.fromMap(result.first);
   }
 
-  Future<List<Execute>> getAllExecutesFromStudent(String user) async {
+  Future<List<Execute>> getStudentExecutes(String user) async {
     final db = await instance.database;
     final result = await db.query(
       tablaExecute,
@@ -1420,6 +1433,23 @@ class ColegioDatabase{
       whereArgs: [user],
     );
     return result.map((map) => Execute.fromMap(map)).toList();
+  }
+
+  Future<List<Task>> getStudentTasks(String user) async{
+    final db = await instance.database;
+    final result = await db.query(
+      tablaExecute,
+      where: 'user = ?',
+      whereArgs: [user],
+    );
+
+    List<Task> tasks = [];
+    for (var execute in result) {
+      final task = await getTask(execute['task_id'] as int);
+      tasks.add(task);
+    }
+
+    return tasks;
   }
 
 }

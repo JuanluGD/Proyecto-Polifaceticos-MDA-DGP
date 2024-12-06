@@ -49,8 +49,8 @@ class _TaskListPageState extends State<TaskListPage> {
   }
 
 
-  Future<void> deleteTaskInterface(String name) async {
-    await deleteTask(name);
+  Future<void> deleteTaskInterface(int id) async {
+    await deleteTask(id);
   }
 
   @override
@@ -70,7 +70,7 @@ class _TaskListPageState extends State<TaskListPage> {
               icon: Icon(Icons.info_outline),
               color: Colors.blue,
               onPressed:
-                // Navegar a la página de información del estudiante
+                // Navegar a la página de información de la tarea
                 () async {
                   /*await Navigator.push(
                     context,
@@ -87,7 +87,7 @@ class _TaskListPageState extends State<TaskListPage> {
                 icon: Icon(Icons.edit),
                 color: Colors.blue,
                 onPressed:
-                  // Navegar a la página de modificación del estudiante
+                  // Navegar a la página de modificación de la tarea
                   () async {
                     /*
                     await Navigator.push(
@@ -105,7 +105,7 @@ class _TaskListPageState extends State<TaskListPage> {
                 color: Colors.blue,
                 onPressed:
                   () async {
-                    await deleteTaskInterface(item.name);
+                    await deleteTaskInterface(item.id);
                     setState((){
                       tasks.removeAt(index);
                     });

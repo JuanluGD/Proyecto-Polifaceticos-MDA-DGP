@@ -8,6 +8,8 @@ import 'package:proyecto/classes/Student.dart';
 import 'package:proyecto/interfaces/hu6.dart' as hu6;
 import 'package:proyecto/interfaces/hu3.dart' as hu3;
 
+import '../classes/Execute.dart';
+
 /// PAGINA PRINCIPAL DEL ESTUDIANTE ///
 /// HU9: Como estudiante quiero ver las tareas que tengo pendientes de hacer.
 Future<void> main() async {
@@ -41,6 +43,24 @@ class StudentInterfacePage extends StatefulWidget {
 }
 
 class _StudentInterfacePageState extends State<StudentInterfacePage> {
+
+  List<Task> tasks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadStudentsTasks();
+  }
+
+  Future<void> loadStudentsTasks() async {
+    setState(() {});
+    tasks = await getStudentTasks(widget.student.user);
+
+    for (Task t in tasks) {
+      print(t.name);
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {

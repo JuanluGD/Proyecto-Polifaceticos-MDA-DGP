@@ -719,6 +719,10 @@ Future<Execute?> getExecute(int id) async {
   return await ColegioDatabase.instance.getExecute(id);
 }
 
-Future<List<Execute>> getAllExecutesFromStudent(String user) async {
-  return await ColegioDatabase.instance.getAllExecutesFromStudent(user);
+Future<List<Execute>> getStudentExecutes(String user) async {
+  return await ColegioDatabase.instance.getStudentExecutes(user);
+}
+
+Future<List<Task>> getStudentTasks(String user) async {
+  return await ColegioDatabase.instance.getStudentTasks(user);
 }
