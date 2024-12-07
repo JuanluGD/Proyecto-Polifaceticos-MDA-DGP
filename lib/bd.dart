@@ -262,6 +262,7 @@ class ColegioDatabase{
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Fregar los Platos', '','assets/tareas/fregar.png','assets/tareas/fregar.png');
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Hacer la cama', '', 'assets/tareas/cama.png','assets/tareas/cama.png');
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Poner el microondas', '', 'assets/tareas/microondas.png','assets/tareas/microondas.png');
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Lorem', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce volutpat  aliquam auctor. Orci varius natoque penatibus et magnis dis parturient  montes, nascetur ridiculus mus. Nam vel bibendum ante. Ut ex odio,  posuere id hendrerit vel, commodo a velit. Mauris quis nunc rutrum,  molestie augue vel, vestibulum tellus.', 'assets/logo.png','assets/logo.png');
 
     '''); 
 
@@ -1276,10 +1277,35 @@ class ColegioDatabase{
     );
     return Task.fromMap(result.first);
   }
+
+  Future<List<Task>> searchTasks(String text) async {
+    final db = await instance.database;
+    final List<Map<String, dynamic>> result;
+    if (await hasMenuTaskToday())
+      result = await db.query(
+        tablaTask,
+        where: 'id != 1 AND (name LIKE ? OR description LIKE ?)',
+        whereArgs: ['%$text%', '%$text%'],
+      );
+    else 
+      result = await db.query(
+        tablaTask,
+        where: 'name LIKE ? OR description LIKE ?',
+        whereArgs: ['%$text%', '%$text%'],
+      );
+    return result.map((map) => Task.fromMap(map)).toList();
+  }
   
   Future<List<Task>> getAllTasks() async {
     final db = await instance.database;
-    final result = await db.query(tablaTask);
+    final List<Map<String, dynamic>> result;
+    if (await hasMenuTaskToday())
+      result = await db.query(
+        tablaTask,
+        where: 'id != 1',
+      );
+    else
+      result = await db.query(tablaTask);
     return result.map((map) => Task.fromMap(map)).toList();
   }
 
