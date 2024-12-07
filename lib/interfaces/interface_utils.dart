@@ -68,6 +68,37 @@ Widget buildPasswdTextField(String labelText, TextEditingController controller, 
   );
 }
 
+// Crear campo de búsqueda
+Widget buildSearchField(String text, Function(String) onChanged) {
+  return TextField(
+    decoration: InputDecoration(
+      hintText: text,
+      hintStyle: TextStyle(color: Colors.grey[600]),
+      filled: true,
+      fillColor: Color.fromARGB(255, 247, 242, 250),
+      suffixIcon: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: Icon(Icons.search),
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(24.0),
+        borderSide: BorderSide(color: Colors.transparent),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(24.0),
+        borderSide: BorderSide(color: Colors.transparent),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(24.0),
+        borderSide: BorderSide(color: Colors.transparent),
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+    ),
+    onChanged: onChanged,
+    style: TextStyle(color: Colors.black),
+  );
+}
+
 // Crear botón con estilos
 Widget buildElevatedButton(String text, TextStyle textStyle, ButtonStyle buttonStyle, VoidCallback onPressed) {
   return ElevatedButton(
@@ -96,6 +127,29 @@ Widget buildIconButton(String tip, Color background, Color iconColor, IconData i
         ),
         onPressed: onPressed,
       ),
+    ),
+  );
+}
+
+// Crear botón de selección
+Widget buildPickerButton(String text, VoidCallback onPressed) {
+  return ElevatedButton(
+    onPressed: onPressed,
+    style: extraButtonStyle,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(width: 8),
+        Text(
+          text,
+          style: buttonTextStyle,
+        ),
+        Icon(
+          Icons.arrow_drop_down,
+          color: Colors.white,
+          size: 30,
+        ),
+      ],
     ),
   );
 }
@@ -195,7 +249,7 @@ Widget buildPickerCard(double height, IconData icon, double size) {
       boxShadow: [
         BoxShadow(
           color: Colors.black26,
-          offset: Offset(0, 2),
+          offset: Offset(0, 1),
           blurRadius: 1,
         ),
       ],

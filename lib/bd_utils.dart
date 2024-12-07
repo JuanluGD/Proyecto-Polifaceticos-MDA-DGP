@@ -615,6 +615,10 @@ Future<Task?> getTaskByName(String name) async {
   return await ColegioDatabase.instance.getTaskByName(name);
 }
 
+Future<List<Task>> searchTasks(String text) async {
+  return await ColegioDatabase.instance.searchTasks(text);
+}
+
 Future<List<Task>> getAllTasks() async {
   return await ColegioDatabase.instance.getAllTasks();
 }
