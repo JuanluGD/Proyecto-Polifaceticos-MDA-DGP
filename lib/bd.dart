@@ -166,7 +166,7 @@ class ColegioDatabase{
 		await db.execute('''
 			CREATE TABLE $tablaTask(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name VARCHAR(100) NOT NULL,
+			name VARCHAR(100) NOT NULL UNIQUE,
       description VARCHAR(100),
       pictogram VARCHAR(30) NOT NULL,
 			image VARCHAR(30) NOT NULL,
@@ -1286,24 +1286,32 @@ class ColegioDatabase{
     }
   }
 
-  Future<Task> getTask(int id) async {
+  Future<Task?> getTask(int id) async {
     final db = await instance.database;
     final result = await db.query(
       tablaTask,
       where: 'id = ?',
       whereArgs: [id],
     );
-    return Task.fromMap(result.first);
+    if (result.isNotEmpty) {
+      return Task.fromMap(result.first);
+    } else {
+      return null; // o maneja el caso donde no se encuentra la tarea
+    }
   }
 
-  Future<Task> getTaskByName(String name) async {
+  Future<Task?> getTaskByName(String name) async {
     final db = await instance.database;
     final result = await db.query(
       tablaTask,
       where: 'name = ?',
       whereArgs: [name],
     );
-    return Task.fromMap(result.first);
+    if (result.isNotEmpty) {
+      return Task.fromMap(result.first);
+    } else {
+      return null; // o maneja el caso donde no se encuentra la tarea
+    }
   }
 
   Future<List<Task>> searchTasks(String text) async {
