@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto/bd_utils.dart';
+import '../classes/Order.dart';
+import '../classes/Task.dart';
+import 'hu2.dart' as hu2;
 import 'hu3.dart' as hu3;
 import 'hu4.dart' as hu4;
 import 'hu6.dart' as hu6;
-import 'hu10.dart' as hu10;
 import 'interface_utils.dart';
 
 /// LOGIN ADMINISTRADOR ///
@@ -265,7 +267,7 @@ class adminInterface extends StatelessWidget {
                       onTap: () async {
                         await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => hu10.TaskListPage()),
+                          MaterialPageRoute(builder: (context) => TaskListPage()),
                         );
                       },
                     ),
@@ -276,7 +278,7 @@ class adminInterface extends StatelessWidget {
                       onTap: () async{
                         await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => hu6.CommandList()),
+                          MaterialPageRoute(builder: (context) => CommandList()),
                         );
                       },
                     ),
@@ -300,6 +302,212 @@ class adminInterface extends StatelessWidget {
             ],
           ),
         ),
+      )
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE LISTA DE TAREAS DISPONIBLES
+// //////////////////////////////////////////////////////////////////////////////////////////
+class TaskListPage extends StatefulWidget {
+  @override
+  _TaskListPageState createState() => _TaskListPageState();
+}
+
+class _TaskListPageState extends State<TaskListPage> {
+  late List<Task> tasks = [];
+
+  Future<void> _loadTasks() async {
+    setState(() {});
+    tasks.addAll(await getAllTasks());
+    setState(() {});
+  }
+
+
+  Future<void> deleteTaskInterface(int id) async {
+    await deleteTask(id);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
+          buildCustomList(items: tasks, title: "Lista de tareas", addButton: true, nextPage: hu2.StudentRegistrationPage(), context: context, circle: false, fit: BoxFit.contain, buildChildren: (context, item, index) { 
+            return [
+              IconButton(
+              icon: Icon(Icons.info_outline),
+              color: Colors.blue,
+              onPressed:
+                // Navegar a la página de información de la tarea
+                () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        if (item.id == 1) {
+                          return hu6.MenuList();
+                        } else {
+                          print("por implementar jaja");
+                          return Container(); // Return an empty container or another widget
+                        }
+                      },
+                    ),
+                  );
+                  
+                  print("no esta implementado jaja");
+                  setState(() {});
+                },
+              ),
+              if (item.id != 1)
+              IconButton(
+                icon: Icon(Icons.edit),
+                color: Colors.blue,
+                onPressed:
+                  // Navegar a la página de modificación de la tarea
+                  () async {
+                    /*
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TaskModificationPage(tarea: item),
+                      ),
+                    );*/
+                    print("no esta implementado jaja");
+                    setState(() {});
+                  },
+              ),
+              if (item.id != 1)
+              IconButton(
+                icon: Icon(Icons.delete),
+                color: Colors.blue,
+                onPressed:
+                  () async {
+                    await deleteTaskInterface(item.id);
+                    setState((){
+                      tasks.removeAt(index);
+                    });
+                  },
+                ),
+              ];
+            }
+          ), 
+        )  
+      ),
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ QUE MUESTRA LAS COMANDAS DEL DÍA
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class CommandList extends StatefulWidget {
+
+  @override
+  _CommandListState createState() => _CommandListState();
+}
+
+class _CommandListState extends State<CommandList> {
+  
+  late List<Order> orders;
+  final groupeOrders = <String, List<Order>>{};
+
+  @override
+  void initState() {
+    super.initState();
+    loadOrders();
+  }
+
+  Future<void> loadOrders() async {
+    orders = await getOrdersByDate();
+    setState(() {});
+
+    for (var order in orders) {
+      if (!groupeOrders.containsKey(order.classroomName)) {
+        groupeOrders[order.classroomName] = [];
+      }
+      groupeOrders[order.classroomName]!.add(order);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740,650,EdgeInsets.all(20), 
+          Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 15),
+                  Text(
+                    "Comandas del día",
+                    style: titleTextStyle,
+                  ),
+                  SizedBox(height: 15),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: groupeOrders.length,
+                      itemBuilder: (context, index) {
+                        final classroomName = groupeOrders.keys.toList()[index];
+                        final classroomOrders = groupeOrders[classroomName]!;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Clase: ${classroomName}',
+                              style: titleTextStyle.copyWith(fontSize: 24)
+                            ),
+                            SizedBox(height: 10),
+                            ListView.builder(
+                              shrinkWrap: true, // Permite que el ListView tome solo el espacio necesario
+                              physics: NeverScrollableScrollPhysics(), // Desactiva el desplazamiento interno
+                              itemCount: classroomOrders.length,
+                              itemBuilder: (context, index) {
+                                final order = classroomOrders[index];
+                                return Card(
+                                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                                  child: ListTile(
+                                    title: Text(order.menuName),
+                                    trailing: Text(
+                                      'Cantidad: ${order.quantity}',
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: 15), // Espaciado entre grupos
+                          ],
+                        );
+                      }
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Center(
+                    child: SizedBox(
+                    width: 200,
+                    child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                        Navigator.pop(context);
+                        }
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        )
       )
     );
   }

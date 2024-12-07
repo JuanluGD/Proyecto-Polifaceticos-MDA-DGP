@@ -1243,6 +1243,29 @@ class ColegioDatabase{
     }
   }
 
+  Future<bool> modifyCompleteTask(int id, String name, String description,String pictogram, String image, String? descriptive_text) async {
+    final db = await instance.database;
+    try {
+      int count = await db.update(
+        tablaTask,
+        {
+          'name': name,
+          'description': description,
+          'image': image,
+          'pictogram': pictogram,
+          'descriptive_text': descriptive_text
+        },
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      return count > 0;
+    } catch (e) {
+      print("Error al modificar la tarea: $e");
+      return false;
+    }
+  }
+
   Future<bool> deleteTask(int id) async {
     final db = await instance.database;
     try {

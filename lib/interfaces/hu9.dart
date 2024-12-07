@@ -56,6 +56,8 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
 
   Future<void> loadStudentsTasks() async {
     setState(() {});
+    executes.clear();
+    tasks.clear();
     executes = await getStudentToDo(widget.student.user);
     for (var execute in executes) {
       Task? task = await getTask(execute.task_id);

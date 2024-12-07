@@ -7,21 +7,21 @@ import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/bd_utils.dart';
 
 import '../classes/Student.dart';
-import 'hu2.dart' as hu2;
-import 'hu4.dart' as hu4;
-
+import 'hu7.dart' as hu7;
 /// CREAR TAREAS ///
 /// HU6: Como administrador quiero poder asignar a un estudiante la tarea de tomar las comandas para el menú del comedor.
 /// HU10: Como administrador quiero poder acceder al historial de actividades realizadas de los estudiantes.
-/// HU13: Como administrador quiero poder asignar a un estudiante la tarea de realizar el inventario.
-/// HU14: Como administrador quiero poder asignar a un estudiante la tarea de repartir el material.
 /// 
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  Student student = (await getStudent('alissea'))!;
+  runApp(MyApp(student: student));
 }
 
 class MyApp extends StatelessWidget {
+  final Student student;
+  const MyApp({super.key, required this.student});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,106 +30,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: TaskListPage(),
+      home: StudentHistoryTasksPage(student: student,),
     );
   }
 }
-
-// //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE LISTA DE TAREAS DISPONIBLES
-// //////////////////////////////////////////////////////////////////////////////////////////
-class TaskListPage extends StatefulWidget {
-  @override
-  _TaskListPageState createState() => _TaskListPageState();
-}
-
-class _TaskListPageState extends State<TaskListPage> {
-  late List<Task> tasks = [];
-
-  Future<void> _loadTasks() async {
-    setState(() {});
-    tasks.addAll(await getAllTasks());
-    setState(() {});
-  }
-
-
-  Future<void> deleteTaskInterface(int id) async {
-    await deleteTask(id);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTasks();
-  }
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlueAccent.shade100,
-      body: Center(
-        child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
-          buildCustomList(items: tasks, title: "Lista de tareas", addButton: true, nextPage: hu2.StudentRegistrationPage(), context: context, circle: false, fit: BoxFit.contain, buildChildren: (context, item, index) { 
-            return [
-              IconButton(
-              icon: Icon(Icons.info_outline),
-              color: Colors.blue,
-              onPressed:
-                // Navegar a la página de información de la tarea
-                () async {
-                  /*await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TaskInfoPage(task: item),
-                    ),
-                  );
-                  */
-                  print("no esta implementado jaja");
-                  setState(() {});
-                },
-              ),
-              if (item.id != 1)
-              IconButton(
-                icon: Icon(Icons.edit),
-                color: Colors.blue,
-                onPressed:
-                  // Navegar a la página de modificación de la tarea
-                  () async {
-                    /*
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TaskModificationPage(tarea: item),
-                      ),
-                    );*/
-                    print("no esta implementado jaja");
-                    setState(() {});
-                  },
-              ),
-              if (item.id != 1)
-              IconButton(
-                icon: Icon(Icons.delete),
-                color: Colors.blue,
-                onPressed:
-                  () async {
-                    await deleteTaskInterface(item.id);
-                    setState((){
-                      tasks.removeAt(index);
-                    });
-                  },
-                ),
-              ];
-            }
-          ), 
-        )  
-      ),
-    );
-  }
-}
-
-
-// //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE INFORMACIÓN DE TAREAS
-// //////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -147,11 +51,13 @@ class StudentHistoryTasksPage extends StatefulWidget {
 }
 
 class _StudentHistoryTasksPageState extends State<StudentHistoryTasksPage> {
-  late List<Execute> executes = [];
-  late List<Task> tasks = [];
+  final List<Execute> executes = [];
+  final List<Task> tasks = [];
 
   Future<void> _loadTasks() async {
     setState(() {});
+    executes.clear();
+    tasks.clear();
     executes.addAll(await getStudentExecutes(widget.student.user));
 
     for (var execute in executes) {
@@ -163,8 +69,9 @@ class _StudentHistoryTasksPageState extends State<StudentHistoryTasksPage> {
     setState(() {});
   }
 
-  Future<void> deleteStudentExecute(Execute execute) async {
+  Future<void> deleteStudentTask(Execute execute, int index) async {
     await deleteExecute(execute);
+    tasks.removeAt(index);
   }
 
   @override
@@ -192,9 +99,12 @@ class _StudentHistoryTasksPageState extends State<StudentHistoryTasksPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => hu2.StudentRegistrationPage(),
+                      builder: (context) => hu7.StudentAssignTasksPage(student: widget.student)
                     ),
-                  );
+                  ).then((_) {
+                    // Cargar las tareas asignadas cuando se vuelva
+                    _loadTasks();
+                  });
                 },
                 buildPickerCard(60, Icons.add, 30),
               ),
@@ -236,7 +146,7 @@ class _StudentHistoryTasksPageState extends State<StudentHistoryTasksPage> {
                               icon: Icon(Icons.delete),
                               color: Colors.blue,
                               onPressed: () async {
-                                await deleteStudentExecute(item);
+                                await deleteStudentTask(item, index);
                                 setState(() {
                                   executes.removeAt(index);
                                 });
@@ -254,13 +164,8 @@ class _StudentHistoryTasksPageState extends State<StudentHistoryTasksPage> {
               Center(
                 child: SizedBox(
                   width: 400,
-                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => hu4.StudentListPage(),
-                        ),
-                      );
+                  child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
+                      Navigator.pop(context);
                     }
                   ),
                 ),

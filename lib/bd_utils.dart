@@ -603,6 +603,10 @@ Future<bool> modifyTaskDescriptiveText(int id, String newDescriptiveText) async 
   return await ColegioDatabase.instance.modifyTask(id, "descriptive_text", newDescriptiveText);
 }
 
+Future<bool> modifyCompleteTask(int id, String name, String description, String pictogram, String image, String? descriptive_text) async {
+  return await ColegioDatabase.instance.modifyCompleteTask(id, name, description, pictogram, image, descriptive_text);
+}
+
 Future<bool> deleteTask(int id) async {
   return await ColegioDatabase.instance.deleteTask(id);
 }
