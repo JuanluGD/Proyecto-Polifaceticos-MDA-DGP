@@ -630,37 +630,39 @@ Future<List<Task>> getAllTasks() async {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE PASOS ///
 /// 
-Future<bool> insertStep(int id, int task_id, String name, String description, String pictogram, String image, String? descriptive_text) async {
+Future<bool> insertStep(int task_id, String name, String description, String pictogram, String image, String? descriptive_text) async {
+  List<Step> steps = await ColegioDatabase.instance.getAllStepsFromTask(task_id);
+  int id = steps.length;
   Step step = Step(id: id, task_id: task_id, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);
   return await ColegioDatabase.instance.insertStep(step);
 }
 
-Future<bool> modifyStepName(int id, String newName) async {
-  return await ColegioDatabase.instance.modifyStep(id, "name", newName);
+Future<bool> modifyStepName(int id, int task_id, String newName) async {
+  return await ColegioDatabase.instance.modifyStep(id, task_id, "name", newName);
 }
 
-Future<bool> modifyStepDescription(int id, String newDescription) async {
-  return await ColegioDatabase.instance.modifyStep(id, "description", newDescription);
+Future<bool> modifyStepDescription(int id, int task_id, String newDescription) async {
+  return await ColegioDatabase.instance.modifyStep(id, task_id, "description", newDescription);
 }
 
-Future<bool> modifyStepPictogram(int id, String newPictogram) async {
-  return await ColegioDatabase.instance.modifyStep(id, "pictogram", newPictogram);
+Future<bool> modifyStepPictogram(int id, int task_id, String newPictogram) async {
+  return await ColegioDatabase.instance.modifyStep(id, task_id, "pictogram", newPictogram);
 }
 
-Future<bool> modifyStepImage(int id, String newImage) async {
-  return await ColegioDatabase.instance.modifyStep(id, "image", newImage);
+Future<bool> modifyStepImage(int id, int task_id, String newImage) async {
+  return await ColegioDatabase.instance.modifyStep(id, task_id, "image", newImage);
 }
 
-Future<bool> modifyStepDescriptiveText(int id, String newDescriptiveText) async {
-  return await ColegioDatabase.instance.modifyStep(id, "descriptive_text", newDescriptiveText);
+Future<bool> modifyStepDescriptiveText(int id, int task_id, String newDescriptiveText) async {
+  return await ColegioDatabase.instance.modifyStep(id, task_id, "descriptive_text", newDescriptiveText);
 }
 
-Future<bool> deleteStep(int id) async {
-  return await ColegioDatabase.instance.deleteStep(id);
+Future<bool> deleteStep(int id, int task_id) async {
+  return await ColegioDatabase.instance.deleteStep(id, task_id);
 }
 
-Future<Step?> getStep(int id) async {
-  return await ColegioDatabase.instance.getStep(id);
+Future<Step?> getStep(int id, int task_id) async {
+  return await ColegioDatabase.instance.getStep(id, task_id);
 }
 
 Future<List<Step>> getAllStepsFromTask(int idTask) async {

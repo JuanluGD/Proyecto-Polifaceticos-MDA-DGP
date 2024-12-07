@@ -178,13 +178,14 @@ class ColegioDatabase{
     /// Almacena los pasos de las tareas
     await db.execute('''
       CREATE TABLE $tablaStep(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id INTEGER,
       task_id INTEGER,
       description VARCHAR(200) NOT NULL,
       pictogram VARCHAR(150) NOT NULL,
       image VARCHAR(150) NOT NULL,
       descriptive_text VARCHAR(100),
-      FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE
+      FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE,
+      PRIMARY KEY (id, task_id)
       )
     ''');
 
@@ -1135,8 +1136,6 @@ class ColegioDatabase{
 ///  MÉTODOS QUE GESTIONAN LA TAREA MENU Y SU ASIGNACIÓN A LOS ALUMNOS  ///
 /// 
 
-  
-  
   /*
     Método
     @Nombre --> setMenuTask
@@ -1346,15 +1345,15 @@ class ColegioDatabase{
     }
   }
 
-  Future<bool> modifyStep(int id, String data, String newData) async {
+  Future<bool> modifyStep(int id, int task_id, String data, String newData) async {
     final db = await instance.database;
 
     try {
       int count = await db.update(
         tablaStep,
         {data: newData},
-        where: 'id = ?',
-        whereArgs: [id],
+        where: 'id = ? and task_id = ?',
+        whereArgs: [id, task_id],
       );
 
       return count > 0;
@@ -1364,27 +1363,44 @@ class ColegioDatabase{
     }
   }
 
-  Future<bool> deleteStep(int id) async {
+  Future<bool> deleteStep(int id, int task_id) async {
     final db = await instance.database;
     try {
       int count = await db.delete(
         tablaStep, 
-        where: 'id = ?', 
-        whereArgs:[id]
+        where: 'id = ? AND task_id = ?', 
+        whereArgs:[id, task_id]
       );
-      return count > 0;
+
+      return (count > 0 && await modifyAllId(id, task_id));
     } catch (e) {
       print("Error al eliminar el paso: $e");
       return false;
     }
   }
 
-  Future<Step> getStep(int id) async {
+  Future<bool> modifyAllId(int id, int task_id) async {
+    final db = await instance.database;
+    try{
+      final result = await db.query('''
+        UPDATE $tablaStep
+        SET id = id - 1
+        WHERE id > $id AND task_id = $task_id
+      ''');
+      return result.isNotEmpty;
+    }
+    catch(e){
+      print("Error al modificar todos los id: $e");
+      return false;
+    }
+  }
+
+  Future<Step> getStep(int id, task_id) async {
     final db = await instance.database;
     final result = await db.query(
       tablaStep,
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'id = ? AND task_id = ?',
+      whereArgs: [id, task_id],
     );
     return Step.fromMap(result.first);
   }
