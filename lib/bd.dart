@@ -1213,10 +1213,16 @@ class ColegioDatabase{
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE TAREAS  ///
   
-  Future<bool> insertTask(Task task) async {
+  Future<bool> insertTask(String name, String descripction, String pictogram, String image, String? descriptive_text) async {
     final db = await instance.database;
     try {
-      await db.insert(tablaTask, task.toMap());
+      await db.insert(tablaTask, {
+        'name': name,
+        'description': descripction,
+        'image': image,
+        'pictogram': pictogram,
+        'descriptive_text': descriptive_text
+      });
       return true;
     } catch (e) {
       print("Error al insertar la tarea: $e");

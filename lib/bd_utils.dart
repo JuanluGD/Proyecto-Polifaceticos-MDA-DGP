@@ -578,9 +578,8 @@ Future<bool> menuTaskCompleted() async{
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREAS ///
 /// 
-Future<bool> insertTask(int id, String name, String description, String pictogram, String image, String? descriptive_text) async {
-  Task task = Task(id: id, name: name, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);
-  return await ColegioDatabase.instance.insertTask(task);
+Future<bool> insertTask(String name, String description, String pictogram, String image, String? descriptive_text) async {
+  return await ColegioDatabase.instance.insertTask(name, description, pictogram, image, descriptive_text);
 }
 
 Future<bool> modifyTaskName(int id, String newName) async {
