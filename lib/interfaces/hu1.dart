@@ -545,6 +545,7 @@ class _TaskInformationPageState extends State<TaskInformationPage> {
     steps.clear();
     setState(() {});
     steps.addAll(await getAllStepsFromTask(widget.task.id));
+    steps.sort((a, b) => a.id.compareTo(b.id));
     setState(() {});
   }
 
@@ -606,27 +607,53 @@ class _TaskInformationPageState extends State<TaskInformationPage> {
                               Column(
                                 children: [
                                   Text(
-                                  'Imagen',
-                                  style: infoTextStyle,
-                                ),
-                                SizedBox(height: 10),
-                                Container(
-                                  height: 150,
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(widget.task.image),
-                                      fit: BoxFit.contain,
-                                    ),
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                      width: 1,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
+                                    'Descripción',
+                                    style: infoTextStyle,
                                   ),
-                                ),
-                              ],
-                            ),
+                                  SizedBox(height: 10),
+                                  Container(
+                                    height: 150,
+                                    width: 200,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Center(
+                                      child: widget.task.description == ''
+                                        ? Text('Sin descripción', style: hintTextStyle)
+                                        : Text(widget.task.description, style: hintTextStyle),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(width: 10),
+                              Column(
+                                children: [
+                                  Text(
+                                    'Imagen',
+                                    style: infoTextStyle,
+                                  ),
+                                  SizedBox(height: 10),
+                                  Container(
+                                    height: 150,
+                                    width: 200,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(widget.task.image),
+                                        fit: BoxFit.contain,
+                                      ),
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ],
+                              ),
                           ],
                         ),
                       ],
