@@ -630,7 +630,7 @@ Future<List<Task>> getAllTasks() async {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE PASOS ///
 /// 
-Future<bool> insertStep(int task_id, String name, String description, String pictogram, String image, String? descriptive_text) async {
+Future<bool> insertStep(int task_id, String description, String pictogram, String image, String? descriptive_text) async {
   List<Step> steps = await ColegioDatabase.instance.getAllStepsFromTask(task_id);
   int id = steps.length;
   Step step = Step(id: id, task_id: task_id, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);

@@ -35,6 +35,18 @@ Widget buildTextField(String labelText, TextEditingController controller) {
   );
 }
 
+// Crear área de texto básica
+Widget buildAreaField(String labelText, int lines, TextEditingController controller) {
+  return TextField(
+    controller: controller,
+    maxLines: lines,
+    decoration: InputDecoration(
+      labelText: labelText,
+      border: OutlineInputBorder(),
+    ),
+  );
+}
+
 // Crear campo de texto relleno
 Widget buildFilledTextField(String labelText, TextEditingController controller) {
   return TextField(

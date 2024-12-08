@@ -1,7 +1,419 @@
+import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:path/path.dart' as path;
 
+import 'package:proyecto/interfaces/interface_utils.dart';
+import 'package:proyecto/image_utils.dart';
+import 'package:proyecto/bd_utils.dart';
 
-/// CREAR TAREAS POR PASIOS
+import 'package:proyecto/classes/Task.dart';
+import 'package:proyecto/classes/Step.dart' as ownStep;
+
+import 'package:proyecto/interfaces/hu4.dart' as hu4;
+
+/// CREAR TAREAS POR PASOS
 /// HU8: Como administrador quiero poder crear una tarea por pasos.
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE INFORMACIÓN DE TAREAS
 // //////////////////////////////////////////////////////////////////////////////////////////
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Creación de Tarea',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      
+      home: TaskRegistrationPage(),
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE REGISTRAR TAREA
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class TaskRegistrationPage extends StatefulWidget {
+  const TaskRegistrationPage({super.key});
+
+  @override
+  _TaskRegistrationPageState createState() =>
+      _TaskRegistrationPageState();
+}
+
+class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
+  // Para almacenar la tarea
+  Task? task;
+
+  // Para almacenar los pasos que se vayan añadiendo
+  final List<ownStep.Step> steps = [];
+
+  // TOMATE
+  // Para cargar los pasos
+  Future<void> loadSteps(int idTask) async {
+    steps.clear();
+    setState(() {});
+    steps.addAll(await getAllStepsFromTask(idTask));
+    print(steps);
+    setState(() {});
+  }
+
+  // Para almacenar el pictograma y la imagen que se suban
+  File? pictogram;
+  File? image;
+
+  // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 650, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Creación de tarea por pasos', style: titleTextStyle),
+              Text('Ingresa los datos de la tarea', style: subtitleTextStyle),
+              SizedBox(height: 30),
+              // Formulario
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Campos de texto
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildTextField('Nombre*', nameController),
+                        SizedBox(height: 20),
+                        buildAreaField('Descripción', 3, descriptionController),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  // Pictograma
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Pictograma*',
+                          style: hintTextStyle,
+                        ),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage(); // Seleccionar la imagen
+                            if (pickedImage != null) {
+                              setState(() {
+                                pictogram = pickedImage; // Asignar la imagen seleccionada
+                              });
+                            }
+                          },
+                          buildPickerContainer(135, Icons.cloud_upload, 'Sube un pictograma', BoxFit.contain, pictogram),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  // Imagen
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Imagen*',
+                          style: hintTextStyle,
+                        ),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage(); // Seleccionar la imagen
+                            if (pickedImage != null) {
+                              setState(() {
+                                image = pickedImage; // Asignar la imagen seleccionada
+                              });
+                            }
+                          },
+                          buildPickerContainer(135, Icons.cloud_upload, 'Sube una imagen', BoxFit.contain, image),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              // Pasos
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pasos:',
+                      style: hintTextStyle,
+                    ),
+                    SizedBox(height: 10),
+                    buildBorderedContainer(Colors.grey, 1,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: buildPickerRegion(
+                              () async {
+                                if (steps.isEmpty) {
+                                  if (nameController.text.isEmpty || image == null || pictogram == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Es necesario rellenar los campos de nombre, pictograma e imagen para crear pasos.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  } else {
+                                    // Obtener la extensión del archivo original
+                                    String extensionIMG = path.extension(image!.path);
+                                    String extensionPIC = path.extension(pictogram!.path);
+
+                                    // Sustituir los espacios
+                                    String name = removeSpacing(nameController.text);
+
+                                    // TOMATE
+                                    // Tarea temporal para crear los pasos, cuando se guarde habrá que actualizar las imágenes y el nombre por si han cambiado tras crear los pasos
+                                    if (await insertTask(nameController.text, descriptionController.text, 'assets/picto_tasks/$name$extensionPIC', 'assets/imgs_tasks/$name$extensionIMG', '')) {
+                                      task = await getTaskByName(nameController.text);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => StepRegistrationPage(task: task!)
+                                        ),
+                                      ).then((_) {
+                                        // Cargar los pasos creados cuando se vuelva
+                                        loadSteps(task!.id);
+                                      });
+                                    }
+                                  }
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => StepRegistrationPage(task: task!)
+                                    ),
+                                  ).then((_) {
+                                    // Cargar los pasos creados cuando se vuelva
+                                    loadSteps(task!.id);
+                                  });
+                                }
+                              },
+                              buildPickerCard(60, Icons.add, 30),
+                            ),
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              // Botones de navegación
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                          setState(() {});
+                          Navigator.pop(context);
+                          setState(() {});
+                        }
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
+                          // Obtener la extensión del archivo original
+                          String extensionIMG = path.extension(image!.path);
+                          String extensionPIC = path.extension(pictogram!.path);
+
+                          // Sustituir los espacios
+                          String name = removeSpacing(nameController.text);
+
+                          // TOMATE
+                          await modifyTaskName(task!.id, nameController.text);
+                          await modifyTaskPictogram(task!.id, 'assets/picto_tasks/$name$extensionPIC');
+                          await modifyTaskImage(task!.id, 'assets/imgs_tasks/$name$extensionIMG');
+                          await modifyTaskDescription(task!.id, descriptionController.text);
+
+                          // TODO: Falta controlar que el nombre no esté ya, y que haya al menos un paso, y guardar las imagenes
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE REGISTRAR PASO
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class StepRegistrationPage extends StatefulWidget {
+  final Task task;
+
+  StepRegistrationPage({required this.task});
+  @override
+  _StepRegistrationPageState createState() =>
+      _StepRegistrationPageState();
+}
+
+class _StepRegistrationPageState extends State<StepRegistrationPage> {
+  // Para almacenar las imágenes que se suban
+  File? imagePIC, imageIMG;
+
+  // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
+  final TextEditingController description = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 650, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Título
+              Text('Crear un Paso', style: titleTextStyle),
+              Text('Ingresa los datos del paso', style: subtitleTextStyle),
+              SizedBox(height: 30),
+              // Campo de descripción
+              buildAreaField('Descripción', 3, description),
+              SizedBox(height: 20),
+              // Campos de imagen y pictograma
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Imagen del paso
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Imagen del paso*', style: hintTextStyle),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage();
+                            if (pickedImage != null) {
+                              setState(() {
+                                imageIMG = pickedImage;
+                              });
+                            }
+                          },
+                          buildPickerContainer(250, Icons.cloud_upload, 'Sube una imagen', BoxFit.contain, imageIMG),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  // Pictograma del paso
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Pictograma del paso*', style: hintTextStyle),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage();
+                            if (pickedImage != null) {
+                              setState(() {
+                                imagePIC = pickedImage;
+                              });
+                            }
+                          },
+                          buildPickerContainer(250, Icons.cloud_upload, 'Sube un pictograma', BoxFit.contain, imagePIC),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 40),
+              // Botones de navegación
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                        setState(() {}); Navigator.pop(context); setState(() {});
+                      }),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
+                        if (imagePIC != null && imageIMG != null) {
+                          // Obtener la extensión del archivo original
+                          String extensionIMG = path.extension(imageIMG!.path);
+                          String extensionPIC = path.extension(imagePIC!.path);
+
+                          // Número del paso
+                          int num = (await getAllStepsFromTask(widget.task.id)).length;
+                          // Sustituir los espacios
+                          String name = removeSpacing('${widget.task.id} step $num');
+
+                          // TOMATE
+                          // Meter el paso en la BD
+                          if (await insertStep(
+                            widget.task.id, description.text, 'assets/picto_steps/$name$extensionPIC', 'assets/imgs_steps/$name$extensionIMG', ''
+                          )) 
+                          {
+                            // Guardar las imágenes en las carpetas
+                            await saveImage(imageIMG!, '$name$extensionIMG', 'assets/imgs_steps');
+                            await saveImage(imagePIC!, '$name$extensionPIC', 'assets/picto_steps');
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Paso creado con éxito.'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                    
+                            Navigator.pop( context);
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Para crear un paso hay que introducir tanto una imagen como un pictograma.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
