@@ -672,7 +672,13 @@ Future<List<Step>> getAllStepsFromTask(int idTask) async {
   return await ColegioDatabase.instance.getAllStepsFromTask(idTask);
 }
 
+Future<bool> incrementStep(int id, int task_id) async {
+  return await ColegioDatabase.instance.incrementId(id, task_id);
+}
 
+Future<bool> decrementStep(int id, int task_id) async {
+  return await ColegioDatabase.instance.decrementId(id, task_id);
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE EXECUTE ///

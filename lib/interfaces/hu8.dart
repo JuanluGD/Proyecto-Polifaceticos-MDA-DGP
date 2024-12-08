@@ -67,7 +67,7 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
     steps.clear();
     setState(() {});
     steps.addAll(await getAllStepsFromTask(idTask));
-    print(steps);
+    steps.sort((a, b) => a.id.compareTo(b.id));
     setState(() {});
   }
 
@@ -260,6 +260,28 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
                                         trailing: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [ 
+                                            IconButton(
+                                              icon: Icon(Icons.keyboard_double_arrow_up),
+                                              color: Colors.blue,
+                                              onPressed: () async {
+                                                // Decrementar el número del paso
+                                                if (item.id > 0) {
+                                                  await decrementStep(item.id, task!.id);
+                                                  loadSteps(task!.id);
+                                                }
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(Icons.keyboard_double_arrow_down),
+                                              color: Colors.blue,
+                                              onPressed: () async {
+                                                // Incrementar el número del paso
+                                                if (item.id < steps.length-1) {
+                                                  await incrementStep(item.id, task!.id);
+                                                  loadSteps(task!.id);
+                                                }
+                                              },
+                                            ),
                                             IconButton(
                                               icon: Icon(Icons.edit),
                                               color: Colors.blue,
@@ -891,7 +913,29 @@ class _TaskModificationPageState extends State<TaskModificationPage> {
                                         subtitle: Text(item.description != '' ? item.description : 'Sin descripción'),
                                         trailing: Row(
                                           mainAxisSize: MainAxisSize.min,
-                                          children: [ 
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(Icons.keyboard_double_arrow_up),
+                                              color: Colors.blue,
+                                              onPressed: () async {
+                                                // Decrementar el número del paso
+                                                if (item.id > 0) {
+                                                  await decrementStep(item.id, widget.task.id);
+                                                  loadSteps(widget.task.id);
+                                                }
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(Icons.keyboard_double_arrow_down),
+                                              color: Colors.blue,
+                                              onPressed: () async {
+                                                // Incrementar el número del paso
+                                                if (item.id < steps.length-1) {
+                                                  await incrementStep(item.id, widget.task.id);
+                                                  loadSteps(widget.task.id);
+                                                }
+                                              },
+                                            ), 
                                             IconButton(
                                               icon: Icon(Icons.edit),
                                               color: Colors.blue,

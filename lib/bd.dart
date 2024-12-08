@@ -1411,6 +1411,68 @@ class ColegioDatabase{
     }
   }
 
+  Future<bool> decrementId(int step_id, int task_id) async {
+    final db = await instance.database;
+    try {
+      // Dejar libre un id
+      final tempCount = await db.rawUpdate('''
+        UPDATE $tablaStep
+        SET id = -1
+        WHERE id = ? AND task_id = ?
+      ''', [step_id, task_id]);
+
+      // Incrementar el id que estaba por encima
+      final incrementCount = await db.rawUpdate('''
+        UPDATE $tablaStep
+        SET id = $step_id
+        WHERE id = ? AND task_id = ?
+      ''', [step_id - 1, task_id]);
+
+      // Decrementar el id especificado
+      final decrementCount = await db.rawUpdate('''
+        UPDATE $tablaStep
+        SET id = $step_id - 1
+        WHERE id = ? AND task_id = ?
+      ''', [-1, task_id]);
+
+      return tempCount > 0 && decrementCount > 0 && incrementCount > 0;
+    } catch (e) {
+      print("Error al decrementar el paso: $e");
+      return false;
+    }
+  }
+
+  Future<bool> incrementId(int step_id, int task_id) async {
+    final db = await instance.database;
+    try {
+      // Dejar libre un id
+      final tempCount = await db.rawUpdate('''
+        UPDATE $tablaStep
+        SET id = -1
+        WHERE id = ? AND task_id = ?
+      ''', [step_id, task_id]);
+
+      // Decrementar el id que estaba por debajo
+      final decrementCount = await db.rawUpdate('''
+        UPDATE $tablaStep
+        SET id = $step_id
+        WHERE id = ? AND task_id = ?
+      ''', [step_id + 1, task_id]);
+
+      // Incrementar el id especificado
+      final incrementCount = await db.rawUpdate('''
+        UPDATE $tablaStep
+        SET id = $step_id + 1
+        WHERE id = ? AND task_id = ?
+      ''', [-1, task_id]);
+
+      return tempCount > 0 && decrementCount > 0 && incrementCount > 0;
+    } catch (e) {
+      print("Error al incrementar el paso: $e");
+      return false;
+    }
+  }
+
   Future<Step> getStep(int id, task_id) async {
     final db = await instance.database;
     final result = await db.query(
