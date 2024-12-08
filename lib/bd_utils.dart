@@ -614,7 +614,6 @@ Future<Task?> getTask(int id) async {
   return await ColegioDatabase.instance.getTask(id);
 }
 
-
 Future<Task?> getTaskByName(String name) async {
   return await ColegioDatabase.instance.getTaskByName(name);
 }
@@ -625,6 +624,10 @@ Future<List<Task>> searchTasks(String text) async {
 
 Future<List<Task>> getAllTasks() async {
   return await ColegioDatabase.instance.getAllTasks();
+}
+
+Future<bool> taskIsValid(String name) async {
+  return await ColegioDatabase.instance.taskIsValid(name);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

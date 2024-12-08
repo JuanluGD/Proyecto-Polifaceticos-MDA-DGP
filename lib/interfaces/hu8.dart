@@ -178,26 +178,35 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
                                       ),
                                     );
                                   } else {
-                                    // Obtener la extensión del archivo original
-                                    String extensionIMG = path.extension(image!.path);
-                                    String extensionPIC = path.extension(pictogram!.path);
+                                    if (await taskIsValid(nameController.text)) {
+                                      // Obtener la extensión del archivo original
+                                      String extensionIMG = path.extension(image!.path);
+                                      String extensionPIC = path.extension(pictogram!.path);
 
-                                    // Sustituir los espacios
-                                    String name = removeSpacing(nameController.text);
+                                      // Sustituir los espacios
+                                      String name = removeSpacing(nameController.text);
 
-                                    // TOMATE
-                                    // Tarea temporal para crear los pasos, cuando se guarde habrá que actualizar las imágenes y el nombre por si han cambiado tras crear los pasos
-                                    if (await insertTask(nameController.text, descriptionController.text, 'assets/picto_tasks/$name$extensionPIC', 'assets/imgs_tasks/$name$extensionIMG', '')) {
-                                      task = await getTaskByName(nameController.text);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => StepRegistrationPage(task: task!)
-                                        ),
-                                      ).then((_) {
-                                        // Cargar los pasos creados cuando se vuelva
-                                        loadSteps(task!.id);
-                                      });
+                                      // TOMATE
+                                      // Tarea temporal para crear los pasos, cuando se guarde habrá que actualizar las imágenes y el nombre por si han cambiado tras crear los pasos
+                                      if (await insertTask(nameController.text, descriptionController.text, 'assets/picto_tasks/$name$extensionPIC', 'assets/imgs_tasks/$name$extensionIMG', '')) {
+                                        task = await getTaskByName(nameController.text);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => StepRegistrationPage(task: task!)
+                                          ),
+                                        ).then((_) {
+                                          // Cargar los pasos creados cuando se vuelva
+                                          loadSteps(task!.id);
+                                        });
+                                      }
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('El nombre ya está registrado.'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
                                     }
                                   }
                                 } else {
@@ -294,6 +303,7 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
                       child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
                           setState(() {});
                           Navigator.pop(context);
+                          if (task != null) await deleteTask(task!.id);
                           setState(() {});
                         }
                       ),
@@ -312,12 +322,42 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
                           String name = removeSpacing(nameController.text);
 
                           // TOMATE
-                          await modifyTaskName(task!.id, nameController.text);
-                          await modifyTaskPictogram(task!.id, 'assets/picto_tasks/$name$extensionPIC');
-                          await modifyTaskImage(task!.id, 'assets/imgs_tasks/$name$extensionIMG');
-                          await modifyTaskDescription(task!.id, descriptionController.text);
+                          if (task != null){
+                            if (task!.name != nameController.text) {
+                              if (await taskIsValid(name))
+                                await modifyTaskName(task!.id, nameController.text);
+                              else
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('El nombre ya está registrado.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                            }
+                            
+                            await modifyTaskPictogram(task!.id, 'assets/picto_tasks/$name$extensionPIC');
+                            await modifyTaskImage(task!.id, 'assets/imgs_tasks/$name$extensionIMG');
+                            await modifyTaskDescription(task!.id, descriptionController.text);
 
-                          // TODO: Falta controlar que el nombre no esté ya, y que haya al menos un paso, y guardar las imagenes
+                            // Guardar las imágenes en las carpetas
+                            await saveImage(image!, '$name$extensionIMG', 'assets/imgs_tasks');
+                            await saveImage(pictogram!, '$name$extensionPIC', 'assets/picto_tasks');
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Tarea creada con éxito.'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+
+                          } else if (steps.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('La tarea debe tener al menos un paso.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                         },
                       ),
                     ),
@@ -634,7 +674,7 @@ class _StepModificationPageState extends State<StepModificationPage> {
                             backgroundColor: Colors.green,
                           ),
                         );
-                
+
                         Navigator.pop(context);
                       }),
                     ),

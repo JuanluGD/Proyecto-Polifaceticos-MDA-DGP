@@ -1431,6 +1431,16 @@ class ColegioDatabase{
     return result.map((map) => Step.fromMap(map)).toList();
   }
 
+  Future<bool> taskIsValid(String name) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tablaTask,
+      where: 'name = ?',
+      whereArgs: [name],
+    );
+    return result.isEmpty;
+  }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE EXECUTE  ///
