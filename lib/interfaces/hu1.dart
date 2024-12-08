@@ -321,6 +321,9 @@ class _TaskListPageState extends State<TaskListPage> {
   late List<Task> tasks = [];
 
   Future<void> _loadTasks() async {
+    PaintingBinding.instance.imageCache.clear();
+    PaintingBinding.instance.imageCache.clearLiveImages();
+    
     setState(() {});
     tasks.clear();
     tasks.addAll(await getAllTasks());

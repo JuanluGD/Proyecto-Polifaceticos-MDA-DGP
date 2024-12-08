@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:flutter/painting.dart';
 
 import 'package:proyecto/interfaces/interface_utils.dart';
 import 'package:proyecto/image_utils.dart';
@@ -57,6 +58,15 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
   // TOMATE
   // Para cargar los pasos
   Future<void> loadSteps(int idTask) async {
+    final pic = pictogram;
+    final img = image;
+
+    PaintingBinding.instance.imageCache.clear();
+    PaintingBinding.instance.imageCache.clearLiveImages();
+
+    pictogram = pic;
+    image = img;
+
     steps.clear();
     setState(() {});
     steps.addAll(await getAllStepsFromTask(idTask));
@@ -710,6 +720,15 @@ class _TaskModificationPageState extends State<TaskModificationPage> {
   // TOMATE
   // Para cargar los pasos
   Future<void> loadSteps(int idTask) async {
+    final pic = pictogram;
+    final img = image;
+
+    PaintingBinding.instance.imageCache.clear();
+    PaintingBinding.instance.imageCache.clearLiveImages();
+
+    pictogram = pic;
+    image = img;
+    
     steps.clear();
     setState(() {});
     steps.addAll(await getAllStepsFromTask(idTask));
