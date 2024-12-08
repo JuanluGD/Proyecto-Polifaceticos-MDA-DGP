@@ -1386,7 +1386,9 @@ class ColegioDatabase{
         whereArgs:[id, task_id]
       );
 
-      return (count > 0 && await modifyAllId(id, task_id));
+      if (count > 0)
+        return await modifyAllId(id, task_id);
+      else return false;
     } catch (e) {
       print("Error al eliminar el paso: $e");
       return false;
@@ -1396,12 +1398,12 @@ class ColegioDatabase{
   Future<bool> modifyAllId(int id, int task_id) async {
     final db = await instance.database;
     try{
-      final result = await db.query('''
-        UPDATE $tablaStep
-        SET id = id - 1
-        WHERE id > $id AND task_id = $task_id
-      ''');
-      return result.isNotEmpty;
+      final count = await db.rawUpdate('''
+      UPDATE $tablaStep
+      SET id = id - 1
+      WHERE id > ? AND task_id = ?
+    ''', [id, task_id]);
+      return count > 0;
     }
     catch(e){
       print("Error al modificar todos los id: $e");

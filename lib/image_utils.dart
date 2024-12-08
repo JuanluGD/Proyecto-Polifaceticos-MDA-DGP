@@ -192,3 +192,8 @@ Future<List<ImgCode>> getImgCodeFromFolder(String folder) async {
 Future<int?> getImagePasswdCount(String user) async {
   return await ColegioDatabase.instance.getSpacesPasswordCount(user);
 }
+
+String getImageName(String direction) {
+  String name = path.basename(direction);
+  return path.basenameWithoutExtension(name);
+}

@@ -163,15 +163,17 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
                     ),
                     SizedBox(height: 10),
                     buildBorderedContainer(Colors.grey, 1,
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: buildPickerRegion(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            buildPickerRegion(
                               () async {
-                                if (steps.isEmpty) {
+                                if (task == null) {
                                   if (nameController.text.isEmpty || image == null || pictogram == null) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Es necesario rellenar los campos de nombre, pictograma e imagen para crear pasos.'),
+                                        content: Text('Es necesario rellenar los campos de nombre, pictograma e imagen para comenzar a crear pasos.'),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
@@ -212,7 +214,72 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
                               },
                               buildPickerCard(60, Icons.add, 30),
                             ),
-                          ),
+                            SizedBox(height: 10),
+                            // Lista de pasos registrados
+                            steps.isEmpty
+                              ? Text(
+                                'No hay pasos registrados aún.',
+                                style: hintTextStyle,
+                              )
+                              : SizedBox(
+                                height: 120,
+                                child: ListView.builder(
+                                  itemCount: steps.length,
+                                  itemBuilder: (context, index) {
+                                    final item = steps[index];
+                                    return Card(
+                                      margin: EdgeInsets.symmetric(vertical: 8.0),
+                                      child: ListTile(
+                                        leading: ClipRRect(
+                                          borderRadius: BorderRadius.circular(5),
+                                          child: Image.file(
+                                            File(item.image),
+                                            fit: BoxFit.cover,
+                                            width: 50,
+                                            height: 50,
+                                          ),
+                                        ),
+                                        title: Text('Paso ${item.id+1}'),
+                                        subtitle: Text(item.description != '' ? item.description : 'Sin descripción'),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [ 
+                                            IconButton(
+                                              icon: Icon(Icons.edit),
+                                              color: Colors.blue,
+                                              onPressed: () async {
+                                                // Navegar a la página de modificación del paso
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => StepModificationPage(step: item)
+                                                  ),
+                                                ).then((_) {
+                                                  // Cargar los pasos creados cuando se vuelva
+                                                  loadSteps(task!.id);
+                                                });
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(Icons.delete),
+                                              color: Colors.blue,
+                                              onPressed: () async {
+                                                // Eliminar el paso
+                                                await deleteStep(item.id, task!.id);
+                                                loadSteps(task!.id);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -405,6 +472,170 @@ class _StepRegistrationPageState extends State<StepRegistrationPage> {
                             ),
                           );
                         }
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE MODIFICAR PASO
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class StepModificationPage extends StatefulWidget {
+  final ownStep.Step step;
+
+  StepModificationPage({required this.step});
+  @override
+  _StepModificationPageState createState() =>
+      _StepModificationPageState();
+}
+
+class _StepModificationPageState extends State<StepModificationPage> {
+  // Para almacenar las imágenes que se suban y manejar si se han cambiado
+  File? imagePIC, imageIMG;
+  bool pic = false, img = false;
+
+  // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
+  final TextEditingController description = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializar los campos con los datos del paso
+    description.text = widget.step.description;
+    imagePIC = File(widget.step.pictogram);
+    imageIMG = File(widget.step.image);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 650, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Título
+              Text('Modificar un Paso', style: titleTextStyle),
+              Text('Cambia los datos del paso', style: subtitleTextStyle),
+              SizedBox(height: 30),
+              // Campo de descripción
+              buildAreaField('Descripción', 3, description),
+              SizedBox(height: 20),
+              // Campos de imagen y pictograma
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Imagen del paso
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Imagen del paso*', style: hintTextStyle),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage();
+                            if (pickedImage != null) {
+                              setState(() {
+                                imageIMG = pickedImage;
+                                img = true;
+                              });
+                            }
+                          },
+                          buildPickerContainer(250, Icons.cloud_upload, 'Sube una imagen', BoxFit.contain, imageIMG),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  // Pictograma del paso
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Pictograma del paso*', style: hintTextStyle),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage();
+                            if (pickedImage != null) {
+                              setState(() {
+                                imagePIC = pickedImage;
+                                pic = true;
+                              });
+                            }
+                          },
+                          buildPickerContainer(250, Icons.cloud_upload, 'Sube un pictograma', BoxFit.contain, imagePIC),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 40),
+              // Botones de navegación
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                        setState(() {}); Navigator.pop(context); setState(() {});
+                      }),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
+                        // TOMATE
+                        // Cambiar la descripción del paso en la BD
+                        await modifyStepDescription(widget.step.id, widget.step.task_id, description.text);
+                        
+                        if (pic) {
+                          // Obtener la extensión del archivo original
+                          String extensionPIC = path.extension(imagePIC!.path);
+                          // Obtener el nombre
+                          String name = getImageName(widget.step.pictogram);
+                          // Sobreescribir el pictograma en la carpeta
+                          await deleteImage(widget.step.pictogram);
+                          await saveImage(imagePIC!, '$name$extensionPIC', 'assets/picto_steps');
+                          // Actualizar la ruta en la BD
+                          await modifyStepPictogram(widget.step.id, widget.step.task_id, 'assets/picto_steps/$name$extensionPIC');
+                        }
+
+                        if (img) {
+                          // Obtener la extensión del archivo original
+                          String extensionIMG = path.extension(imageIMG!.path);
+                          // Obtener el nombre
+                          String name = getImageName(widget.step.image);
+                          // Sobreescribir la imagen en la carpeta
+                          await deleteImage(widget.step.image);
+                          await saveImage(imageIMG!, '$name$extensionIMG', 'assets/imgs_steps');
+                          // Actualizar la ruta en la BD
+                          await modifyStepPictogram(widget.step.id, widget.step.task_id, 'assets/imgs_steps/$name$extensionIMG');
+                        }
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Paso modificado con éxito.'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                
+                        Navigator.pop(context);
                       }),
                     ),
                   ),
