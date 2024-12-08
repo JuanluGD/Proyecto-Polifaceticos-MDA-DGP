@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:proyecto/bd_utils.dart';
 import '../classes/Order.dart';
 import '../classes/Task.dart';
+import 'package:proyecto/classes/Step.dart' as ownStep;
 import 'hu2.dart' as hu2;
 import 'hu3.dart' as hu3;
 import 'hu4.dart' as hu4;
@@ -326,6 +328,9 @@ class _TaskListPageState extends State<TaskListPage> {
     
     setState(() {});
     tasks.clear();
+    if (await hasMenuTaskToday()) {
+      tasks.add((await getTask(1))!);
+    }
     tasks.addAll(await getAllTasks());
     setState(() {});
   }
@@ -361,14 +366,11 @@ class _TaskListPageState extends State<TaskListPage> {
                         if (item.id == 1) {
                           return hu6.MenuList();
                         } else {
-                          print("por implementar jaja");
-                          return Container(); // Return an empty container or another widget
+                          return TaskInformationPage(task: item);
                         }
                       },
                     ),
                   );
-                  
-                  print("no esta implementado jaja");
                   setState(() {});
                 },
               ),
@@ -516,6 +518,205 @@ class _CommandListState extends State<CommandList> {
           ),
         )
       )
+    );
+  }
+}
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE INFORMACIÓN DE TAREAS
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class TaskInformationPage extends StatefulWidget {
+  final Task task;
+  const TaskInformationPage({super.key, required this.task});
+
+  @override
+  _TaskInformationPageState createState() =>
+      _TaskInformationPageState();
+}
+
+class _TaskInformationPageState extends State<TaskInformationPage> {
+  // Para almacenar los pasos de la tarea
+  final List<ownStep.Step> steps = [];
+
+  // TOMATE
+  // Para cargar los pasos
+  Future<void> loadSteps() async {
+    steps.clear();
+    setState(() {});
+    steps.addAll(await getAllStepsFromTask(widget.task.id));
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadSteps();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 650, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Tarea: ${widget.task.name}', style: titleTextStyle),
+              SizedBox(height: 30),
+              // Formulario
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(width: 20),
+                  // Pictograma e imagen
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  'Pictograma',
+                                  style: infoTextStyle,
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  height: 150,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(widget.task.pictogram),
+                                      fit: BoxFit.contain,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                ],
+                              ),
+                              SizedBox(width: 10),
+                              Column(
+                                children: [
+                                  Text(
+                                  'Imagen',
+                                  style: infoTextStyle,
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  height: 150,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(widget.task.image),
+                                      fit: BoxFit.contain,
+                                    ),
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                ],
+              ),
+              SizedBox(height: 20),
+              // Pasos
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pasos:',
+                      style: infoTextStyle,
+                    ),
+                    SizedBox(height: 10),
+                    buildBorderedContainer(Colors.grey, 1,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            // Lista de pasos registrados
+                            steps.isEmpty
+                              ? SizedBox(
+                                height: 200,
+                                width: double.infinity,
+                                child: Center(
+                                  child: Text(
+                                    'No hay pasos registrados.',
+                                    style: hintTextStyle,
+                                  ),
+                                ),
+                              )
+                              : SizedBox(
+                                height: 200,
+                                child: ListView.builder(
+                                  itemCount: steps.length,
+                                  itemBuilder: (context, index) {
+                                    final item = steps[index];
+                                    return Card(
+                                      margin: EdgeInsets.symmetric(vertical: 8.0),
+                                      child: ListTile(
+                                        leading: ClipRRect(
+                                          borderRadius: BorderRadius.circular(5),
+                                          child: Image.file(
+                                            File(item.image),
+                                            fit: BoxFit.cover,
+                                            width: 50,
+                                            height: 50,
+                                          ),
+                                        ),
+                                        title: Text('Paso ${item.id+1}'),
+                                        subtitle: Text(item.description != '' ? item.description : 'Sin descripción'),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              // Botones de navegación
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                          setState(() {});
+                          Navigator.pop(context);
+                          setState(() {});
+                        }
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
