@@ -322,7 +322,7 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
                           String name = removeSpacing(nameController.text);
 
                           // TOMATE
-                          if (task != null){
+                          if (task != null && !steps.isEmpty) {
                             if (task!.name != nameController.text) {
                               if (await taskIsValid(name))
                                 await modifyTaskName(task!.id, nameController.text);
@@ -350,7 +350,7 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
                               ),
                             );
 
-                          } else if (steps.isEmpty) {
+                          } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('La tarea debe tener al menos un paso.'),
@@ -650,7 +650,7 @@ class _StepModificationPageState extends State<StepModificationPage> {
                           // Obtener el nombre
                           String name = getImageName(widget.step.pictogram);
                           // Sobreescribir el pictograma en la carpeta
-                          await deleteImage(widget.step.pictogram);
+                          //await deleteImage(widget.step.pictogram);
                           await saveImage(imagePIC!, '$name$extensionPIC', 'assets/picto_steps');
                           // Actualizar la ruta en la BD
                           await modifyStepPictogram(widget.step.id, widget.step.task_id, 'assets/picto_steps/$name$extensionPIC');
@@ -662,10 +662,10 @@ class _StepModificationPageState extends State<StepModificationPage> {
                           // Obtener el nombre
                           String name = getImageName(widget.step.image);
                           // Sobreescribir la imagen en la carpeta
-                          await deleteImage(widget.step.image);
+                          //await deleteImage(widget.step.image);
                           await saveImage(imageIMG!, '$name$extensionIMG', 'assets/imgs_steps');
                           // Actualizar la ruta en la BD
-                          await modifyStepPictogram(widget.step.id, widget.step.task_id, 'assets/imgs_steps/$name$extensionIMG');
+                          await modifyStepImage(widget.step.id, widget.step.task_id, 'assets/imgs_steps/$name$extensionIMG');
                         }
 
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -677,6 +677,311 @@ class _StepModificationPageState extends State<StepModificationPage> {
 
                         Navigator.pop(context);
                       }),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+// INTERFAZ DE MODIFICAR TAREA
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+class TaskModificationPage extends StatefulWidget {
+  final Task task;
+
+  TaskModificationPage({required this.task});
+  @override
+  _TaskModificationPageState createState() =>
+      _TaskModificationPageState();
+}
+
+class _TaskModificationPageState extends State<TaskModificationPage> {
+  // Para almacenar los pasos
+  final List<ownStep.Step> steps = [];
+
+  // TOMATE
+  // Para cargar los pasos
+  Future<void> loadSteps(int idTask) async {
+    steps.clear();
+    setState(() {});
+    steps.addAll(await getAllStepsFromTask(idTask));
+    print(steps);
+    setState(() {});
+  }
+
+  // Para almacenar el pictograma y la imagen que se suban
+  File? pictogram;
+  File? image;
+
+  // CONTROLADORES PARA TRABAJAR CON LOS CAMPOS
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializar los campos con los datos de la tarea
+    nameController.text = widget.task.name;
+    descriptionController.text = widget.task.description;
+    pictogram = File(widget.task.pictogram);
+    image = File(widget.task.image);
+    loadSteps(widget.task.id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.lightBlueAccent.shade100,
+      body: Center(
+        child: buildMainContainer(740, 650, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Modificación de tarea por pasos', style: titleTextStyle),
+              Text('Cambia los datos de la tarea', style: subtitleTextStyle),
+              SizedBox(height: 30),
+              // Formulario
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Campos de texto
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildTextField('Nombre*', nameController),
+                        SizedBox(height: 20),
+                        buildAreaField('Descripción', 3, descriptionController),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  // Pictograma
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Pictograma*',
+                          style: hintTextStyle,
+                        ),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage(); // Seleccionar la imagen
+                            if (pickedImage != null) {
+                              setState(() {
+                                pictogram = pickedImage; // Asignar la imagen seleccionada
+                              });
+                            }
+                          },
+                          buildPickerContainer(135, Icons.cloud_upload, 'Sube un pictograma', BoxFit.contain, pictogram),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  // Imagen
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Imagen*',
+                          style: hintTextStyle,
+                        ),
+                        SizedBox(height: 10),
+                        buildPickerRegion(
+                          () async {
+                            final pickedImage = await pickImage(); // Seleccionar la imagen
+                            if (pickedImage != null) {
+                              setState(() {
+                                image = pickedImage; // Asignar la imagen seleccionada
+                              });
+                            }
+                          },
+                          buildPickerContainer(135, Icons.cloud_upload, 'Sube una imagen', BoxFit.contain, image),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              // Pasos
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pasos:',
+                      style: hintTextStyle,
+                    ),
+                    SizedBox(height: 10),
+                    buildBorderedContainer(Colors.grey, 1,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            buildPickerRegion(
+                              () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => StepRegistrationPage(task: widget.task)
+                                  ),
+                                ).then((_) {
+                                  // Cargar los pasos creados cuando se vuelva
+                                  loadSteps(widget.task.id);
+                                });
+                                
+                              },
+                              buildPickerCard(60, Icons.add, 30),
+                            ),
+                            SizedBox(height: 10),
+                            // Lista de pasos registrados
+                            steps.isEmpty
+                              ? Text(
+                                'No hay pasos registrados aún.',
+                                style: hintTextStyle,
+                              )
+                              : SizedBox(
+                                height: 120,
+                                child: ListView.builder(
+                                  itemCount: steps.length,
+                                  itemBuilder: (context, index) {
+                                    final item = steps[index];
+                                    return Card(
+                                      margin: EdgeInsets.symmetric(vertical: 8.0),
+                                      child: ListTile(
+                                        leading: ClipRRect(
+                                          borderRadius: BorderRadius.circular(5),
+                                          child: Image.file(
+                                            File(item.image),
+                                            fit: BoxFit.cover,
+                                            width: 50,
+                                            height: 50,
+                                          ),
+                                        ),
+                                        title: Text('Paso ${item.id+1}'),
+                                        subtitle: Text(item.description != '' ? item.description : 'Sin descripción'),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [ 
+                                            IconButton(
+                                              icon: Icon(Icons.edit),
+                                              color: Colors.blue,
+                                              onPressed: () async {
+                                                // Navegar a la página de modificación del paso
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => StepModificationPage(step: item)
+                                                  ),
+                                                ).then((_) {
+                                                  // Cargar los pasos creados cuando se vuelva
+                                                  loadSteps(widget.task.id);
+                                                });
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(Icons.delete),
+                                              color: Colors.blue,
+                                              onPressed: () async {
+                                                // Eliminar el paso
+                                                await deleteStep(item.id, widget.task.id);
+                                                loadSteps(widget.task.id);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Botones de navegación
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
+                          setState(() {});
+                          Navigator.pop(context);
+                          setState(() {});
+                        }
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: buildElevatedButton('Guardar', buttonTextStyle, nextButtonStyle, () async {
+                          // Obtener la extensión del archivo original
+                          String extensionIMG = path.extension(image!.path);
+                          String extensionPIC = path.extension(pictogram!.path);
+
+                          // Sustituir los espacios
+                          String name = removeSpacing(nameController.text);
+
+                          // TOMATE
+                          if (!steps.isEmpty) {
+                            if (widget.task.name != nameController.text) {
+                              if (await taskIsValid(name))
+                                await modifyTaskName(widget.task.id, nameController.text);
+                              else
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('El nombre ya está registrado.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                            }
+                            
+                            await modifyTaskPictogram(widget.task.id, 'assets/picto_tasks/$name$extensionPIC');
+                            await modifyTaskImage(widget.task.id, 'assets/imgs_tasks/$name$extensionIMG');
+                            await modifyTaskDescription(widget.task.id, descriptionController.text);
+
+                            // Guardar las imágenes en las carpetas
+                            await saveImage(image!, '$name$extensionIMG', 'assets/imgs_tasks');
+                            await saveImage(pictogram!, '$name$extensionPIC', 'assets/picto_tasks');
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Tarea modificada con éxito.'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+
+                            Navigator.pop(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('La tarea debe tener al menos un paso.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ],

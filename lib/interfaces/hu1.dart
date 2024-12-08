@@ -6,6 +6,7 @@ import 'hu2.dart' as hu2;
 import 'hu3.dart' as hu3;
 import 'hu4.dart' as hu4;
 import 'hu6.dart' as hu6;
+import 'hu8.dart' as hu8;
 import 'interface_utils.dart';
 
 /// LOGIN ADMINISTRADOR ///
@@ -310,6 +311,7 @@ class adminInterface extends StatelessWidget {
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE LISTA DE TAREAS DISPONIBLES
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class TaskListPage extends StatefulWidget {
   @override
   _TaskListPageState createState() => _TaskListPageState();
@@ -320,6 +322,7 @@ class _TaskListPageState extends State<TaskListPage> {
 
   Future<void> _loadTasks() async {
     setState(() {});
+    tasks.clear();
     tasks.addAll(await getAllTasks());
     setState(() {});
   }
@@ -373,14 +376,15 @@ class _TaskListPageState extends State<TaskListPage> {
                 onPressed:
                   // Navegar a la página de modificación de la tarea
                   () async {
-                    /*
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TaskModificationPage(tarea: item),
+                        builder: (context) => hu8.TaskModificationPage(task: item),
                       ),
-                    );*/
-                    print("no esta implementado jaja");
+                    ).then((_) {
+                      // Cargar las tareas cuando se vuelva
+                      _loadTasks();
+                    });
                     setState(() {});
                   },
               ),
