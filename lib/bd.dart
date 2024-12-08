@@ -269,9 +269,9 @@ class ColegioDatabase{
 
     /// INSERTAR PASOS DE TAREAS ///
     await db.execute('''
-      INSERT INTO $tablaStep (task_id, description, pictogram, image) VALUES (2, 'Coger los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
-      INSERT INTO $tablaStep (task_id, description, pictogram, image) VALUES (2, 'Fregar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
-      INSERT INTO $tablaStep (task_id, description, pictogram, image) VALUES (2, 'Secar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (0, 2, 'Coger los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (1, 2, 'Fregar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (2, 2, 'Secar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
     ''');
     
     DateTime now = DateTime.now();
@@ -1481,7 +1481,7 @@ class ColegioDatabase{
       int count = await db.update(
         tablaExecute,
         {'status': status},
-        where: 'id_task = ? AND user = ? AND date = ?',
+        where: 'task_id = ? AND user = ? AND date = ?',
         whereArgs: [execute.task_id, execute.user, execute.date],
       );
 
@@ -1512,7 +1512,7 @@ class ColegioDatabase{
     final db = await instance.database;
     final result = await db.query(
       tablaExecute,
-      where: 'id_task = ? AND user = ? AND date = ?',
+      where: 'task_id = ? AND user = ? AND date = ?',
       whereArgs: [id_task, user, date],
     );
     return Execute.fromMap(result.first);

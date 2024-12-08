@@ -8,10 +8,8 @@ import 'package:proyecto/bd_utils.dart';
 
 import '../classes/Student.dart';
 import 'hu7.dart' as hu7;
-/// CREAR TAREAS ///
-/// HU6: Como administrador quiero poder asignar a un estudiante la tarea de tomar las comandas para el menú del comedor.
+
 /// HU10: Como administrador quiero poder acceder al historial de actividades realizadas de los estudiantes.
-/// 
 
 Future<void> main() async {
   Student student = (await getStudent('alissea'))!;
@@ -35,12 +33,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
-
 // //////////////////////////////////////////////////////////////////////////////////////////
 // INTERFAZ DE HISTORIAL DE TAREAS DE UN ESTUDIANTE
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class StudentHistoryTasksPage extends StatefulWidget {
   final Student student;
 

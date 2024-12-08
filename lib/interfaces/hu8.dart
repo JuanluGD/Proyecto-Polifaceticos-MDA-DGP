@@ -12,11 +12,8 @@ import 'package:proyecto/classes/Step.dart' as ownStep;
 
 import 'package:proyecto/interfaces/hu4.dart' as hu4;
 
-/// CREAR TAREAS POR PASOS
 /// HU8: Como administrador quiero poder crear una tarea por pasos.
-// //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE INFORMACIÓN DE TAREAS
-// //////////////////////////////////////////////////////////////////////////////////////////
+/// HU13: Como administrador quiero poder modificar la información de una tarea.
 
 void main() {
   runApp(MyApp());
