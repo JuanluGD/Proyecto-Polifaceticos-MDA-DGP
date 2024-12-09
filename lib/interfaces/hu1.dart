@@ -549,10 +549,19 @@ class _TaskInformationPageState extends State<TaskInformationPage> {
     setState(() {});
   }
 
+  late ScrollController scroll;
+
   @override
   void initState() {
     super.initState();
+    scroll = ScrollController();
     loadSteps();
+  }
+
+  @override
+  void dispose() {
+    scroll.dispose();
+    super.dispose();
   }
 
   @override
@@ -565,7 +574,23 @@ class _TaskInformationPageState extends State<TaskInformationPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Tarea: ${widget.task.name}', style: titleTextStyle),
-              SizedBox(height: 30),
+              widget.task.description == ''
+              ? Text('Descripción: Sin descripción', style: subtitleTextStyle)
+              : SizedBox(
+                  height: 20,
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    controller: scroll,
+                    child: SingleChildScrollView(
+                      controller: scroll,
+                      child: Text(
+                        'Descripción: ${widget.task.description}',
+                        style: subtitleTextStyle,
+                      ),
+                    ),
+                  ),
+                ),
+              SizedBox(height: 15),
               // Formulario
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -607,53 +632,27 @@ class _TaskInformationPageState extends State<TaskInformationPage> {
                               Column(
                                 children: [
                                   Text(
-                                    'Descripción',
-                                    style: infoTextStyle,
-                                  ),
-                                  SizedBox(height: 10),
-                                  Container(
-                                    height: 150,
-                                    width: 200,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
+                                  'Imagen',
+                                  style: infoTextStyle,
+                                ),
+                                SizedBox(height: 10),
+                                Container(
+                                  height: 150,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(widget.task.image),
+                                      fit: BoxFit.contain,
                                     ),
-                                    child: Center(
-                                      child: widget.task.description == ''
-                                        ? Text('Sin descripción', style: hintTextStyle)
-                                        : Text(widget.task.description, style: hintTextStyle),
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                      width: 1,
                                     ),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                ],
-                              ),
-                              SizedBox(width: 10),
-                              Column(
-                                children: [
-                                  Text(
-                                    'Imagen',
-                                    style: infoTextStyle,
-                                  ),
-                                  SizedBox(height: 10),
-                                  Container(
-                                    height: 150,
-                                    width: 200,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(widget.task.image),
-                                        fit: BoxFit.contain,
-                                      ),
-                                      border: Border.all(
-                                        color: Colors.grey,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ],
