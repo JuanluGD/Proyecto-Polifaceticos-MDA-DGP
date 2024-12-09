@@ -35,6 +35,18 @@ Widget buildTextField(String labelText, TextEditingController controller) {
   );
 }
 
+// Crear área de texto básica
+Widget buildAreaField(String labelText, int lines, TextEditingController controller) {
+  return TextField(
+    controller: controller,
+    maxLines: lines,
+    decoration: InputDecoration(
+      labelText: labelText,
+      border: OutlineInputBorder(),
+    ),
+  );
+}
+
 // Crear campo de texto relleno
 Widget buildFilledTextField(String labelText, TextEditingController controller) {
   return TextField(
@@ -656,7 +668,7 @@ Widget buildCustomList({
                   ),
                 title: Text('${item.name} ${item is Student ? item.surname ?? '' : ''}'),
                 subtitle: item is Student ? Text(item.user) 
-                        : item is Task ? Text(item.description)
+                        : item is Task ? item.description == '' ? Text('Sin descripción') : Text(item.description)
                         : null,
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -714,3 +726,9 @@ ButtonStyle returnButtonStyle = ElevatedButton.styleFrom(backgroundColor: Colors
 // Estilo de botones adicionales
 ButtonStyle extraButtonStyle = ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue[200], padding: EdgeInsets.symmetric(vertical: 16.0));
 
+// ESTÁNDARES
+
+// Obtener fecha con el formato para la BD
+String getBDate(DateTime date) {
+    return '${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+}

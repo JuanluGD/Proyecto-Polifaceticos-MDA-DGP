@@ -159,7 +159,7 @@ class _ClassSelectionState extends State<ClassSelection> {
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FinishedTask(student: widget.student),
+                              builder: (context) => hu9.FinishedTask(student: widget.student, idTask: 1, date: getBDate(DateTime.now())),
                             ),
                           );
                         },
@@ -582,107 +582,7 @@ class _FinishedOrderState extends State<FinishedOrder> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE TAREA COMEDOR TERMINADA
-// //////////////////////////////////////////////////////////////////////////////////////////
-
-class FinishedTask extends StatefulWidget{
- final Student student;
-  const
- FinishedTask({required this.student}); 
-
-  @override
-  _FinishedTaskState createState() => _FinishedTaskState();
-}
-
-
-class _FinishedTaskState extends State<FinishedTask> {
-  @override
-  void initState() {
-    super.initState();
-  }
- @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.lightBlueAccent.shade100,
-        body: Stack(
-          children: [
-            Center(
-              child: buildMainContainer(740, 625, EdgeInsets.all(20),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: (widget.student.interfaceTXT == 1)
-                      ? Text(
-                        '¡Tarea terminada!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 60,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                      : Image(
-                          image: AssetImage("assets/tareas/terminar.png"),
-                      ),
-                    ),
-                    SizedBox(height: 60), 
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          // TOMATE marcar como completada la tarea del comedor del alumno
-                          await menuTaskCompleted();
-                          // PORQUE NO FUNCIONA?
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => hu9.StudentInterfacePage(student: widget.student),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12), // Bordes redondeados
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Seguir',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            avatarTopCorner(widget.student), // Muestra el avatar en la esquina superior
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ QUE MUESTRA LOS MENUS DISPONIBLES
+// INTERFAZ QUE MUESTRA LOS MENÚS DISPONIBLES
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class MenuList extends StatefulWidget {
@@ -721,7 +621,7 @@ class _MenuListState extends State<MenuList>{
                 onPressed:
                   // Navegar a la página de tareas del estudiante
                   () async {
-                    print("no esta implementado jaja"); //TOMATE
+                    print("no esta implementado jaja"); // TOMATE
                     setState(() {});
                   },
               ),

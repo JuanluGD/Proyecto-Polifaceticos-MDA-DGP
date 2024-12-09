@@ -614,7 +614,6 @@ Future<Task?> getTask(int id) async {
   return await ColegioDatabase.instance.getTask(id);
 }
 
-
 Future<Task?> getTaskByName(String name) async {
   return await ColegioDatabase.instance.getTaskByName(name);
 }
@@ -627,10 +626,14 @@ Future<List<Task>> getAllTasks() async {
   return await ColegioDatabase.instance.getAllTasks();
 }
 
+Future<bool> taskIsValid(String name) async {
+  return await ColegioDatabase.instance.taskIsValid(name);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE PASOS ///
 /// 
-Future<bool> insertStep(int task_id, String name, String description, String pictogram, String image, String? descriptive_text) async {
+Future<bool> insertStep(int task_id, String description, String pictogram, String image, String? descriptive_text) async {
   List<Step> steps = await ColegioDatabase.instance.getAllStepsFromTask(task_id);
   int id = steps.length;
   Step step = Step(id: id, task_id: task_id, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);
@@ -669,7 +672,13 @@ Future<List<Step>> getAllStepsFromTask(int idTask) async {
   return await ColegioDatabase.instance.getAllStepsFromTask(idTask);
 }
 
+Future<bool> incrementStep(int id, int task_id) async {
+  return await ColegioDatabase.instance.incrementId(id, task_id);
+}
 
+Future<bool> decrementStep(int id, int task_id) async {
+  return await ColegioDatabase.instance.decrementId(id, task_id);
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE EXECUTE ///
