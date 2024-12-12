@@ -574,62 +574,178 @@ Future<bool> menuIsValid(String name) async {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREAS ///
-/// 
+
+/*
+  Método
+  @Nombre --> insertTask
+  @Funcion --> Inserta una nueva tarea en la base de datos
+  @Argumentos
+      - name: el nombre de la tarea
+      - description: la descripción de la tarea
+      - pictogram: el pictograma asociado a la tarea
+      - image: la imagen asociada a la tarea
+      - descriptive_text: texto descriptivo adicional de la tarea
+*/
 Future<bool> insertTask(String name, String description, String pictogram, String image, String? descriptive_text) async {
   return await ColegioDatabase.instance.insertTask(name, description, pictogram, image, descriptive_text);
 }
 
+/*
+  Método
+  @Nombre --> modifyTaskName
+  @Funcion --> Modifica el nombre de una tarea existente en la base de datos
+  @Argumentos
+      - id: el identificador de la tarea
+      - newName: el nuevo nombre de la tarea
+*/
 Future<bool> modifyTaskName(int id, String newName) async {
   return await ColegioDatabase.instance.modifyTask(id, "name", newName);
 }
 
+/*
+  Método
+  @Nombre --> modifyTaskDescription
+  @Funcion --> Modifica la descripción de una tarea existente en la base de datos
+  @Argumentos
+      - id: el identificador de la tarea
+      - newDescription: la nueva descripción de la tarea
+*/
 Future<bool> modifyTaskDescription(int id, String newDescription) async {
   return await ColegioDatabase.instance.modifyTask(id, "description", newDescription);
 }
 
+/*
+  Método
+  @Nombre --> modifyTaskPictogram
+  @Funcion --> Modifica el pictograma de una tarea existente en la base de datos
+  @Argumentos
+      - id: el identificador de la tarea
+      - newPictogram: el nuevo pictograma de la tarea
+*/
 Future<bool> modifyTaskPictogram(int id, String newPictogram) async {
   return await ColegioDatabase.instance.modifyTask(id, "pictogram", newPictogram);
 }
 
+/*
+  Método
+  @Nombre --> modifyTaskImage
+  @Funcion --> Modifica la imagen de una tarea existente en la base de datos
+  @Argumentos
+      - id: el identificador de la tarea
+      - newImage: la nueva imagen de la tarea
+*/
 Future<bool> modifyTaskImage(int id, String newImage) async {
   return await ColegioDatabase.instance.modifyTask(id, "image", newImage);
 }
 
+/*
+  Método
+  @Nombre --> modifyTaskDescriptiveText
+  @Funcion --> Modifica el texto descriptivo de una tarea existente en la base de datos
+  @Argumentos
+      - id: el identificador de la tarea
+      - newDescriptiveText: el nuevo texto descriptivo de la tarea
+*/
 Future<bool> modifyTaskDescriptiveText(int id, String newDescriptiveText) async {
   return await ColegioDatabase.instance.modifyTask(id, "descriptive_text", newDescriptiveText);
 }
 
+/*
+  Método
+  @Nombre --> modifyCompleteTask
+  @Funcion --> Modifica todos los atributos de una tarea existente en la base de datos
+  @Argumentos
+      - id: el identificador de la tarea
+      - name: el nuevo nombre de la tarea
+      - description: la nueva descripción de la tarea
+      - pictogram: el nuevo pictograma de la tarea
+      - image: la nueva imagen de la tarea
+      - descriptive_text: el nuevo texto descriptivo de la tarea
+*/
 Future<bool> modifyCompleteTask(int id, String name, String description, String pictogram, String image, String? descriptive_text) async {
   return await ColegioDatabase.instance.modifyCompleteTask(id, name, description, pictogram, image, descriptive_text);
 }
 
+/*
+  Método
+  @Nombre --> deleteTask
+  @Funcion --> Elimina una tarea de la base de datos
+  @Argumentos
+      - id: el identificador de la tarea a eliminar
+*/
 Future<bool> deleteTask(int id) async {
   return await ColegioDatabase.instance.deleteTask(id);
 }
 
+/*
+  Método
+  @Nombre --> getTask
+  @Funcion --> Obtiene una tarea específica de la base de datos por su identificador
+  @Argumentos
+      - id: el identificador de la tarea
+*/
 Future<Task?> getTask(int id) async {
   return await ColegioDatabase.instance.getTask(id);
 }
 
+/*
+  Método
+  @Nombre --> getTaskByName
+  @Funcion --> Obtiene una tarea específica de la base de datos por su nombre
+  @Argumentos
+      - name: el nombre de la tarea
+*/
 Future<Task?> getTaskByName(String name) async {
   return await ColegioDatabase.instance.getTaskByName(name);
 }
 
+/*
+  Método
+  @Nombre --> searchTasks
+  @Funcion --> Busca tareas en la base de datos que coincidan con un texto
+  @Argumentos
+      - text: el texto a buscar en las tareas
+*/
 Future<List<Task>> searchTasks(String text) async {
   return await ColegioDatabase.instance.searchTasks(text);
 }
 
+/*
+  Método
+  @Nombre --> getAllTasks
+  @Funcion --> Obtiene todas las tareas almacenadas en la base de datos
+  @Argumentos
+      - (Ninguno)
+*/
 Future<List<Task>> getAllTasks() async {
   return await ColegioDatabase.instance.getAllTasks();
 }
 
+/*
+  Método
+  @Nombre --> taskIsValid
+  @Funcion --> Comprueba si una tarea con un nombre específico existe en la base de datos
+  @Argumentos
+      - name: el nombre de la tarea
+*/
 Future<bool> taskIsValid(String name) async {
   return await ColegioDatabase.instance.taskIsValid(name);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE PASOS ///
-/// 
+
+/*
+  Método
+  @Nombre --> insertStep
+  @Funcion --> Inserta un nuevo paso en una tarea específica en la base de datos
+  @Argumentos
+      - task_id: el identificador de la tarea a la que pertenece el paso
+      - description: la descripción del paso
+      - pictogram: el pictograma asociado al paso
+      - image: la imagen asociada al paso
+      - descriptive_text: texto descriptivo adicional del paso (opcional)
+*/
 Future<bool> insertStep(int task_id, String description, String pictogram, String image, String? descriptive_text) async {
   List<Step> steps = await ColegioDatabase.instance.getAllStepsFromTask(task_id);
   int id = steps.length;
@@ -637,75 +753,214 @@ Future<bool> insertStep(int task_id, String description, String pictogram, Strin
   return await ColegioDatabase.instance.insertStep(step);
 }
 
+/*
+  Método
+  @Nombre --> modifyStepName
+  @Funcion --> Modifica el nombre de un paso específico en la base de datos
+  @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea a la que pertenece el paso
+      - newName: el nuevo nombre del paso
+*/
 Future<bool> modifyStepName(int id, int task_id, String newName) async {
   return await ColegioDatabase.instance.modifyStep(id, task_id, "name", newName);
 }
 
+/*
+  Método
+  @Nombre --> modifyStepDescription
+  @Funcion --> Modifica la descripción de un paso específico en la base de datos
+  @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea a la que pertenece el paso
+      - newDescription: la nueva descripción del paso
+*/
 Future<bool> modifyStepDescription(int id, int task_id, String newDescription) async {
   return await ColegioDatabase.instance.modifyStep(id, task_id, "description", newDescription);
 }
 
+/*
+  Método
+  @Nombre --> modifyStepPictogram
+  @Funcion --> Modifica el pictograma de un paso específico en la base de datos
+  @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea a la que pertenece el paso
+      - newPictogram: el nuevo pictograma del paso
+*/
 Future<bool> modifyStepPictogram(int id, int task_id, String newPictogram) async {
   return await ColegioDatabase.instance.modifyStep(id, task_id, "pictogram", newPictogram);
 }
 
+/*
+  Método
+  @Nombre --> modifyStepImage
+  @Funcion --> Modifica la imagen de un paso específico en la base de datos
+  @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea a la que pertenece el paso
+      - newImage: la nueva imagen del paso
+*/
 Future<bool> modifyStepImage(int id, int task_id, String newImage) async {
   return await ColegioDatabase.instance.modifyStep(id, task_id, "image", newImage);
 }
 
+/*
+  Método
+  @Nombre --> modifyStepDescriptiveText
+  @Funcion --> Modifica el texto descriptivo de un paso específico en la base de datos
+  @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea a la que pertenece el paso
+      - newDescriptiveText: el nuevo texto descriptivo del paso
+*/
 Future<bool> modifyStepDescriptiveText(int id, int task_id, String newDescriptiveText) async {
   return await ColegioDatabase.instance.modifyStep(id, task_id, "descriptive_text", newDescriptiveText);
 }
 
+/*
+  Método
+  @Nombre --> deleteStep
+  @Funcion --> Elimina un paso específico de una tarea en la base de datos
+  @Argumentos
+      - id: el identificador del paso a eliminar
+      - task_id: el identificador de la tarea a la que pertenece el paso
+*/
 Future<bool> deleteStep(int id, int task_id) async {
   return await ColegioDatabase.instance.deleteStep(id, task_id);
 }
 
+/*
+  Método
+  @Nombre --> getStep
+  @Funcion --> Obtiene un paso específico de una tarea desde la base de datos
+  @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea a la que pertenece el paso
+*/
 Future<Step?> getStep(int id, int task_id) async {
   return await ColegioDatabase.instance.getStep(id, task_id);
 }
 
+/*
+  Método
+  @Nombre --> getAllStepsFromTask
+  @Funcion --> Obtiene todos los pasos de una tarea específica desde la base de datos
+  @Argumentos
+      - idTask: el identificador de la tarea
+*/
 Future<List<Step>> getAllStepsFromTask(int idTask) async {
   return await ColegioDatabase.instance.getAllStepsFromTask(idTask);
 }
 
+/*
+  Método
+  @Nombre --> incrementStep
+  @Funcion --> Incrementa el identificador de un paso específico en la base de datos
+  @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea a la que pertenece el paso
+*/
 Future<bool> incrementStep(int id, int task_id) async {
   return await ColegioDatabase.instance.incrementId(id, task_id);
 }
 
+/*
+  Método
+  @Nombre --> decrementStep
+  @Funcion --> Decrementa el identificador de un paso específico en la base de datos
+  @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea a la que pertenece el paso
+*/
 Future<bool> decrementStep(int id, int task_id) async {
   return await ColegioDatabase.instance.decrementId(id, task_id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE EXECUTE ///
-/// 
 
+/*
+  Método
+  @Nombre --> insertExecute
+  @Funcion --> Inserta una nueva ejecución en la base de datos
+  @Argumentos
+      - task_id: el identificador de la tarea asociada
+      - user: el usuario que realiza la ejecución
+      - status: el estado de la ejecución
+      - date: la fecha de la ejecución
+*/
 Future<bool> insertExecute(int task_id, String user, int status, String date) async {
   Execute execute = Execute(task_id: task_id, user: user, status: status, date: date);
   return await ColegioDatabase.instance.insertExecute(execute);
 }
 
+/*
+  Método
+  @Nombre --> modifyExecuteDate
+  @Funcion --> Modifica la fecha de una ejecución existente en la base de datos
+  @Argumentos
+      - execute: la ejecución a modificar
+      - date: la nueva fecha para la ejecución
+*/
 Future<bool> modifyExecuteDate(Execute execute, String date) async {
   return await ColegioDatabase.instance.modifyExecuteDate(execute, date);
 }
 
+/*
+  Método
+  @Nombre --> modifyExecuteStatus
+  @Funcion --> Modifica el estado de una ejecución existente en la base de datos
+  @Argumentos
+      - execute: la ejecución a modificar
+      - status: el nuevo estado para la ejecución
+*/
 Future<bool> modifyExecuteStatus(Execute execute, int status) async {
   return await ColegioDatabase.instance.modifyExecuteStatus(execute, status);
 }
 
+/*
+  Método
+  @Nombre --> deleteExecute
+  @Funcion --> Elimina una ejecución específica de la base de datos
+  @Argumentos
+      - execute: la ejecución a eliminar
+*/
 Future<bool> deleteExecute(Execute execute) async {
   return await ColegioDatabase.instance.deleteExecute(execute);
 }
 
+/*
+  Método
+  @Nombre --> getExecute
+  @Funcion --> Obtiene una ejecución específica de la base de datos
+  @Argumentos
+      - id_task: el identificador de la tarea asociada
+      - user: el usuario que realizó la ejecución
+      - date: la fecha de la ejecución
+*/
 Future<Execute?> getExecute(int id_task, String user, String date) async {
   return await ColegioDatabase.instance.getExecute(id_task, user, date);
 }
 
+/*
+  Método
+  @Nombre --> getStudentExecutes
+  @Funcion --> Obtiene todas las ejecuciones realizadas por un estudiante
+  @Argumentos
+      - user: el usuario (estudiante) cuyas ejecuciones se quieren obtener
+*/
 Future<List<Execute>> getStudentExecutes(String user) async {
   return await ColegioDatabase.instance.getStudentExecutes(user);
 }
 
+/*
+  Método
+  @Nombre --> getStudentToDo
+  @Funcion --> Obtiene las ejecuciones pendientes de un estudiante
+  @Argumentos
+      - user: el usuario (estudiante) cuyas ejecuciones pendientes se quieren obtener
+*/
 Future<List<Execute>> getStudentToDo(String user) async {
   return await ColegioDatabase.instance.getStudentToDo(user);
 }
