@@ -276,7 +276,6 @@ class ColegioDatabase{
     
     DateTime now = DateTime.now();
     String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    print(date);
     /// INSERTAR EJECUCIONES DE TAREAS ///
 		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2024-12-01', 1]);
 		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2025-01-01', 0]);
@@ -1178,7 +1177,6 @@ class ColegioDatabase{
   Future<bool> hasMenuTaskToday() async {
     DateTime now = DateTime.now();
     String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    print(date);
     final db = await instance.database;
     final result = await db.query(
       tablaExecute,
@@ -1188,28 +1186,6 @@ class ColegioDatabase{
     return result.isNotEmpty;
   }
 
-  Future<bool> menuTaskCompleted() async {
-    DateTime now = DateTime.now();
-    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    print(date);
-    final db = await instance.database;
-
-    try {
-      int count = await db.update(
-        tablaExecute,
-        {'status': 1},
-        where: 'task_id = ? AND date = ?',
-        whereArgs: [1, date],
-      );
-
-      return count > 0;
-    } catch (e) {
-      print("Error al modificar el execute: $e");
-      return false;
-    }
-
-  }
-  
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE TAREAS  ///
   

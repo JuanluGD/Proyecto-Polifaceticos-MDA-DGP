@@ -572,9 +572,6 @@ Future<bool> menuIsValid(String name) async {
   return await ColegioDatabase.instance.menuIsValid(name);
 }
 
-Future<bool> menuTaskCompleted() async{
-  return await ColegioDatabase.instance.menuTaskCompleted();
-}
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREAS ///
 /// 
