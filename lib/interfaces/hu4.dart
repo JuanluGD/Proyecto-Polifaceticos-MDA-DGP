@@ -9,7 +9,6 @@ import 'package:proyecto/classes/ImgCode.dart';
 import 'package:proyecto/classes/Student.dart';
 
 import 'package:proyecto/interfaces/hu2.dart' as hu2;
-import 'package:proyecto/interfaces/hu1.dart' as hu1;
 import 'package:proyecto/interfaces/hu10.dart' as hu10;
 
 
@@ -336,7 +335,7 @@ class _StudentInfoPageState extends State<StudentInfoPage> {
 class StudentModificationPage extends StatefulWidget {
   final Student student; // Recibir el estudiante seleccionado
 
-  StudentModificationPage({required this.student});
+  const StudentModificationPage({super.key, required this.student});
 
   @override
   _StudentModificationPageState createState() =>
