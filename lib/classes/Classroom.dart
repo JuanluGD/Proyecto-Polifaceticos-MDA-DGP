@@ -21,5 +21,4 @@ class Classroom {
   // Método que convierte un Map a un objeto de tipo Classroom.
   Classroom.fromMap(Map<String, dynamic> map)
       : name = map['name'], image = map['image'], task_completed = false;
-
 }

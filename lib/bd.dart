@@ -257,19 +257,19 @@ class ColegioDatabase{
 
     /// INSERTAR TAREAS ///
     await db.execute('''
-      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Comedor', 'Tomar las comandas del día','assets/tareas/comedor.png','assets/tareas/comedor.png');
-      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Fregar los Platos', '','assets/tareas/fregar.png','assets/tareas/fregar.png');
-      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Hacer la cama', '', 'assets/tareas/cama.png','assets/tareas/cama.png');
-      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Poner el microondas', '', 'assets/tareas/microondas.png','assets/tareas/microondas.png');
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Comedor', 'Tomar las comandas del día','assets/picto_tasks/comedor.png','assets/imgs_tasks/comedor.png');
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Fregar los Platos', '','assets/picto_tasks/fregar.png','assets/imgs_tasks/fregar.png');
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Hacer la cama', '', 'assets/picto_tasks/cama.png','assets/imgs_tasks/cama.png');
+      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Poner el microondas', '', 'assets/picto_tasks/microondas.png','assets/imgs_tasks/microondas.png');
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Lorem', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce volutpat  aliquam auctor. Orci varius natoque penatibus et magnis dis parturient  montes, nascetur ridiculus mus. Nam vel bibendum ante. Ut ex odio,  posuere id hendrerit vel, commodo a velit. Mauris quis nunc rutrum,  molestie augue vel, vestibulum tellus.', 'assets/logo.png','assets/logo.png');
 
     '''); 
 
     /// INSERTAR PASOS DE TAREAS ///
     await db.execute('''
-      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (0, 2, 'Coger los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
-      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (1, 2, 'Fregar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
-      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (2, 2, 'Secar los platos', 'assets/tareas/fregar.png', 'assets/tareas/fregar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (0, 2, 'Coger los platos', 'assets/picto_steps/fregar.png', 'assets/imgs_steps/fregar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (1, 2, 'Fregar los platos', 'assets/picto_steps/fregar.png', 'assets/imgs_steps/fregar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (2, 2, 'Secar los platos', 'assets/picto_steps/fregar.png', 'assets/imgs_steps/fregar.png');
     ''');
     
     DateTime now = DateTime.now();

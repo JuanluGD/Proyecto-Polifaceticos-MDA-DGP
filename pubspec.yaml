@@ -80,6 +80,10 @@ flutter:
     - assets/imgs_claves/
     - assets/imgs_menu/
     - assets/picto_menu/
+    - assets/imgs_tasks/
+    - assets/picto_tasks/
+    - assets/imgs_steps/
+    - assets/picto_steps/
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
