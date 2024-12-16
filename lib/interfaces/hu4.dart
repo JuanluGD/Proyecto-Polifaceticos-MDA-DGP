@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE LISTA DE ESTUDIANTES
+/// INTERFAZ DE LISTA DE ESTUDIANTES
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class StudentListPage extends StatefulWidget {
@@ -144,7 +144,7 @@ class _StudentListPageState extends State<StudentListPage> {
 
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE INFORMACIÓN DE ESTUDIANTE
+/// INTERFAZ DE INFORMACIÓN DE ESTUDIANTE
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class StudentInfoPage extends StatefulWidget {
@@ -329,7 +329,7 @@ class _StudentInfoPageState extends State<StudentInfoPage> {
 
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE MODIFICACIÓN DE ESTUDIANTE
+/// INTERFAZ DE MODIFICACIÓN DE ESTUDIANTE
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class StudentModificationPage extends StatefulWidget {
@@ -338,6 +338,7 @@ class StudentModificationPage extends StatefulWidget {
   const StudentModificationPage({super.key, required this.student});
 
   @override
+  // ignore: library_private_types_in_public_api
   _StudentModificationPageState createState() =>
       _StudentModificationPageState();
 }
@@ -600,9 +601,10 @@ class _StudentModificationPageState extends State<StudentModificationPage> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// PÁGINA DE CONTRASEÑA DE PICTOGRAMAS O IMÁGENES
+/// PÁGINA DE CONTRASEÑA DE PICTOGRAMAS O IMÁGENES
 // //////////////////////////////////////////////////////////////////////////////////////////
 
+// ignore: must_be_immutable
 class ImgCodePasswordPage extends StatefulWidget {
   Student student;
   final String passwordType;
@@ -836,9 +838,10 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE SELECCION PICTOGRAMAS O IMÁGENES
+/// INTERFAZ DE SELECCION PICTOGRAMAS O IMÁGENES
 // //////////////////////////////////////////////////////////////////////////////////////////
 
+// ignore: must_be_immutable
 class ImgCodeSelectionPage extends StatefulWidget {
   final Function(List<ImgCode>) updateSelectedElements;
   final String passwordType, user;
@@ -927,7 +930,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
+/// INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class AlphanumericPasswordPage extends StatefulWidget {

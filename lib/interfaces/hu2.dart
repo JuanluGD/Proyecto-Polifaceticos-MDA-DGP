@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE REGISTRAR ALUMNO
+/// INTERFAZ DE REGISTRAR ALUMNO
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class StudentRegistrationPage extends StatefulWidget {
@@ -288,7 +288,7 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE CONTRASEÑA DE IMÁGENES O PICTOGRAMAS
+/// INTERFAZ DE CONTRASEÑA DE IMÁGENES O PICTOGRAMAS
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 class ImgCodePasswordPage extends StatefulWidget {
@@ -511,7 +511,7 @@ class _ImgCodePasswordPageState extends State<ImgCodePasswordPage> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE SELECCIÓN DE PICTOGRAMAS O IMÁGENES
+/// INTERFAZ DE SELECCIÓN DE PICTOGRAMAS O IMÁGENES
 // //////////////////////////////////////////////////////////////////////////////////////////
 
 // Página para seleccionar pictogramas o imágenes que formarán parte de las posibilidades de contraseña del estudiante
@@ -605,9 +605,10 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-// INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
+/// INTERFAZ DE CONTRASEÑA ALFANUMÉRICA
 // //////////////////////////////////////////////////////////////////////////////////////////
 
+// ignore: must_be_immutable
 class AlphanumericPasswordPage extends StatefulWidget {
   final String userStudent, nameStudent, surnameStudent;
   final bool interfacePIC , interfaceIMG, interfaceTXT, interfaceAV;

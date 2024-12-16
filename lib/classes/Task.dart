@@ -4,7 +4,6 @@ class Task {
   String description;
   String pictogram;
   String image;
-  String? descriptive_text;
 
 
   // Constructor de la clase Tarea.
@@ -13,8 +12,7 @@ class Task {
     required this.name,
     required this.description,
     required this.pictogram,
-    required this.image,
-    this.descriptive_text,
+    required this.image
   }); 
 
   // Método que convierte un objeto de tipo Tarea a un Map.
@@ -25,7 +23,6 @@ class Task {
       'description': description,
       'pictogram': pictogram,
       'image': image,
-      'descriptive_text': descriptive_text,
     };
   }
 
@@ -35,6 +32,5 @@ class Task {
         name = map['name'], 
         description = map['description'], 
         image = map['image'], 
-        pictogram = map['pictogram'], 
-        descriptive_text = map['descriptive_text'];
+        pictogram = map['pictogram'];
 }

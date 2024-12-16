@@ -133,7 +133,6 @@ class ColegioDatabase{
 			name VARCHAR(30),
 			pictogram VARCHAR(30) NOT NULL,
 			image VARCHAR(30) NOT NULL,
-      descriptive_text VARCHAR(100),
 			PRIMARY KEY (name)
 			)
 		''');
@@ -169,8 +168,7 @@ class ColegioDatabase{
 			name VARCHAR(100) NOT NULL UNIQUE,
       description VARCHAR(100),
       pictogram VARCHAR(30) NOT NULL,
-			image VARCHAR(30) NOT NULL,
-      descriptive_text VARCHAR(100)
+			image VARCHAR(30) NOT NULL
 			)
 		''');
 
@@ -183,7 +181,6 @@ class ColegioDatabase{
       description VARCHAR(200) NOT NULL,
       pictogram VARCHAR(150) NOT NULL,
       image VARCHAR(150) NOT NULL,
-      descriptive_text VARCHAR(100),
       FOREIGN KEY (task_id) REFERENCES $tablaTask(id) ON DELETE CASCADE,
       PRIMARY KEY (id, task_id)
       )
@@ -204,8 +201,9 @@ class ColegioDatabase{
     ''');
 
 
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     /// INSERTAR DATOS DE PRUEBA ///
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     await db.execute('''
       INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('alissea', 'Alicia', '', 'assets/perfiles/alissea.png', 'rosa.png_picto azul.png_picto ', 'pictograms', 0, 1, 0);
       INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('alex123', 'Alex', '', 'assets/perfiles/alex123.png', '1234', 'alphanumeric', 0, 1, 1);
@@ -289,7 +287,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE ESTUDIANTES  ///
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /*
     Método
     @Nombre --> insertStudent
@@ -562,7 +560,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////  
 ///  MÉTODOS PARA LA TABLA DE IMÁGENES  ///
-/// 
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /*
     Método
     @Nombre --> insertImgCode
@@ -699,7 +697,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE DECRYPT  ///
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /*
     Método
     @Nombre --> insertDecryptEntries
@@ -786,7 +784,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE MENÚS  ///
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /*
     Método
     @Nombre --> insertMenu
@@ -935,7 +933,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE AULAS  ///
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /*
     Método
     @Nombre --> insertClassroom
@@ -1034,7 +1032,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE PEDIDOS  ///
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /* 
     Método
     @Nombre --> insertOrders
@@ -1141,7 +1139,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS QUE GESTIONAN LA TAREA MENU Y SU ASIGNACIÓN A LOS ALUMNOS  ///
-/// 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
   /*
     Método
@@ -1196,7 +1194,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE TAREAS  ///
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /*
     Método
     @Nombre --> insertTask
@@ -1206,17 +1204,15 @@ class ColegioDatabase{
       - description: la descripción de la tarea
       - pictogram: el pictograma asociado a la tarea
       - image: la imagen asociada a la tarea
-      - descriptive_text: un texto descriptivo adicional para la tarea (opcional)
   */
-  Future<bool> insertTask(String name, String descripction, String pictogram, String image, String? descriptive_text) async {
+  Future<bool> insertTask(String name, String descripction, String pictogram, String image) async {
     final db = await instance.database;
     try {
       await db.insert(tablaTask, {
         'name': name,
         'description': descripction,
         'image': image,
-        'pictogram': pictogram,
-        'descriptive_text': descriptive_text
+        'pictogram': pictogram
       });
       return true;
     } catch (e) {
@@ -1262,9 +1258,8 @@ class ColegioDatabase{
       - description: la nueva descripción de la tarea
       - pictogram: el nuevo pictograma asociado a la tarea
       - image: la nueva imagen asociada a la tarea
-      - descriptive_text: el nuevo texto descriptivo adicional para la tarea (opcional)
   */
-  Future<bool> modifyCompleteTask(int id, String name, String description,String pictogram, String image, String? descriptive_text) async {
+  Future<bool> modifyCompleteTask(int id, String name, String description,String pictogram, String image) async {
     final db = await instance.database;
     try {
       int count = await db.update(
@@ -1273,8 +1268,7 @@ class ColegioDatabase{
           'name': name,
           'description': description,
           'image': image,
-          'pictogram': pictogram,
-          'descriptive_text': descriptive_text
+          'pictogram': pictogram
         },
         where: 'id = ?',
         whereArgs: [id],
@@ -1397,7 +1391,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE STEPS  ///
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /*
     Método
     @Nombre --> insertStep
@@ -1627,7 +1621,7 @@ class ColegioDatabase{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE EXECUTE  ///
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
   /*
     Método
     @Nombre --> insertExecute
