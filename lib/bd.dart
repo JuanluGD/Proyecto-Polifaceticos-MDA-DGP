@@ -276,7 +276,6 @@ class ColegioDatabase{
     
     DateTime now = DateTime.now();
     String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    print(date);
     /// INSERTAR EJECUCIONES DE TAREAS ///
 		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2024-12-01', 1]);
 		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2025-01-01', 0]);
@@ -757,6 +756,13 @@ class ColegioDatabase{
     return result.map((map) => ImgCode.fromMap(map)).toList();
   }
 
+  /*
+    Método
+    @Nombre --> getDecryptEntries
+    @Funcion --> Permite obtener todas las entradas de desencriptación asociadas a un alumno
+    @Argumentos
+      - user: el usuario del alumno del que se obtendrán las entradas de desencriptación
+  */
   Future<List<Decrypt>>getDecryptEntries(String user) async {
     final db = await instance.database;
     final result = await db.query(
@@ -766,6 +772,7 @@ class ColegioDatabase{
     );
     return result.map((map) => Decrypt.fromMap(map)).toList();
   }
+
   /*
     Método
     @Nombre --> getAllDecrypts
@@ -1178,7 +1185,6 @@ class ColegioDatabase{
   Future<bool> hasMenuTaskToday() async {
     DateTime now = DateTime.now();
     String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    print(date);
     final db = await instance.database;
     final result = await db.query(
       tablaExecute,
@@ -1188,31 +1194,20 @@ class ColegioDatabase{
     return result.isNotEmpty;
   }
 
-  Future<bool> menuTaskCompleted() async {
-    DateTime now = DateTime.now();
-    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    print(date);
-    final db = await instance.database;
-
-    try {
-      int count = await db.update(
-        tablaExecute,
-        {'status': 1},
-        where: 'task_id = ? AND date = ?',
-        whereArgs: [1, date],
-      );
-
-      return count > 0;
-    } catch (e) {
-      print("Error al modificar el execute: $e");
-      return false;
-    }
-
-  }
-  
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE TAREAS  ///
-  
+
+  /*
+    Método
+    @Nombre --> insertTask
+    @Funcion --> Inserta una nueva tarea en la base de datos
+    @Argumentos
+      - name: el nombre de la tarea
+      - description: la descripción de la tarea
+      - pictogram: el pictograma asociado a la tarea
+      - image: la imagen asociada a la tarea
+      - descriptive_text: un texto descriptivo adicional para la tarea (opcional)
+  */
   Future<bool> insertTask(String name, String descripction, String pictogram, String image, String? descriptive_text) async {
     final db = await instance.database;
     try {
@@ -1230,6 +1225,15 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> modifyTask
+    @Funcion --> Modifica un dato específico de una tarea en la base de datos
+    @Argumentos
+      - id: el identificador de la tarea
+      - data: el campo de la tarea a modificar
+      - newData: el nuevo valor para el campo especificado
+  */
   Future<bool> modifyTask(int id, String data, String newData) async {
     final db = await instance.database;
 
@@ -1248,6 +1252,18 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> modifyCompleteTask
+    @Funcion --> Modifica todos los datos de una tarea en la base de datos
+    @Argumentos
+      - id: el identificador de la tarea
+      - name: el nuevo nombre de la tarea
+      - description: la nueva descripción de la tarea
+      - pictogram: el nuevo pictograma asociado a la tarea
+      - image: la nueva imagen asociada a la tarea
+      - descriptive_text: el nuevo texto descriptivo adicional para la tarea (opcional)
+  */
   Future<bool> modifyCompleteTask(int id, String name, String description,String pictogram, String image, String? descriptive_text) async {
     final db = await instance.database;
     try {
@@ -1271,6 +1287,13 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> deleteTask
+    @Funcion --> Elimina una tarea de la base de datos
+    @Argumentos
+      - id: el identificador de la tarea a eliminar
+  */
   Future<bool> deleteTask(int id) async {
     final db = await instance.database;
     try {
@@ -1286,6 +1309,13 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> getTask
+    @Funcion --> Obtiene una tarea específica de la base de datos según su identificador
+    @Argumentos
+      - id: el identificador de la tarea a obtener
+  */
   Future<Task?> getTask(int id) async {
     final db = await instance.database;
     final result = await db.query(
@@ -1300,6 +1330,13 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> getTaskByName
+    @Funcion --> Obtiene una tarea específica de la base de datos según su nombre
+    @Argumentos
+      - name: el nombre de la tarea a obtener
+  */
   Future<Task?> getTaskByName(String name) async {
     final db = await instance.database;
     final result = await db.query(
@@ -1314,6 +1351,13 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> searchTasks
+    @Funcion --> Busca tareas en la base de datos cuyo nombre o descripción contengan un texto específico
+    @Argumentos
+      - text: el texto a buscar en las tareas
+  */
   Future<List<Task>> searchTasks(String text) async {
     final db = await instance.database;
     final List<Map<String, dynamic>> result;
@@ -1331,7 +1375,13 @@ class ColegioDatabase{
       );
     return result.map((map) => Task.fromMap(map)).toList();
   }
-  
+
+  /*
+    Método
+    @Nombre --> getAllTasks
+    @Funcion --> Obtiene todas las tareas de la base de datos
+    @Notas --> Excluye la tarea con id = 1 si existe un menú de tareas para hoy
+  */
   Future<List<Task>> getAllTasks() async {
     final db = await instance.database;
     final List<Map<String, dynamic>> result;
@@ -1348,6 +1398,13 @@ class ColegioDatabase{
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE STEPS  ///
 
+  /*
+    Método
+    @Nombre --> insertStep
+    @Funcion --> Inserta un nuevo paso en la base de datos
+    @Argumentos
+      - step: el objeto Step que representa el paso a insertar
+  */
   Future<bool> insertStep(Step step) async {
     final db = await instance.database;
     try {
@@ -1359,6 +1416,16 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> modifyStep
+    @Funcion --> Modifica un dato específico de un paso en la base de datos
+    @Argumentos
+      - id: el identificador del paso a modificar
+      - task_id: el identificador de la tarea asociada al paso
+      - data: el campo del paso a modificar
+      - newData: el nuevo valor para el campo especificado
+  */
   Future<bool> modifyStep(int id, int task_id, String data, String newData) async {
     final db = await instance.database;
 
@@ -1377,6 +1444,14 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> deleteStep
+    @Funcion --> Elimina un paso de la base de datos y actualiza los IDs restantes
+    @Argumentos
+      - id: el identificador del paso a eliminar
+      - task_id: el identificador de la tarea asociada al paso
+  */
   Future<bool> deleteStep(int id, int task_id) async {
     final db = await instance.database;
     try {
@@ -1395,6 +1470,14 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> modifyAllId
+    @Funcion --> Actualiza los identificadores de los pasos restantes después de eliminar uno
+    @Argumentos
+      - id: el identificador del paso eliminado
+      - task_id: el identificador de la tarea asociada a los pasos
+  */
   Future<bool> modifyAllId(int id, int task_id) async {
     final db = await instance.database;
     try{
@@ -1411,6 +1494,14 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> decrementId
+    @Funcion --> Disminuye el identificador de un paso en la base de datos
+    @Argumentos
+      - step_id: el identificador actual del paso
+      - task_id: el identificador de la tarea asociada al paso
+  */
   Future<bool> decrementId(int step_id, int task_id) async {
     final db = await instance.database;
     try {
@@ -1442,6 +1533,14 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> incrementId
+    @Funcion --> Incrementa el identificador de un paso en la base de datos
+    @Argumentos
+      - step_id: el identificador actual del paso
+      - task_id: el identificador de la tarea asociada al paso
+  */
   Future<bool> incrementId(int step_id, int task_id) async {
     final db = await instance.database;
     try {
@@ -1473,6 +1572,14 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> getStep
+    @Funcion --> Obtiene un paso específico de la base de datos
+    @Argumentos
+      - id: el identificador del paso
+      - task_id: el identificador de la tarea asociada al paso
+  */
   Future<Step> getStep(int id, task_id) async {
     final db = await instance.database;
     final result = await db.query(
@@ -1483,6 +1590,13 @@ class ColegioDatabase{
     return Step.fromMap(result.first);
   }
 
+  /*
+    Método
+    @Nombre --> getAllStepsFromTask
+    @Funcion --> Obtiene todos los pasos asociados a una tarea específica
+    @Argumentos
+      - idTask: el identificador de la tarea cuyos pasos se obtendrán
+  */
   Future<List<Step>> getAllStepsFromTask(int idTask) async {
     final db = await instance.database;
     final result = await db.query(
@@ -1493,6 +1607,13 @@ class ColegioDatabase{
     return result.map((map) => Step.fromMap(map)).toList();
   }
 
+  /*
+    Método
+    @Nombre --> taskIsValid
+    @Funcion --> Verifica si existe una tarea con un nombre específico en la base de datos
+    @Argumentos
+      - name: el nombre de la tarea a verificar
+  */
   Future<bool> taskIsValid(String name) async {
     final db = await instance.database;
     final result = await db.query(
@@ -1507,6 +1628,13 @@ class ColegioDatabase{
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE EXECUTE  ///
 
+  /*
+    Método
+    @Nombre --> insertExecute
+    @Funcion --> Inserta un nuevo registro de ejecución en la base de datos
+    @Argumentos
+      - execute: el objeto Execute que representa el registro de ejecución a insertar
+  */
   Future<bool> insertExecute(Execute execute) async {
     final db = await instance.database;
     try {
@@ -1518,6 +1646,14 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> modifyExecuteDate
+    @Funcion --> Modifica la fecha de un registro de ejecución existente
+    @Argumentos
+      - execute: el objeto Execute correspondiente al registro a modificar
+      - date: la nueva fecha para el registro
+  */
   Future<bool> modifyExecuteDate(Execute execute, String date) async {
     final db = await instance.database;
 
@@ -1536,7 +1672,15 @@ class ColegioDatabase{
     }
   }
 
-    Future<bool> modifyExecuteStatus(Execute execute, int status) async{
+  /*
+    Método
+    @Nombre --> modifyExecuteStatus
+    @Funcion --> Modifica el estado de un registro de ejecución existente
+    @Argumentos
+      - execute: el objeto Execute correspondiente al registro a modificar
+      - status: el nuevo estado para el registro
+  */
+  Future<bool> modifyExecuteStatus(Execute execute, int status) async{
       final db = await instance.database;
 
       try {
@@ -1555,6 +1699,13 @@ class ColegioDatabase{
 
   }
 
+  /*
+    Método
+    @Nombre --> deleteExecute
+    @Funcion --> Elimina un registro de ejecución existente de la base de datos
+    @Argumentos
+      - execute: el objeto Execute correspondiente al registro a eliminar
+  */
   Future<bool> deleteExecute(Execute execute) async {
     final db = await instance.database;
     try {
@@ -1570,6 +1721,15 @@ class ColegioDatabase{
     }
   }
 
+  /*
+    Método
+    @Nombre --> getExecute
+    @Funcion --> Obtiene un registro de ejecución específico de la base de datos
+    @Argumentos
+      - id_task: el identificador de la tarea asociada al registro
+      - user: el usuario asociado al registro
+      - date: la fecha del registro de ejecución
+  */
   Future<Execute> getExecute(int id_task, String user, String date) async {
     final db = await instance.database;
     final result = await db.query(
@@ -1580,6 +1740,13 @@ class ColegioDatabase{
     return Execute.fromMap(result.first);
   }
 
+  /*
+    Método
+    @Nombre --> getStudentExecutes
+    @Funcion --> Obtiene todos los registros de ejecución asociados a un usuario
+    @Argumentos
+      - user: el usuario del cual se obtendrán los registros
+  */
   Future<List<Execute>> getStudentExecutes(String user) async {
     final db = await instance.database;
     final result = await db.query(
@@ -1591,6 +1758,13 @@ class ColegioDatabase{
     return result.map((map) => Execute.fromMap(map)).toList();
   }
 
+  /*
+    Método
+    @Nombre --> getStudentToDo
+    @Funcion --> Obtiene los registros de ejecución pendientes asociados a un usuario
+    @Argumentos
+      - user: el usuario del cual se obtendrán los registros pendientes
+  */
   Future<List<Execute>> getStudentToDo(String user) async {
     final db = await instance.database;
     final result = await db.query(
@@ -1601,6 +1775,5 @@ class ColegioDatabase{
     );
     return result.map((map) => Execute.fromMap(map)).toList();
   }
-
 
 }

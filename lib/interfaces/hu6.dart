@@ -616,16 +616,6 @@ class _MenuListState extends State<MenuList>{
           buildChildren: (context, item, index) { 
             return [
               IconButton(
-                icon: Icon(Icons.task),
-                color: Colors.blue,
-                onPressed:
-                  // Navegar a la página de tareas del estudiante
-                  () async {
-                    print("no esta implementado jaja"); // TOMATE
-                    setState(() {});
-                  },
-              ),
-              IconButton(
                 icon: Icon(Icons.edit),
                 color: Colors.blue,
                 onPressed:
