@@ -193,7 +193,7 @@ class _TaskRegistrationPageState extends State<TaskRegistrationPage> {
 
                                       // TOMATE
                                       // Tarea temporal para crear los pasos, cuando se guarde habrá que actualizar las imágenes y el nombre por si han cambiado tras crear los pasos
-                                      if (await insertTask(nameController.text, descriptionController.text, 'assets/picto_tasks/$name$extensionPIC', 'assets/imgs_tasks/$name$extensionIMG', '')) {
+                                      if (await insertTask(nameController.text, descriptionController.text, 'assets/picto_tasks/$name$extensionPIC', 'assets/imgs_tasks/$name$extensionIMG')) {
                                         task = await getTaskByName(nameController.text);
                                         Navigator.push(
                                           context,
