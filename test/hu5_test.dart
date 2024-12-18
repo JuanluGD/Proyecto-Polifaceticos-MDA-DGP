@@ -38,7 +38,7 @@ void main() {
     });
 
     //test 3
-    test('Comprobar el usuario de un estudiante no se ha modificado en la base de datos', () async {
+    test('Comprobar que no se puede modificar el usuario a un usuario existente', () async {
       expect(await modifyUserStudent('juan123', 'luciaaa22'), false);
       final student = await getStudent('juan123');
       expect(student!.user, 'juan123');
