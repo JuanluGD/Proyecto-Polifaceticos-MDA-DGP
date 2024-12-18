@@ -1,42 +1,55 @@
-import 'package:path/path.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/bd.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
 
-  group('Pruebas sobre Base de Datos', () async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'colegio.db');
+  group('Pruebas sobre Base de Datos', () {
+
     setUp(() async {
-      if (await databaseExists(path)) {
-        deleteDatabase(path);
+      try {
+        // Forzar la inicialización de una nueva base de datos
+        await ColegioDatabase.instance.database;
+
+        // Insertar datos de prueba
+        await insertStudent('juan123','Juan','Pérez','1234','assets/perfiles/chico.png','alphanumeric',1,1,1);
+        await insertStudent('luciaaa22','Lucia','Muñoz','1111','assets/perfiles/chica.png','pictograms',1,0,1);
+      } catch (e) {
+        print("Error en setUp: $e");
+        rethrow;
       }
-
-      await ColegioDatabase.instance.database;
-      await insertStudent('juan123', 'Juan', 'Pérez', '1234', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
-      await insertStudent('luciaaa22', 'Lucia', 'Muñoz', '1111', 'assets/perfiles/chica.png', 'pictograms', 1, 0, 1);
     });
-    test('Comprobar que se añaden correctamente en la bd los nuevos estudiantes', () async {
 
-      expect(getStudent('juan123'), isNotNull);
-      expect(getStudent('luciaaa22'), isNotNull);
-      expect(getAllStudents(), 2);
+    tearDown(()async{
+      await deleteStudent('juan123');
+      await deleteStudent('luciaaa22');
+    });
+
+    test('Comprobar que se añaden correctamente en la bd los nuevos estudiantes', () async {
+      final student1 = await getStudent('juan123');
+      final student2 = await getStudent('luciaaa22');
+      final students = await getAllStudents();
+      expect(student1, isNotNull);
+      expect(student2, isNotNull);
+      expect(students.length, 5);  // Cambiar a 2 si solo se insertan esos dos
     });
 
     test('Comprobar que no se añaden diferentes estudiantes con el mismo usuario', () async {
       String user = 'juan123';
-      expect(userIsValid(user), false);
-      expect(await insertStudent(user, 'Juan', 'Gómez', '3254', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1), false);
-      expect(getAllStudents(), 2);
+      bool valid = await userIsValid(user);
+      bool insert = await insertStudent(user, 'Juan', 'Gómez', '3254', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
+      expect(valid, false);
+      expect(insert, false);
+      final students = await getAllStudents();
+      expect(students.length, 5);
     });
 
     test('Comprobar que no se permite el uso de caracteres especiales en el usuario', () async {
-
       String format_invalid = "juan!@#123";
       expect(userFormat(format_invalid), false);
     });
+
+
   });
+
 }

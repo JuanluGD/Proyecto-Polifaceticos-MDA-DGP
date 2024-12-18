@@ -284,6 +284,17 @@ class ColegioDatabase{
 
 	}
 
+  Future<bool> delete(String table) async {
+    final db = await instance.database;
+    try {
+      await db.delete(table);
+      return true;
+    } catch (e) {
+      print("Error al eliminar la tabla: $e");
+      return false;
+    }
+  }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///  MÉTODOS PARA LA TABLA DE ESTUDIANTES  ///

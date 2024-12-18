@@ -5,8 +5,6 @@ import 'package:proyecto/classes/ImgCode.dart';
 
 void main() {
   group('Pruebas sobre Base de Datos', () {
-    setUp(){
-    }
     //test 1
     test('Eliminacion de tuplas decrypt al eliminar un estudiante', () async {
       final db = await ColegioDatabase.instance.database;

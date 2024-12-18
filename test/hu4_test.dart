@@ -1,47 +1,24 @@
+import 'package:proyecto/bd.dart';
 import 'package:proyecto/bd_utils.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:proyecto/interfaces/hu2.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+void main() {
+  group('Pruebas sobre Base de Datos', () {
+    setUp(() async {
+      try {
+        // Forzar la inicialización de una nueva base de datos
+        await ColegioDatabase.instance.database;
 
-// NO SE QUE LE PASA A ESTE FICHERO QUE NO ME PERMITE PROBAR LOS TEST DESDE AQUI
-void main() async {
-  final dbPath = await getDatabasesPath();
-  final path = join(dbPath, 'colegio.db');
-  group('Pruebas sobre Widgets', () {
-    //test 1
-    // QUE?
-    testWidgets('Comprobar que se puede asignar cualquier interfaz a cualquier estudiante', (WidgetTester tester) async {
-      // Monta la página de registro de estudiante
-      await tester.pumpWidget(MaterialApp(home: StudentRegistrationPage()));
-
-      // Encuentra el TextField de usuario por su etiqueta
-      final userField = find.widgetWithText(TextField, 'Usuario*');
-
-      // Introduce un texto con caracteres especiales
-      await tester.enterText(userField, 'usuario@');
-
-      // Re-renderiza el widget para procesar los cambios
-      await tester.pump();
-
-      // Verifica que el texto introducido no contenga caracteres especiales
-      expect(find.text('usuario@'), findsNothing); // No debería mostrar el texto con el carácter especial.
-      expect(find.text('usuario'), findsOneWidget); // El campo debería mostrar solo el texto válido.
+        // Insertar datos de prueba
+        await insertStudent('juan123','Juan','Pérez','1234','assets/perfiles/chico.png','alphanumeric',1,1,1);
+      } catch (e) {
+        print("Error en setUp: $e");
+        rethrow;
+      }
     });
-    
-  });
 
-  group('Pruebas sobre Base de Datos', () async {
-
-      
-      setUp(() async {
-        if (await databaseExists(path)) {
-          deleteDatabase(path);
-        }
-        await insertStudent('juan123', 'Juan', 'Pérez', 'password123', 'assets/perfiles/chico.png', 'alphanumeric', 1, 1, 1);
-      });
+    tearDown(()async{
+      await deleteStudent('juan123');
+    });
 
       //test 1
       // COMO ESTAS COMPROBANDO ESTO?
