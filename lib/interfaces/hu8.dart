@@ -515,7 +515,7 @@ class _StepRegistrationPageState extends State<StepRegistrationPage> {
                           // TOMATE
                           // Meter el paso en la BD
                           if (await insertStep(
-                            widget.task.id, description.text, 'assets/picto_steps/$name$extensionPIC', 'assets/imgs_steps/$name$extensionIMG', ''
+                            widget.task.id, description.text, 'assets/picto_steps/$name$extensionPIC', 'assets/imgs_steps/$name$extensionIMG',
                           )) 
                           {
                             // Guardar las imágenes en las carpetas

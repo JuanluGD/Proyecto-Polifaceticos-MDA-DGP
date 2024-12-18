@@ -1,12 +1,7 @@
-import 'package:path/path.dart';
 import 'package:proyecto/bd.dart';
 import 'package:proyecto/bd_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:proyecto/classes/Execute.dart';
-import 'package:proyecto/classes/Task.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
 /*
 HU 7: Como administrador quiero poder asignar una tarea a un alumno.
 */
