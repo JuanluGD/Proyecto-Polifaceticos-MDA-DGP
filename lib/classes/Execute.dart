@@ -28,5 +28,25 @@ class Execute {
         user = map['user'], 
         status = map['status'],
         date = map['date'];
+  
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Execute &&
+        other.task_id == task_id &&
+        other.user == user &&
+        other.status == status &&
+        other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    return task_id.hashCode ^
+        user.hashCode ^
+        status.hashCode ^
+        date.hashCode;
+  }
         
 }

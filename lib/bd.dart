@@ -1154,40 +1154,6 @@ class ColegioDatabase{
 
   /*
     Método
-    @Nombre --> setMenuTask
-    @Funcion --> Permite asignar la tarea del menu a un alumno
-    @Argumentos
-      - user: usuario del alumno al que se le asignará la tarea
-  */
-  Future<bool> setMenuTask(String user) async {
-    DateTime now = DateTime.now();
-    String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    final db = await instance.database;
-    try{
-      bool result = await hasMenuTaskToday();
-      if(result){
-        print("La tarea del comedor ya ha sido asignada");
-        return false;
-      }else{
-        await db.insert(
-          tablaExecute,
-          Execute(
-            user: user,
-            task_id: 1,
-            date: date,
-            status: 0
-          ).toMap() 
-        );
-        return true;
-      }
-    } catch (e) {
-      print("Error al insertar la tarea del comedor: $e");
-      return false;
-    }
-  }
-
-  /*
-    Método
     @Nombre --> hasMenuTaskToday
     @Funcion --> Comprueba si la tarea del menú ya ha sido asignada a un alumno en el día actual
   */

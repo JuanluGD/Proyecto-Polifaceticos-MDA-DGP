@@ -28,4 +28,23 @@ class Order {
       quantity = map['quantity'],
       menuName = map['menuName'],
       classroomName = map['classroomName'];
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Order &&
+        other.date == date &&
+        other.quantity == quantity &&
+        other.menuName == menuName &&
+        other.classroomName == classroomName;
+  }
+
+  @override
+  int get hashCode {
+    return date.hashCode ^
+        quantity.hashCode ^
+        menuName.hashCode ^
+        classroomName.hashCode;
+  }
 }

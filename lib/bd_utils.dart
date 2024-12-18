@@ -544,16 +544,7 @@ Future<void> classCompleted(Classroom classroom) async {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///  GESTIÓN DE TAREA MENU ///
 /// ////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-  Método
-  @Nombre --> setMenuTask
-  @Funcion --> Permite asignar la tarea del menu a un alumno
-  @Argumentos
-    - user: usuario del alumno al que se le asignará la tarea
-*/
-Future<bool> setMenuTask(String user) async {
-  return await ColegioDatabase.instance.setMenuTask(user);
-}
+
 
 /*
   Método

@@ -4,7 +4,6 @@ class Step {
   String description;
   String pictogram;
   String image;
-  String? descriptive_text;
 
   // Constructor de la clase Paso.
   Step({
@@ -12,8 +11,7 @@ class Step {
     required this.task_id,
     required this.description,
     required this.pictogram,
-    required this.image,
-    this.descriptive_text,
+    required this.image
   });
 
   // Método que convierte un objeto de tipo Paso a un Map.
@@ -24,7 +22,6 @@ class Step {
       'description': this.description,
       'pictogram': this.pictogram,
       'image': this.image,
-      'descriptive_text': this.descriptive_text,  
     };
   }
 
@@ -34,7 +31,27 @@ class Step {
         task_id = map['task_id'], 
         description = map['description'], 
         image = map['image'], 
-        pictogram = map['pictogram'], 
-        descriptive_text = map['descriptive_text'];
+        pictogram = map['pictogram'];
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Step &&
+        other.id == id &&
+        other.task_id == task_id &&
+        other.description == description &&
+        other.pictogram == pictogram &&
+        other.image == image;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        task_id.hashCode ^
+        description.hashCode ^
+        pictogram.hashCode ^
+        image.hashCode;
+  }
 
 }

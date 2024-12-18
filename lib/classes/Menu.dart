@@ -24,4 +24,21 @@ class Menu{
     : name = map['name'],
       pictogram = map['pictogram'],
       image = map['image'];
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Menu &&
+        other.name == name &&
+        other.pictogram == pictogram &&
+        other.image == image;
+  }
+
+  @override
+  int get hashCode {
+    return name.hashCode ^
+        pictogram.hashCode ^
+        image.hashCode;
+  }
 }

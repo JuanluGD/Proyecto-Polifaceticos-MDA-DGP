@@ -21,4 +21,22 @@ class Classroom {
   // Método que convierte un Map a un objeto de tipo Classroom.
   Classroom.fromMap(Map<String, dynamic> map)
       : name = map['name'], image = map['image'], task_completed = false;
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Classroom &&
+        other.name == name &&
+        other.image == image &&
+        other.task_completed == task_completed;
+  }
+
+  @override
+  int get hashCode {
+    return name.hashCode ^
+        image.hashCode ^
+        task_completed.hashCode;
+  }
+  
 }

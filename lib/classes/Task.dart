@@ -33,4 +33,25 @@ class Task {
         description = map['description'], 
         image = map['image'], 
         pictogram = map['pictogram'];
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Task &&
+        other.id == id &&
+        other.name == name &&
+        other.description == description &&
+        other.pictogram == pictogram &&
+        other.image == image;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        name.hashCode ^
+        description.hashCode ^
+        pictogram.hashCode ^
+        image.hashCode;
+  }
 }

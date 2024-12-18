@@ -49,4 +49,33 @@ class Student {
 					interfaceIMG = map['interfaceIMG'],
 					interfacePIC = map['interfacePIC'],
 					interfaceTXT = map['interfaceTXT'];
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Student &&
+        other.user == user &&
+        other.name == name &&
+        other.surname == surname &&
+        other.password == password &&
+        other.image == image &&
+        other.typePassword == typePassword &&
+        other.interfaceIMG == interfaceIMG &&
+        other.interfacePIC == interfacePIC &&
+        other.interfaceTXT == interfaceTXT;
+  }
+
+  @override
+  int get hashCode {
+    return user.hashCode ^
+        name.hashCode ^
+        surname.hashCode ^
+        password.hashCode ^
+        image.hashCode ^
+        typePassword.hashCode ^
+        interfaceIMG.hashCode ^
+        interfacePIC.hashCode ^
+        interfaceTXT.hashCode;
+  }
 }
