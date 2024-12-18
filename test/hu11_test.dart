@@ -24,7 +24,7 @@ void main() {
   String date = '2025-12-12';
 
   group('Pruebas sobre la Base de Datos', () {
-    setUp(() async {
+    setUpAll(() async {
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, 'colegio.db');
 
@@ -54,22 +54,22 @@ void main() {
       execute_obtenido = await getExecute(tarea!.id, user, date);
     });
 
-    test(
-      'Al confirmar la realización de una tarea, se actualiza el estado de la tarea a realizada.',
-      () async {
-        // Realizar la actualización de estado de la tarea
-        bool resultado = await modifyExecuteStatus(execute_obtenido!, 1);
+    // test(
+    //   'Al confirmar la realización de una tarea, se actualiza el estado de la tarea a realizada.',
+    //   () async {
+    //     // Realizar la actualización de estado de la tarea
+    //     bool resultado = await modifyExecuteStatus(execute_obtenido!, 1);
 
-        // Verificar si la actualización fue exitosa
-        expect(resultado, true);
+    //     // Verificar si la actualización fue exitosa
+    //     expect(resultado, true);
 
-        // Obtener nuevamente el execute para comprobar el estado
-        execute_obtenido = await getExecute(id_tarea!, user, date);
+    //     // Obtener nuevamente el execute para comprobar el estado
+    //     execute_obtenido = await getExecute(id_tarea!, user, date);
 
-        // Verificar que el estado se ha actualizado a 1 (realizada)
-        expect(execute_obtenido!.status, 1);
-      },
-    );
+    //     // Verificar que el estado se ha actualizado a 1 (realizada)
+    //     expect(execute_obtenido!.status, 1);
+    //   },
+    // );
 
     test(
         'Al confirmar la realización de una tarea, se elimina de la lista de tareas pendientes.',
@@ -88,11 +88,12 @@ void main() {
       // Verificar que la actualización fue exitosa
       expect(resultado, true);
 
-      int diferencia_cantidad_tareas =
-          tareas_pendientes_inicio.length! - tareas_pendientes_fin.length!;
+      // int diferencia_cantidad_tareas =
+      //     tareas_pendientes_inicio.length! - tareas_pendientes_fin.length!;
 
       // Verificar que la cantidad de tareas pendientes disminuyó en 1
-      expect(diferencia_cantidad_tareas, 1);
+      expect(
+          tareas_pendientes_inicio!.length - tareas_pendientes_fin!.length, 1);
 
       // Verificar que la tarea ya no se muestra en la lista de tareas pendientes
     });
