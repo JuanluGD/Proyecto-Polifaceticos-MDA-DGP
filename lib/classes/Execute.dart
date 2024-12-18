@@ -9,7 +9,7 @@ class Execute {
     required this.task_id,
     required this.user,
     required this.status,
-    required this.date,
+    required this.date
   });
 
   // Método que convierte un objeto de tipo Execute a un Map.

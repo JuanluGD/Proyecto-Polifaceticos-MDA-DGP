@@ -15,7 +15,6 @@ void main() {
         await insertStudent('juan123','Juan','Pérez','1234','assets/perfiles/chico.png','alphanumeric',1,1,1);
         await insertStudent('luciaaa22','Lucia','Muñoz','1111','assets/perfiles/chica.png','pictograms',1,0,1);
       } catch (e) {
-        print("Error en setUp: $e");
         rethrow;
       }
     });
@@ -31,7 +30,9 @@ void main() {
       final students = await getAllStudents();
       expect(student1, isNotNull);
       expect(student2, isNotNull);
-      expect(students.length, 5);  // Cambiar a 2 si solo se insertan esos dos
+      expect(students.contains(student1), true);
+      expect(students.contains(student2), true);
+      expect(students.length, 5); 
     });
 
     test('Comprobar que no se añaden diferentes estudiantes con el mismo usuario', () async {
@@ -45,8 +46,8 @@ void main() {
     });
 
     test('Comprobar que no se permite el uso de caracteres especiales en el usuario', () async {
-      String format_invalid = "juan!@#123";
-      expect(userFormat(format_invalid), false);
+      String formatInvalid = "juan!@#123";
+      expect(userFormat(formatInvalid), false);
     });
 
 

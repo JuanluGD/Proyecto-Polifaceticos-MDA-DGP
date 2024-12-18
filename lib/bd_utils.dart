@@ -742,10 +742,10 @@ Future<bool> taskIsValid(String name) async {
       - image: la imagen asociada al paso
       - descriptive_text: texto descriptivo adicional del paso (opcional)
 */
-Future<bool> insertStep(int task_id, String description, String pictogram, String image, String? descriptive_text) async {
+Future<bool> insertStep(int task_id, String description, String pictogram, String image) async {
   List<Step> steps = await ColegioDatabase.instance.getAllStepsFromTask(task_id);
   int id = steps.length;
-  Step step = Step(id: id, task_id: task_id, description: description, pictogram: pictogram, image: image, descriptive_text: descriptive_text);
+  Step step = Step(id: id, task_id: task_id, description: description, pictogram: pictogram, image: image);
   return await ColegioDatabase.instance.insertStep(step);
 }
 

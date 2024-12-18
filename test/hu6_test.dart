@@ -1,6 +1,5 @@
 import 'package:proyecto/bd_utils.dart';
 import 'package:proyecto/bd.dart';
-import 'package:proyecto/classes/Decrypt.dart';
 import 'package:proyecto/classes/Execute.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,7 +18,6 @@ void main() {
         Execute execute = Execute(task_id: 1, user: 'alex123', status: 0, date: date);
         await deleteExecute(execute);
       } catch (e) {
-        print("Error en setUp: $e");
         rethrow;
       }
     });
@@ -35,13 +33,7 @@ void main() {
     test('Comprobar que la asignación de la tarea “Tomar comandas para el menú del comedor” se refleja correctamente en la base de datos del estudiante.', () async {
       await insertExecute(1, 'alex123', 0, date);
       final executes = await getStudentExecutes('alex123');
-      final exists = executes.any((e) =>
-          e.task_id == 1 &&
-          e.user == 'alex123' &&
-          e.status == 0 &&
-          e.date == date);
-
-      expect(exists, true);
+      expect(executes.contains(Execute( task_id: 1, user: 'alex123', status: 0, date: date)), true);
     });
 
   });

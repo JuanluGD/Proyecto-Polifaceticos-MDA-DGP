@@ -13,7 +13,6 @@ void main() {
         await insertStudent('juan123','Juan','Pérez','1234','assets/perfiles/chico.png','alphanumeric',1,1,1);
         await insertStudent('luciaaa22','Lucia','Muñoz','1111','assets/perfiles/chica.png','pictograms',1,0,1);
       } catch (e) {
-        print("Error en setUp: $e");
         rethrow;
       }
     });
