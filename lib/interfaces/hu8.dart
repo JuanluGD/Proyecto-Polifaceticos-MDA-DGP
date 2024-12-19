@@ -749,7 +749,7 @@ class _TaskModificationPageState extends State<TaskModificationPage> {
     steps.clear();
     setState(() {});
     steps.addAll(await getAllStepsFromTask(idTask));
-    print(steps);
+    steps.sort((a, b) => a.id.compareTo(b.id));
     setState(() {});
   }
 
