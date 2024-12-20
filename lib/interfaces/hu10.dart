@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:proyecto/classes/Execute.dart';
 import 'package:proyecto/classes/Task.dart';
@@ -11,6 +10,7 @@ import '../classes/Student.dart';
 import 'hu7.dart' as hu7;
 
 /// HU10: Como administrador quiero poder acceder al historial de actividades realizadas de los estudiantes.
+/// HU12: Como administrador quiero poder modificar la fecha límite de una tarea asignada.
 
 Future<void> main() async {
   Student student = (await getStudent('alissea'))!;
