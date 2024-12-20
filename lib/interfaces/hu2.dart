@@ -208,6 +208,13 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                                     backgroundColor: Colors.red,
                                   ),
                                 );
+                              } else if (interfaceIMG && interfacePIC) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('No pueden ser ambas interfaces de pictogramas e imágenes.'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
                               } else {
                                 if (image != null) {
                                   if (typePassword == 'pictograms' || typePassword == 'images') {
@@ -573,7 +580,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
               ),
               SizedBox(height: 20),
               Expanded(
-                child: buildTickGrid(4, 8, elements, selectionElements, 6, context),
+                child: buildTickGrid(4, 8, elements, selectionElements, 6, context, (){}),
               ),
               SizedBox(height: 20),
               // Botón Guardar

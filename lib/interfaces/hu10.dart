@@ -129,7 +129,9 @@ class _StudentHistoryTasksPageState extends State<StudentHistoryTasksPage> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(item.status == 1 ? 'Completado' : 'Pendiente'), 
+                            Text(item.status == 1 ? 'Completado' : 'Pendiente',
+                              style: TextStyle(color: item.status == 1 ? Colors.green : Colors.red),
+                            ), 
                             IconButton(
                               icon: Icon(Icons.edit),
                               color: Colors.blue,

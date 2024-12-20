@@ -900,7 +900,7 @@ class _ImgCodeSelectionPageState extends State<ImgCodeSelectionPage> {
               ),
               SizedBox(height: 20),
               Expanded(
-                child: buildTickGrid(4, 8, elements, widget.selectionElements, 6, context),
+                child: buildTickGrid(4, 8, elements, widget.selectionElements, 6, context, (){}),
               ),
               SizedBox(height: 20),
               // Botón Guardar

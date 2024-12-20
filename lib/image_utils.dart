@@ -49,7 +49,7 @@ Future<void> deleteImage(String path) async {
 }
 
 // Método para seleccionar elementos de una lista de imágenes de contraseña
-List<ImgCode> toggleSelection(List<ImgCode> selectionImgCode, ImgCode imgCode, int max, BuildContext context) {
+List<ImgCode> toggleSelection(List<ImgCode> selectionImgCode, ImgCode imgCode, int max, BuildContext context, VoidCallback onSelection) {
   if (selectionImgCode.contains(imgCode)) {
     selectionImgCode.remove(imgCode);
   } else {
@@ -61,6 +61,8 @@ List<ImgCode> toggleSelection(List<ImgCode> selectionImgCode, ImgCode imgCode, i
       );
     }
   }
+
+  onSelection();
 
   return List.from(selectionImgCode);
 }
