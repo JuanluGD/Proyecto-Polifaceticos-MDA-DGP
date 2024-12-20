@@ -301,7 +301,20 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                         child: buildBorderedContainer(Colors.grey, 2,
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: buildSizedIconTickGrid(3, 8, 200, imagesSelection, imagesPassword, imagesMax!, context),
+                            child: buildSizedIconTickGrid(3, 8, 200, imagesSelection, imagesPassword, imagesMax!, context, () async {
+                              // TOMATE
+                              // Crear la contraseña que correspondería a los elementos seleccionados
+                              String password = await imageCodeToPassword(imagesPassword);
+                              // Comprobar si es correcta y acceder si sí
+                              if (await loginStudent(widget.student.user, password) == true) {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => hu9.StudentInterfacePage(student: widget.student),
+                                  ),
+                                );
+                              }
+                            }),
                           ),
                         ),
                       )
@@ -311,7 +324,20 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                         child: buildBorderedContainer(Colors.grey, 2,
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: buildSizedIconTickGrid(3, 8, 200, imagesSelection, imagesPassword, imagesMax!, context),
+                            child: buildSizedIconTickGrid(3, 8, 200, imagesSelection, imagesPassword, imagesMax!, context, () async {
+                              // TOMATE
+                              // Crear la contraseña que correspondería a los elementos seleccionados
+                              String password = await imageCodeToPassword(imagesPassword);
+                              // Comprobar si es correcta y acceder si sí
+                              if (await loginStudent(widget.student.user, password) == true) {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => hu9.StudentInterfacePage(student: widget.student),
+                                  ),
+                                );
+                              }
+                            }),
                           ),
                         ),
                       ),
@@ -337,27 +363,6 @@ class _LoginImgCodePageState extends State<LoginImgCodePage> {
                           if (imagesPassword.isNotEmpty) {
                             imagesPassword.removeLast();
                             setState(() {});
-                          }
-                        }),
-                        buildIconButton('Iniciar sesión', Colors.blue, Colors.white, Icons.arrow_forward, () async {
-                          // TOMATE
-                          // Crear la contraseña que correspondería a los elementos seleccionados
-                          String password = await imageCodeToPassword(imagesPassword);
-                          // Comprobar si es correcta e informar de que no o acceder si sí
-                          if (await loginStudent(widget.student.user, password) == false) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Contraseña incorrecta.'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          } else {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => hu9.StudentInterfacePage(student: widget.student),
-                              ),
-                            );
                           }
                         }),
                       ],

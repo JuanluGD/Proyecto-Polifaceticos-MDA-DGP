@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
 // //////////////////////////////////////////////////////////////////////////////////////////
 /// INTERFAZ PRINCIPAL ESTUDIANTE
 // //////////////////////////////////////////////////////////////////////////////////////////
+
 class StudentInterfacePage extends StatefulWidget {
   final Student student;
   StudentInterfacePage({required this.student});
@@ -141,29 +142,33 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              if(widget.student.interfaceTXT == 1)
-                                              Text(
-                                                task.name,
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.blue,
-                                                ),
-                                              ),
-                                              Text(
-                                                item.date,
-                                                style: TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.blue,
-                                                ),
-                                              ),
                                               if(widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
-                                              Image.asset(
-                                                task.image,
-                                                width: 60,
-                                                height: 60,
-                                              ),
+                                                Image.asset(
+                                                  task.image,
+                                                  width: 60,
+                                                  height: 60,
+                                                ),
+                                              if(widget.student.interfaceTXT == 1)... [
+                                                SizedBox(width: 10),
+                                                Text(
+                                                  task.name,
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Text(
+                                                  item.date,
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                              ],
                                             ],
                                           ),
                                         ],
@@ -179,21 +184,15 @@ class _StudentInterfacePageState extends State<StudentInterfacePage> {
                     },
                   ),
                 ),
-                // ESTO ES SOLO PARA PRUEBAS
                 SizedBox(height: 20),
-                Center(
-                  child: SizedBox(
-                    width: 400,
-                    child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => hu3.StudentLoginPage(),
-                          ),
-                        );
-                      }),
+                buildStudentElevatedButton(widget.student, 'Cerrar', Icons.arrow_back, Colors.deepOrange[400], false, 200, () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => hu3.StudentLoginPage(),
                     ),
-                  ),
+                  );
+                }),
                 ],
               ),
             ),
@@ -289,29 +288,19 @@ class _StudentTaskInterfacePageState extends State<StudentTaskInterfacePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Center(
-                        child: SizedBox(
-                          width: 200,
-                          child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
-                            setState(() {}); Navigator.pop(context); setState(() {});
-                          }),
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      Center(
-                        child: SizedBox(
-                          width: 200,
-                          child: buildElevatedButton('Comenzar', buttonTextStyle, nextButtonStyle, () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => StudentStepInterfacePage(student: widget.student, steps: steps, index: 0, date: widget.date)
-                              ),
-                            );
-                            setState(() {});
-                          }),
-                        ),
-                      ),
+                      buildStudentElevatedButton(widget.student, 'Atrás', Icons.arrow_back, Colors.deepOrange[400], false, 200, () {
+                        setState(() {}); Navigator.pop(context); setState(() {});
+                      }),
+                      SizedBox(width: 50),
+                      buildStudentElevatedButton(widget.student, 'Comenzar', Icons.arrow_forward, Colors.blue, true, 200, () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => StudentStepInterfacePage(student: widget.student, steps: steps, index: 0, date: widget.date)
+                          ),
+                        );
+                        setState(() {});
+                      }),
                     ],
                   ),
                   SizedBox(height: 25),
@@ -408,39 +397,30 @@ class _StudentStepInterfacePageState extends State<StudentStepInterfacePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(height: 25),
-                      Center(
-                        child: SizedBox(
-                          width: 200,
-                          child: buildElevatedButton('Atrás', buttonTextStyle, returnButtonStyle, () {
-                            setState(() {}); Navigator.pop(context); setState(() {});
-                          }),
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      Center(
-                        child: SizedBox(
-                          width: 200,
-                          child: widget.index < num-1
-                            ? buildElevatedButton('Siguiente', buttonTextStyle, nextButtonStyle, () async {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => StudentStepInterfacePage(student: widget.student, steps: widget.steps, index: widget.index+1, date: widget.date)
-                                ),
-                              );
-                              setState(() {});
-                            })
-                            : buildElevatedButton('Terminar', buttonTextStyle, nextButtonStyle, () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FinishedTask(student: widget.student, idTask: widget.steps[widget.index].task_id, date: widget.date),
-                                ),
-                              );
-                              setState(() {});
-                            }),
-                        ),
-                      ),
+                      buildStudentElevatedButton(widget.student, 'Atrás', Icons.arrow_back, Colors.deepOrange[400], false, 200, () {
+                        setState(() {}); Navigator.pop(context); setState(() {});
+                      }),
+                      SizedBox(width: 50),
+                      if (widget.index < num-1)
+                        buildStudentElevatedButton(widget.student, 'Siguiente', Icons.arrow_forward, Colors.blue, true, 200, () async {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StudentStepInterfacePage(student: widget.student, steps: widget.steps, index: widget.index+1, date: widget.date)
+                            ),
+                          );
+                          setState(() {});
+                        })
+                      else
+                        buildStudentElevatedButton(widget.student, 'Terminar', Icons.arrow_forward, Colors.blue, true, 200, () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FinishedTask(student: widget.student, idTask: widget.steps[widget.index].task_id, date: widget.date),
+                            ),
+                          );
+                          setState(() {});
+                        }),
                     ],
                   ),
                 ],
@@ -538,19 +518,21 @@ class _FinishedTaskState extends State<FinishedTask> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              'Seguir',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                            if (widget.student.interfaceTXT == 1)
+                              Text(
+                                'Seguir',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
                             SizedBox(width: 10),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                            ),
+                            if (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
+                              Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                              ),
                           ],
                         ),
                       ),

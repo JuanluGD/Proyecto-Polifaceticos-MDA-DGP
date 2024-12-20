@@ -426,7 +426,7 @@ class CommandList extends StatefulWidget {
 
 class _CommandListState extends State<CommandList> {
   
-  late List<Order> orders;
+  List<Order> orders = [];
   final groupeOrders = <String, List<Order>>{};
 
   @override
@@ -464,44 +464,53 @@ class _CommandListState extends State<CommandList> {
                     style: titleTextStyle,
                   ),
                   SizedBox(height: 15),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: groupeOrders.length,
-                      itemBuilder: (context, index) {
-                        final classroomName = groupeOrders.keys.toList()[index];
-                        final classroomOrders = groupeOrders[classroomName]!;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Clase: ${classroomName}',
-                              style: titleTextStyle.copyWith(fontSize: 24)
-                            ),
-                            SizedBox(height: 10),
-                            ListView.builder(
-                              shrinkWrap: true, // Permite que el ListView tome solo el espacio necesario
-                              physics: NeverScrollableScrollPhysics(), // Desactiva el desplazamiento interno
-                              itemCount: classroomOrders.length,
-                              itemBuilder: (context, index) {
-                                final order = classroomOrders[index];
-                                return Card(
-                                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                                  child: ListTile(
-                                    title: Text(order.menuName),
-                                    trailing: Text(
-                                      'Cantidad: ${order.quantity}',
-                                      style: TextStyle(fontSize: 18),
+                  if (!orders.isEmpty)
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: groupeOrders.length,
+                        itemBuilder: (context, index) {
+                          final classroomName = groupeOrders.keys.toList()[index];
+                          final classroomOrders = groupeOrders[classroomName]!;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Clase: ${classroomName}',
+                                style: titleTextStyle.copyWith(fontSize: 24)
+                              ),
+                              SizedBox(height: 10),
+                              ListView.builder(
+                                shrinkWrap: true, // Permite que el ListView tome solo el espacio necesario
+                                physics: NeverScrollableScrollPhysics(), // Desactiva el desplazamiento interno
+                                itemCount: classroomOrders.length,
+                                itemBuilder: (context, index) {
+                                  final order = classroomOrders[index];
+                                  return Card(
+                                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                                    child: ListTile(
+                                      title: Text(order.menuName),
+                                      trailing: Text(
+                                        'Cantidad: ${order.quantity}',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(height: 15), // Espaciado entre grupos
-                          ],
-                        );
-                      }
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 15), // Espaciado entre grupos
+                            ],
+                          );
+                        }
+                      ),
+                    )
+                  else... [
+                    Spacer(),
+                    Text(
+                      'No se han realizado las comandas aún.',
+                      style: hintTextStyle,
                     ),
-                  ),
+                    Spacer(),
+                  ],
                   SizedBox(height: 20),
                   Center(
                     child: SizedBox(

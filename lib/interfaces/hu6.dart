@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:path/path.dart' as path;
 import 'package:proyecto/classes/Classroom.dart';
 import 'package:proyecto/classes/Menu.dart';
@@ -90,10 +91,17 @@ class _ClassSelectionState extends State<ClassSelection> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(height: 15),
-                  Text(
-                    'Comandas',
-                    style: titleTextStyle,
-                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.restaurant, size: 30, color: Colors.blue),
+                      SizedBox(width: 10),
+                      Text(
+                        'Comandas',
+                        style: titleTextStyle,
+                      ),
+                    ],
+                  ),                  
                   SizedBox(height: 15),
                   Expanded(
                     child: GridView.builder(
@@ -124,15 +132,35 @@ class _ClassSelectionState extends State<ClassSelection> {
                                 Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    (widget.student.interfaceTXT == 1) ?
-                                    Text(
-                                      'Clase ${classroom.name}',
-                                      style: titleTextStyle
-                                    )
-                                    : Image.file(
-                                        File(classroom.image),
-                                        fit: BoxFit.cover,
-                                    ),
+                                    if (widget.student.interfaceTXT == 1 && (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1))... [
+                                      Image.file(
+                                          File(classroom.image),
+                                          fit: BoxFit.cover,
+                                      ),
+                                      Text(
+                                        'Clase ${classroom.name}',
+                                        style: titleTextStyle.copyWith(
+                                          foreground: Paint()
+                                            ..style = PaintingStyle.stroke
+                                            ..strokeWidth = 6
+                                            ..color = Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Clase ${classroom.name}',
+                                        style: titleTextStyle,
+                                      ),
+                                    ]
+                                    else if (widget.student.interfaceTXT == 1)
+                                      Text(
+                                        'Clase ${classroom.name}',
+                                        style: titleTextStyle
+                                      )
+                                    else if (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
+                                      Image.file(
+                                          File(classroom.image),
+                                          fit: BoxFit.cover,
+                                      ),
                                     if (classroom.task_completed) ...[
                                       SizedBox(height: 8.0),
                                       Icon(
@@ -270,9 +298,16 @@ class _CommandListPageState extends State<CommandListPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(height: 15),
-                  Text(
-                    'Comandas Clase: ${widget.classroom.name}',
-                    style: titleTextStyle,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(MaterialCommunityIcons.food, size: 30, color: Colors.blue),
+                      SizedBox(width: 10),
+                      Text(
+                        'Comandas Clase: ${widget.classroom.name}',
+                        style: titleTextStyle,
+                      ),
+                    ],
                   ),
                   SizedBox(height: 15),
                   // Lista de menús en un Expanded para que sea scrollable
@@ -414,58 +449,18 @@ class _CommandListPageState extends State<CommandListPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 255, 168, 37),
-                            minimumSize: Size(160, 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        buildStudentElevatedButton(widget.student, 'Atrás', Icons.arrow_back, Color.fromARGB(255, 255, 168, 37), false, 200, () {
+                          Navigator.pop(context);
+                        }),
+                        buildStudentElevatedButton(widget.student, 'Terminar', Icons.arrow_forward, Colors.blue, true, 200, () async {
+                          createOrders(orders_aux);
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FinishedOrder(student: widget.student, classroom: widget.classroom),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.arrow_back, color: Colors.white),
-                              SizedBox(width: 8),
-                              Text(
-                                'Atrás',
-                                style: TextStyle(fontSize: 18, color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            createOrders(orders_aux);
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FinishedOrder(student: widget.student, classroom: widget.classroom),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            minimumSize: Size(160, 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Terminar',
-                                style: TextStyle(fontSize: 18, color: Colors.white),
-                              ),
-                              SizedBox(width: 8),
-                              Icon(Icons.arrow_forward, color: Colors.white),
-                            ],
-                          ),
-                        ),
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -514,23 +509,29 @@ class _FinishedOrderState extends State<FinishedOrder> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: (widget.student.interfaceTXT == 1)
-                      ? Text(
-                          '¡Comanda de la Clase ${widget.classroom.name} terminada!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 60,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : Image(
-                        image: AssetImage("assets/tareas/terminar.png"),
+                    Spacer(),
+                    if (widget.student.interfaceTXT == 1) ...[
+                      Text(
+                        '¡Comanda de la Clase ${widget.classroom.name} terminada!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 60,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 60),
+                    ],
+                    if (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15.0),
+                        child: Image.file(
+                          File("assets/tareas/terminar.png"),
+                          fit: BoxFit.cover,
+                          height: 300,
+                        ),
+                      ),
+                    ],
+                    Spacer(), 
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
@@ -551,19 +552,21 @@ class _FinishedOrderState extends State<FinishedOrder> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              'Seguir',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                            if (widget.student.interfaceTXT == 1)
+                              Text(
+                                'Seguir',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
                             SizedBox(width: 10),
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                            ),
+                            if (widget.student.interfaceIMG == 1 || widget.student.interfacePIC == 1)
+                              Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                              ),
                           ],
                         ),
                       ),
@@ -611,7 +614,7 @@ class _MenuListState extends State<MenuList>{
       backgroundColor: Colors.lightBlueAccent.shade100,
       body: Center(
         child: buildMainContainer(740, 625, EdgeInsets.symmetric(vertical: 20.0, horizontal: 40.0), 
-          buildCustomList(items: menus, title: "Lista de menus", addButton: true, nextPage: MenuRegistration(), context: context,
+          buildCustomList(items: menus, title: "Lista de menús", addButton: true, nextPage: MenuRegistration(), context: context,
           buildChildren: (context, item, index) { 
             return [
               IconButton(

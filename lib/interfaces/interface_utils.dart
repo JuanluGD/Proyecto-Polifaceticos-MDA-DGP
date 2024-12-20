@@ -123,6 +123,50 @@ Widget buildElevatedButton(String text, TextStyle textStyle, ButtonStyle buttonS
   );
 }
 
+// Crear botón adaptado a la interfaz del estudiante
+Widget buildStudentElevatedButton(Student student, String text, IconData icon, Color? color, bool firstText, double width, VoidCallback onPressed) {
+  return Center(
+    child: SizedBox(
+      width: width,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(backgroundColor: color, padding: EdgeInsets.symmetric(vertical: 24.0)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (firstText)... [
+              if (student.interfaceTXT == 1)
+                Text(
+                  text,
+                  style: buttonTextStyle,
+                ),
+              SizedBox(width: 10),
+              if (student.interfaceIMG == 1 || student.interfacePIC == 1)
+                Icon(
+                  icon,
+                  color: Colors.white,
+                ),
+            ]
+            else... [
+              if (student.interfaceIMG == 1 || student.interfacePIC == 1)
+                Icon(
+                  icon,
+                  color: Colors.white,
+                ),
+              SizedBox(width: 10),
+              if (student.interfaceTXT == 1)
+                Text(
+                  text,
+                  style: buttonTextStyle,
+                ),
+            ]
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 // Crear botón de iconos
 Widget buildIconButton(String tip, Color background, Color iconColor, IconData icon, VoidCallback onPressed) {
   return Tooltip(
@@ -374,7 +418,7 @@ Widget buildIndexGrid(int columns, double spacing, List<ImgCode> selectedElement
 }
 
 // Crear un grid de selección de elementos candidatos para la clave
-Widget buildTickGrid(int columns, double spacing, List<ImgCode> allElements, List<ImgCode> selectionElements, int max, BuildContext context) {
+Widget buildTickGrid(int columns, double spacing, List<ImgCode> allElements, List<ImgCode> selectionElements, int max, BuildContext context, VoidCallback onSelection) {
   return GridView.count(
     crossAxisCount: columns,
     crossAxisSpacing: spacing,
@@ -383,7 +427,7 @@ Widget buildTickGrid(int columns, double spacing, List<ImgCode> allElements, Lis
       final isSelected = selectionElements.contains(element);
       return buildPickerRegion(
         () {
-          toggleSelection(selectionElements, element, max, context);
+          toggleSelection(selectionElements, element, max, context, onSelection);
           // Actualizar el estado
           (context as Element).markNeedsBuild();
         },
@@ -392,7 +436,7 @@ Widget buildTickGrid(int columns, double spacing, List<ImgCode> allElements, Lis
     }).toList(),
   );
 }
-Widget buildSizedIconTickGrid(int columns, double spacing, double size, List<ImgCode> allElements, List<ImgCode> selectionElements, int max, BuildContext context) {
+Widget buildSizedIconTickGrid(int columns, double spacing, double size, List<ImgCode> allElements, List<ImgCode> selectionElements, int max, BuildContext context, VoidCallback onSelection) {
   return GridView.count(
     crossAxisCount: columns,
     crossAxisSpacing: spacing,
@@ -401,7 +445,7 @@ Widget buildSizedIconTickGrid(int columns, double spacing, double size, List<Img
       final isSelected = selectionElements.contains(element);
       return buildPickerRegion(
         () {
-          toggleSelection(selectionElements, element, max, context);
+          toggleSelection(selectionElements, element, max, context, onSelection);
           // Actualizar el estado
           (context as Element).markNeedsBuild();
         },
