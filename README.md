@@ -53,6 +53,7 @@ Según el sistema operativo que se utilice, cambiar <so> por el correspondiente.
 Acceso para administrador:
   - Usuario: admin
   - Contraseña: admin
+
 Hay estudiantes de prueba.
   - Contraseña de Alicia: 1. rosa, 2. azul
   - Contraseña de Alex: 1234
