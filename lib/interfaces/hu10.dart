@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:proyecto/classes/Execute.dart';
 import 'package:proyecto/classes/Task.dart';
 import 'package:proyecto/interfaces/interface_utils.dart';
@@ -10,6 +10,7 @@ import '../classes/Student.dart';
 import 'hu7.dart' as hu7;
 
 /// HU10: Como administrador quiero poder acceder al historial de actividades realizadas de los estudiantes.
+/// HU12: Como administrador quiero poder modificar la fecha límite de una tarea asignada.
 
 Future<void> main() async {
   Student student = (await getStudent('alissea'))!;
@@ -27,6 +28,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('es', ''),
+      ],
+      locale: const Locale('es', ''),
       debugShowCheckedModeBanner: false,
       home: StudentHistoryTasksPage(student: student,),
     );
@@ -65,8 +75,41 @@ class _StudentHistoryTasksPageState extends State<StudentHistoryTasksPage> {
     setState(() {});
   }
 
+  // Para modificar la fecha
+  Future<void> _pickDate(Execute execute, Task? selected) async {
+    DateTime? selectedDate; // Fecha seleccionada
+    
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.parse(execute.date),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2050),
+      locale: const Locale('es', ''),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        selectedDate = pickedDate;
+      });
+    }
+
+    if (selected!= null && selected.id == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('La tarea del comedor solo se puede asignar para hoy.'),
+        ),
+      );
+    } else {
+      // TOMATE
+      if (selectedDate != null) {
+        await modifyExecuteDate(execute, getBDate(selectedDate!));
+        _loadTasks();
+      }
+    }
+  }
+
   Future<void> deleteStudentTask(Execute execute, int index) async {
     await deleteExecute(execute);
+    executes.removeAt(index);
     tasks.removeAt(index);
   }
 
@@ -131,15 +174,16 @@ class _StudentHistoryTasksPageState extends State<StudentHistoryTasksPage> {
                           children: [
                             Text(item.status == 1 ? 'Completado' : 'Pendiente',
                               style: TextStyle(color: item.status == 1 ? Colors.green : Colors.red),
-                            ), 
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              color: Colors.blue,
-                              onPressed: () async {
-                                // Navegar a la pagina de modificacion de la fecha de entrega
-                                print("por implementar jaja");
-                              },
                             ),
+                            SizedBox(width: 10),
+                            if (item.status == 0)
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                color: Colors.blue,
+                                onPressed: () async {
+                                  await _pickDate(item, task);
+                                },
+                              ),
                             IconButton(
                               icon: Icon(Icons.delete),
                               color: Colors.blue,

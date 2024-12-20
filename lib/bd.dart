@@ -1632,7 +1632,7 @@ class ColegioDatabase{
       int count = await db.update(
         tablaExecute,
         {'date': date},
-        where: 'id_task = ? AND user = ? AND date = ?',
+        where: 'task_id = ? AND user = ? AND date = ?',
         whereArgs: [execute.task_id, execute.user, execute.date],
       );
 
