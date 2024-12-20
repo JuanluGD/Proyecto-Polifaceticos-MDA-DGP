@@ -12,19 +12,19 @@ Así mismo, los administradores de la aplicación podrán asignarle tareas a los
 
 ### Gestión de usuarios
 - Autenticación personalizada:
-Acceso mediante usuario y contraseña para administradores y login personalizado para estudiantes.
+Acceso mediante usuario y contraseña para el administrador y login personalizado para estudiantes.
 - Alta, edición y baja de usuarios:
-Los administradores pueden dar de alta, modificar perfiles y eliminar estudiantes.
+El administrador pueden dar de alta, modificar perfiles y eliminar estudiantes.
 
 ### Gestión y asignación de tareas.
 - Creación y asignación de tareas:
-Los administradores puede asignar tareas específicas, como tomar comandas, repartir material o tareas por pasos.
+El administrador puede asignar las tareas específicas de tomar comandas y tareas por pasos. Estas últimas las puede crear, modificar y eliminar.
 - Seguimineto de tareas:
-Los estudiantes pueden confirmar la realización de las tareas y solicitar posponerlas si es necesario.
+Los estudiantes pueden ejecutar tareas y confirmar su realización.
 
 ### Accesibilidad y personalización.
 - Interfaz adaptativa:
-Los administradores pueden personalizar la interfaz que se mostrará a cada estudiante según sus necesidades.
+El administrador pueden personalizar la interfaz que se mostrará a cada estudiante según sus necesidades.
 - Acceso sencillo:
 Los estudiantes pueden iniciar sesión y navegar en una interfaz intuitiva diseñada para sus requerimientos.
 
@@ -48,22 +48,18 @@ git clone https://github.com/juanluGR/Proyecto-Polifaceticos-MDA-DGP.git
 flutter pub get
 ```
 
-### 4. Ejecutar la aplicación (temporal).
+### 4. Ejecutar la aplicación.
 Según el sistema operativo que se utilice, cambiar <so> por el correspondiente. Por ejemplo, para Windows se cambiaría `<so>` por windows.
+Acceso para administrador:
+  - Usuario: admin
+  - Contraseña: admin
+Hay estudiantes de prueba.
+  - Contraseña de Alicia: 1. rosa, 2. azul
+  - Contraseña de Alex: 1234
+  - Contraseña de Juan: 1. azul
 
-- Página de inicio de sesión alfanumérica.
 ```bash
-flutter run -d <so> ./lib/hu1.dart
-```
-
-- Página de alta de estudiante.
-```bash
-flutter run -d <so> ./lib/hu2.dart
-```
-
-- Página de lista y modificación de estudiantes.
-```bash
-flutter run -d <so> ./lib/hu3.dart
+flutter run -d <so> ./lib/main.dart
 ```
 
 ## 📧 Contacto
