@@ -207,7 +207,7 @@ class ColegioDatabase{
     await db.execute('''
       INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('alissea', 'Alicia', '', 'assets/perfiles/alissea.png', 'rosa.png_picto azul.png_picto ', 'pictograms', 0, 1, 0);
       INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('alex123', 'Alex', '', 'assets/perfiles/alex123.png', '1234', 'alphanumeric', 0, 1, 1);
-      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('juancito', 'Juan', '', 'assets/perfiles/juancito.png', 'azul.png_img ', 'images', 1, 0, 0);
+      INSERT INTO $tablaStudents (user, name, surname, image, password, typePassword, interfaceIMG, interfacePIC, interfaceTXT) VALUES ('juancito', 'Juan', '', 'assets/perfiles/juancito.png', 'texto', 'alphanumeric', 0, 0, 1);
    ''');
 
     await db.execute('''
@@ -232,12 +232,6 @@ class ColegioDatabase{
       INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/azul.png');
       INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/morado.jpg');
       INSERT INTO $tablaDecrypt (user, path) VALUES ('alissea', 'assets/picto_claves/rosa.png');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/rojo.jpg');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/naranja.png');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/amarillo.jpg');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/azul.png');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/morado.jpg');
-      INSERT INTO $tablaDecrypt (user, path) VALUES ('juancito', 'assets/imgs_claves/rosa.png');
     '''); 
 
     /// INSERTAR MENUS ///
@@ -260,27 +254,29 @@ class ColegioDatabase{
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Comedor', 'Tomar las comandas del día','assets/picto_tasks/comedor.png','assets/imgs_tasks/comedor.png');
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Fregar los Platos', '','assets/picto_tasks/fregar.png','assets/imgs_tasks/fregar.png');
       INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Hacer la cama', '', 'assets/picto_tasks/cama.png','assets/imgs_tasks/cama.png');
-      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Poner el microondas', '', 'assets/picto_tasks/microondas.png','assets/imgs_tasks/microondas.png');
-      INSERT INTO $tablaTask (name, description, pictogram, image) VALUES ('Lorem', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce volutpat  aliquam auctor. Orci varius natoque penatibus et magnis dis parturient  montes, nascetur ridiculus mus. Nam vel bibendum ante. Ut ex odio,  posuere id hendrerit vel, commodo a velit. Mauris quis nunc rutrum,  molestie augue vel, vestibulum tellus.', 'assets/logo.png','assets/logo.png');
 
     '''); 
 
     /// INSERTAR PASOS DE TAREAS ///
     await db.execute('''
-      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (0, 2, 'Coger los platos', 'assets/picto_steps/fregar.png', 'assets/imgs_steps/fregar.png');
-      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (1, 2, 'Fregar los platos', 'assets/picto_steps/fregar.png', 'assets/imgs_steps/fregar.png');
-      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (2, 2, 'Secar los platos', 'assets/picto_steps/fregar.png', 'assets/imgs_steps/fregar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (0, 2, 'Enjabonar los platos', 'assets/picto_steps/enjabonar.png', 'assets/imgs_steps/enjabonar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (1, 2, 'Aclarar los platos', 'assets/picto_steps/fregar.png', 'assets/imgs_steps/fregar.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (0, 3, 'Extender la sábana', 'assets/picto_steps/sabanas.png', 'assets/imgs_steps/sabanas.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (1, 3, 'Extender el edredón', 'assets/picto_steps/edredon.png', 'assets/imgs_steps/edredon.png');
+      INSERT INTO $tablaStep (id, task_id, description, pictogram, image) VALUES (2, 3, 'Poner la almohada', 'assets/picto_steps/almohada.png', 'assets/imgs_steps/almohada.png');
     ''');
     
     DateTime now = DateTime.now();
     String date = '${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
     /// INSERTAR EJECUCIONES DE TAREAS ///
-		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2024-12-01', 1]);
-		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2025-01-01', 0]);
-		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 3, '2025-01-01', 0]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2024-01-15', 1]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 2, '2025-01-18', 0]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alissea', 3, '2025-01-20', 0]);
 		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alex123', 1, date, 0]);
-		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alex123', 2, '2025-01-02', 0]);
-		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alex123', 3, '2025-01-01', 0]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alex123', 2, '2025-01-20', 0]);
+		await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['alex123', 3, '2025-01-20', 0]);
+    await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['juancito', 3, '2025-01-20', 0]);
+    await db.execute(''' INSERT INTO $tablaExecute (user, task_id, date, status) VALUES (?, ?, ?, ?); ''', ['juancito', 3, '2025-01-21', 0]);
 
 	}
 
